@@ -1,0 +1,99 @@
+/* body {
+  } */
+.logIn-pg {
+  background-color: #ffffff;
+  display: flex;
+}
+.login-sideimg-div {
+  background-image: url(../../assets/login-img.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 94vh;
+  width: 453px;
+  margin: 20px;
+  border-radius: 12px;
+}
+.login-sideimg-div img {
+  width: 100%;
+}
+
+.login-form-section {
+  width: 420px;
+  margin: auto;
+  position: relative;
+  /* padding: 20px; */
+}
+.login-form-section img {
+  width: 100px;
+}
+.login-form-section h5 {
+  font-size: 18px;
+  font-weight: normal;
+  text-align: center;
+  margin-top: 0;
+}
+.login-form-section input {
+  width: 100%;
+  margin: 8px 0 24px 0;
+  font-size: 16px;
+}
+.password-input {
+  background-image: url(../../assets/icons/eye.png);
+  background-repeat: no-repeat;
+  background-size: 16px;
+
+  background-position: calc(100% - 15px) center;
+  padding-right: 45px;
+}
+.resetPass-msg {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+.logIn-pg label {
+  font-size: 14px;
+}
+.verificationEmail-txt {
+  background: #f9f9f9;
+  color: #838383;
+  padding: 10px 24px;
+  text-align: center;
+  line-height: 25px;
+}
+.verificationEmail-txt p {
+  margin: 0;
+}
+
+@media screen and (max-width: 991px) {
+  .login-sideimg-div {
+    width: 353px;
+  }
+}
+@media screen and (max-width: 860px) {
+  .login-sideimg-div {
+    width: 300px;
+    margin-right: 10px;
+  }
+}
+@media screen and (max-width: 787px) {
+  .login-sideimg-div {
+    display: none;
+  }
+
+  .login-form-section {
+    padding: 3rem 10px;
+  }
+}
+@media screen and (max-width: 465px) {
+  .login-form-section {
+    width: 350px;
+  }
+}
+@media screen and (max-width: 380px) {
+  .login-form-section {
+    width: 300px;
+  }
+}

@@ -1,0 +1,165 @@
+.label-deleteModal-btns {
+  display: flex;
+}
+.label-deleteModal-btns button:first-child {
+  font-size: 16px;
+  cursor: pointer;
+  border: 1px solid #dc3e42;
+  border-radius: 6px;
+  color: #dc3e42;
+  padding: 12px 16px;
+  width: 50%;
+  margin-right: 16px;
+  background-color: #fff;
+}
+.label-deleteModal-btns button:last-child {
+  cursor: pointer;
+  background-color: #ea3958;
+  font-size: 16px;
+  border-radius: 6px;
+  color: #fff;
+  padding: 12px 16px;
+  width: 50%;
+  border: none;
+}
+.status.pending {
+  color: #ffa552;
+  background: rgba(255, 165, 82, 0.09);
+}
+
+.status.success,
+.status.open {
+  color: rgba(0, 113, 63, 0.8);
+  background: rgba(0, 164, 51, 0.09);
+}
+.status.closed,
+.status.re-submitted,
+.status.error {
+  color: #8d8d8d;
+  background: #e8e8e8;
+}
+
+.status.rejected,
+.status.suspended {
+  color: #e5484d;
+  background: #feebec;
+}
+.status.approved,
+.status.active {
+  color: #2b9a66;
+  background: #e6f6eb;
+}
+.status {
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-weight: 500;
+  /* width: 53px; */
+  display: inline;
+  text-align: center;
+}
+/* single lable */
+.lable-details {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+}
+.lable-img-row {
+  display: flex;
+  margin-bottom: 32px;
+}
+
+.lables-description {
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  padding: 16px;
+}
+.lables-description p {
+  color: #202020;
+}
+.singleLable-social-div {
+  background-color: #fff;
+  padding: 16px 16px 0 16px;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  /* margin-left: 20px; */
+  margin: 0px 0px 24px 0px;
+}
+
+.singleLabel-social-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.singleLabel-dropdown-btn {
+  margin-right: 0 !important;
+}
+.singleLabel-image {
+  margin-left: 0;
+}
+@media screen and (max-width: 930px) {
+  .singleLable-social-div {
+    margin-bottom: 0;
+  }
+}
+@media screen and (max-width: 885px) {
+  .lable-img-txt div h1 {
+    font-size: 30px;
+  }
+  .lable-img-txt div h4 {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .lable-img-txt div h1 {
+    font-size: 28px;
+  }
+  .singleLabel-social-row {
+    display: block;
+  }
+  .singleArtist-info {
+    margin-bottom: 20px !important;
+  }
+}
+@media screen and (max-width: 560px) {
+  .lables-card {
+    width: calc(50% - 36px);
+  }
+  .singleLabel-image {
+    width: 124px;
+  }
+  .lable-img-txt div h1 {
+    font-size: 24px;
+  }
+  .lable-img-txt div h4 {
+    font-size: 16px;
+  }
+  .lable-img-txt {
+    margin-left: 8px;
+  }
+}
+@media screen and (max-width: 475px) {
+  .lable-img-row {
+    display: block;
+    margin: auto;
+    text-align: center;
+    position: relative;
+  }
+  .singleLabel-dropdown-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-top: 3px !important;
+  }
+  .lable-img-txt div {
+    margin: auto;
+    width: 100%;
+    /* text-align: center; */
+  }
+  .lable-img-txt {
+    margin-left: 0;
+  }
+  .artist-editImg-div {
+    padding: 16px;
+  }
+}

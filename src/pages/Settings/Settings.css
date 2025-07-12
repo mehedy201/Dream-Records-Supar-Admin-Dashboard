@@ -1,0 +1,287 @@
+.settings-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+.setting-teams-collapse {
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+.setting-collapse-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+}
+.add-member-div {
+  display: flex;
+  margin: 24px 0 0 0;
+}
+.add-member-div p {
+  margin: 0;
+}
+.add-member-div button {
+  margin-left: auto;
+  margin-right: 0;
+}
+.collapse-arrowIcon {
+  min-width: 22px;
+  min-height: 26px;
+  color: #838383;
+  cursor: pointer;
+}
+
+.generalSettingsList-container {
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+}
+.generalSettingsList-container h3 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+}
+.generalSettingsList-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.generalSettingsList-header .item-count {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 16px;
+}
+
+.generalSettingsList-item-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.generalSettingsList-item-list .tag {
+  background: #efefef;
+  padding: 6px 12px;
+  border-radius: 6px;
+  /* font-size: 14px; */
+  display: flex;
+  align-items: center;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  margin-left: 8px;
+  cursor: pointer;
+  color: #666;
+}
+
+.dialog-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  inset: 0;
+}
+
+.dialog-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  margin: 100px auto;
+  position: fixed;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -30%);
+}
+
+.genre-input {
+  width: 100%;
+  padding: 8px;
+  /* margin-top: 10px; */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+.settings-dropdown,
+.settings-search {
+  width: 100%;
+  margin-right: 20px;
+  flex: 1;
+}
+.settings-search {
+  margin-top: 0;
+}
+.settings-cehckbox-div {
+  background: #fcfcfc;
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid #f0f0f0;
+  /* margin-top: 20px; */
+}
+.settings-textarea {
+  height: 112px;
+}
+.save-btn {
+  width: 205px;
+  margin: 0;
+  border-radius: 6px;
+}
+.generalSettingsList-container .messageBox-time {
+  padding-right: 0;
+}
+
+.settings-member {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 12px 0;
+}
+.settings-member:last-child {
+  border-bottom: none;
+}
+.settings-member-img {
+  width: 48px;
+  margin-right: 12px;
+  object-fit: cover;
+  border-radius: 100%;
+}
+.settings-member p {
+  margin: 0;
+  font-weight: 500;
+}
+.settings-dropdown-btn {
+  margin-right: 0;
+  background: none;
+}
+.settings-addMember-modal {
+  width: 440px;
+}
+.settings-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 16px;
+}
+.settings-label {
+  font-size: 12px;
+  display: block;
+  margin-bottom: 8px;
+  margin-top: 16px;
+}
+.settings-addMember-modal input {
+  width: 100%;
+}
+.settingsModal-checkbox-div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e8e8e8;
+}
+.settings-addNew-btn {
+  padding-left: 16px;
+  padding-right: 16px;
+  margin: 0;
+}
+.generalSettingsList-collapse-content {
+  margin-top: 20px;
+}
+.setting-member-detail {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.setting-member-detail small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  display: block;
+}
+@media screen and (max-width: 1350px) {
+  .settings-dropdown,
+  .settings-search {
+    margin-right: 8px;
+  }
+}
+@media screen and (max-width: 1150px) {
+  .item-count span {
+    display: none !important;
+  }
+}
+@media screen and (max-width: 991px) {
+  .settings-addNew-btn span {
+    display: none !important;
+  }
+}
+@media screen and (max-width: 830px) {
+  .settings-addNew-btn,
+  .item-count {
+    display: flex;
+  }
+  .settings-addNew-btn span {
+    display: block !important;
+  }
+}
+@media screen and (max-width: 740px) {
+  .settings-addNew-btn span {
+    display: none !important;
+  }
+}
+@media screen and (max-width: 570px) {
+  .generalSettingsList-header {
+    display: block;
+    margin: auto;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .settings-addNew-btn span,
+  .item-count span {
+    display: block !important;
+    text-align: center;
+  }
+  .settings-addNew-btn,
+  .item-count {
+    justify-content: center;
+    margin: auto;
+    margin-top: 16px;
+  }
+  .settings-search {
+    margin-right: 0;
+    width: 100%;
+  }
+  .settings-search input {
+    width: 100% !important;
+  }
+}
+@media screen and (max-width: 530px) {
+  .settings-addMember-modal {
+    width: 350px;
+  }
+}
+@media screen and (max-width: 416px) {
+  .settings-addMember-modal {
+    width: 320px;
+  }
+  .add-member-div {
+    display: block;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .add-member-div p {
+    margin-bottom: 12px;
+  }
+}
+@media screen and (max-width: 393px) {
+  .settings-addNew-btn span {
+    display: none !important;
+  }
+}
+@media screen and (max-width: 380px) {
+  .settings-addMember-modal {
+    width: 300px;
+  }
+}

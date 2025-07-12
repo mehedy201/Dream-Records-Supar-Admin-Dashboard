@@ -1,0 +1,97 @@
+.page-heading {
+  display: flex;
+  margin-top: 24px;
+}
+.page-heading h2 {
+  margin: 0;
+  font-weight: 500;
+  margin-top: 4px;
+}
+.page-heading button {
+  margin-left: auto;
+  width: 205px;
+  margin-right: 0;
+}
+.analytics-newReport-imgUpload {
+  width: 100%;
+  height: 138px;
+  margin-top: 12px;
+}
+.analytics-dropdown-btn {
+  width: auto;
+  padding: 5px;
+  /* background: none; */
+  margin: auto 16px auto auto;
+  border: none;
+  height: auto;
+  box-shadow: none;
+}
+.analytics-dropdown-btn:focus {
+  outline: none;
+}
+.analytics-modal-dropdown {
+  width: 100%;
+}
+.analytics-modal-label {
+  font-size: 12px;
+  display: block;
+  margin-bottom: 8px;
+  margin-top: 16px;
+}
+.analytics-modal-report {
+  background: #e8e8e8;
+  border-radius: 4px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+}
+.analytics-modal-report img {
+  width: 35px;
+  margin-right: 12px;
+}
+.analytics-modal-report p {
+  color: #202020;
+  font-size: 14px;
+  margin: 0;
+}
+.analytics-modal-report small {
+  color: #838383;
+  font-size: 12px;
+}
+.analytics-modal-report button {
+  background: #fff;
+  color: #dc3e42;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: none;
+  margin-right: 12px;
+  margin-left: auto;
+}
+.analytics-report-modal {
+  width: 440px;
+}
+@media screen and (max-width: 510px) {
+  .analytics-report-modal {
+    width: 350px;
+  }
+}
+@media screen and (max-width: 412px) {
+  .analytics-report-modal {
+    width: 320px;
+  }
+}
+@media screen and (max-width: 372px) {
+  .analytics-report-modal {
+    width: 295px;
+  }
+  .analytics-modal-report button {
+    margin-right: 4px;
+    padding: 4px;
+  }
+  .analytics-modal-report img {
+    margin-right: 6px;
+  }
+  .analytics-deleteModal-btns button:first-child {
+    width: 44%;
+  }
+}

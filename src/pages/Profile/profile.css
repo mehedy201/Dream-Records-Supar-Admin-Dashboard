@@ -1,0 +1,183 @@
+.profile-content {
+  background-color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+}
+.profile-img {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #ccc;
+}
+.profile-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+.profile-img div {
+  position: absolute;
+  color: #fff;
+  top: 50%;
+  left: 50%;
+}
+.profile-img svg {
+  /* border: 1px solid #777; */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 31px !important;
+  height: 27px;
+  transform: translate(-50%, -50%);
+}
+.profile-img-txt {
+  margin: auto;
+  margin-left: 24px;
+}
+.profile-img-txt h1 {
+  font-size: 35px;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.profile-img-flex {
+  display: flex;
+}
+.profile-info {
+  text-align: left;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  margin: 24px 0 20px 0;
+  position: relative;
+}
+.profile-info h5 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+}
+.profile-info p,
+.profile-info a {
+  font-size: 14px;
+  color: #202020;
+  margin-top: 0;
+  text-decoration: none;
+}
+.profile-info p:first-child {
+  color: #838383;
+  width: 20%;
+}
+.profile-downloadRow-label {
+  color: #838383;
+  width: 42% !important;
+}
+.profile-download-row .profile-info {
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+.profile-download-row .profile-info-download-div:last-child {
+  margin-right: 0 !important;
+}
+.profile-info-download-div {
+  background-color: #e8e8e8;
+  border-radius: 4px;
+  padding: 12px;
+  /* width: 126px; */
+  margin-right: 8px;
+  margin-top: 8px;
+  width: 100%;
+}
+.profile-info-download-div button {
+  border: 1px solid #838383;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 14px;
+  margin-top: 20px;
+}
+.profile-info .d-flex span {
+  font-size: 14px;
+  color: #838383;
+}
+.profile-pass-btn,
+.profile-email-btn {
+  border: 1px solid #838383;
+  border-radius: 4px;
+  padding: 8px 12px;
+  height: auto;
+  bottom: 12px;
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.profile-email-btn {
+  top: 24px;
+  height: 32px;
+}
+.prodile-modal input {
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.profile-info-download-div p {
+  width: 100% !important;
+}
+.profile-value-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1; /* This lets the element grow inside flex container */
+}
+
+@media screen and (max-width: 991px) {
+  .profile-download-row .col-6 {
+    width: 100%;
+  }
+  .profile-download-row .col-6:last-child div {
+    margin-left: 0 !important;
+  }
+  .profile-downloadRow-label,
+  .profile-info p:first-child {
+    width: 30% !important;
+  }
+}
+@media screen and (max-width: 535px) {
+  .profile-downloadRow-label,
+  .profile-info p:first-child {
+    width: 40% !important;
+  }
+  .profile-pass-btn,
+  .profile-email-btn {
+    position: relative;
+    margin: 8px 8px 8px 12px;
+    top: 0;
+  }
+  .profile-pass-btn {
+    margin-right: 0;
+  }
+  .profile-info:last-child {
+    display: block;
+    padding-right: 0;
+  }
+}
+@media screen and (max-width: 465px) {
+  .profile-img-flex {
+    display: block;
+    margin: auto;
+    text-align: center;
+  }
+  .profile-img {
+    margin: auto;
+    text-align: center;
+  }
+  .profile-img-txt {
+    margin-left: 0px;
+  }
+}
+@media screen and (max-width: 420px) {
+  .profile-downloadRow-label,
+  .profile-info p:first-child {
+    width: 40% !important;
+  }
+}
