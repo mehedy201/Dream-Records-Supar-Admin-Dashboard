@@ -9,7 +9,6 @@ export const homeCardContent = [
 export const DistributionOverviewContent = [
   { name: "QC Approval", value: "512" },
   { name: "In Review", value: "24" },
-  { name: "Barcode", value: "34" },
   { name: "To Live", value: "10K" },
   { name: "In Issue", value: "24" },
 ];

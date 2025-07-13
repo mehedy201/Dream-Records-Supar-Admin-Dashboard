@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import {
   PieChart,
@@ -7,6 +8,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
+import formatNumber from "../hooks/formatNumber";
 const releaseByType = [
   { name: "Albums", value: 9000 },
   { name: "Singles", value: 3000 },
@@ -50,6 +52,18 @@ function PieChartComponent() {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const [releaseSummary, setReleaseSummary] = useState();
+  useEffect(() => {
+    axios.get(`http://localhost:5000/admin/api/v1/release/summary`)
+    .then(res => {
+      if(res.status === 200){
+        setReleaseSummary(res.data.data)
+      }
+    })
+  },[])
+
+
   return (
     <div className="charts-container">
       <div className="chart-card">
@@ -57,7 +71,7 @@ function PieChartComponent() {
         <div className="second-pie-div">
           <div>
             <p className="chart-subtitle">Total Releases</p>
-            <h2 className="chart-count">12K</h2>
+            <h2 className="chart-count">{formatNumber(releaseSummary?.totalRelease)}</h2>
           </div>
           <ResponsiveContainer
             width="100%"
@@ -66,7 +80,7 @@ function PieChartComponent() {
           >
             <PieChart>
               <Pie
-                data={releaseByType}
+                data={releaseSummary?.releaseBasedType}
                 dataKey="value"
                 cx="50%"
                 cy="50%"
@@ -74,7 +88,7 @@ function PieChartComponent() {
                 outerRadius={75}
                 style={{ cursor: "pointer" }}
               >
-                {releaseByType.map((entry, index) => (
+                {releaseSummary?.releaseBasedType?.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS_TYPE[index % COLORS_TYPE.length]}
@@ -98,7 +112,7 @@ function PieChartComponent() {
         <div className="second-pie-div">
           <div>
             <p className="chart-subtitle">Total Tracks</p>
-            <h2 className="chart-count">15K</h2>
+            <h2 className="chart-count">{formatNumber(releaseSummary?.totalTrack)}</h2>
           </div>
           <ResponsiveContainer
             width="100%"
@@ -107,14 +121,14 @@ function PieChartComponent() {
           >
             <PieChart>
               <Pie
-                data={releaseByStatus}
-                dataKey="value"
+                data={releaseSummary?.releaseByStatus}
+                dataKey="count"
                 cx="50%"
                 cy="50%"
                 style={{ cursor: "pointer" }}
                 outerRadius={80}
               >
-                {releaseByStatus.map((entry, index) => (
+                {releaseSummary?.releaseByStatus.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS_STATUS[index % COLORS_STATUS.length]}

@@ -6,7 +6,7 @@ import {
   Outlet,
 } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import Home from "./pages/Home/Home";
+import Home from "./pages/home/Home";
 import "@fontsource/inter"; // Default 400 weight
 import "@fontsource/inter/400.css"; // Specific weight
 import "@fontsource/inter/700.css"; // Bold weight

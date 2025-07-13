@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import ReleaseCard from "../../../components/ReleaseCard";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import formatNumber from "../../../hooks/formatNumber";
 
 function DistributionOverview({ releaseItems }) {
   const [releaseVisibleCount, setReleaseVisibleCount] = useState(
@@ -35,10 +37,21 @@ function DistributionOverview({ releaseItems }) {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+
+  const [releaseSummary, setReleaseSummary] = useState();
+  useEffect(() => {
+    axios.get(`http://localhost:5000/admin/api/v1/release/summary`)
+    .then(res => {
+      if(res.status === 200){
+        setReleaseSummary(res.data.data)
+      }
+    })
+  },[])
   return (
     <div>
       <div className="distribution-card-grid">
-        {DistributionOverviewContent.map((item, index) => (
+        {releaseSummary?.releaseByStatus?.map((item, index) => (
           <div key={index} className="home-card">
             <div className="d-flex" style={{ alignItems: "center" }}>
               <div
@@ -47,8 +60,6 @@ function DistributionOverview({ releaseItems }) {
                   item.name === "QC Approval"
                     ? { background: "#FFA552" }
                     : item.name === "In Review"
-                    ? { background: "#0090FF" }
-                    : item.name === "Barcode"
                     ? { background: "#2B9A66" }
                     : item.name === "To Live"
                     ? { background: "#EA3958" }
@@ -60,8 +71,6 @@ function DistributionOverview({ releaseItems }) {
                   item.name === "QC Approval"
                     ? { color: "#FFA552" }
                     : item.name === "In Review"
-                    ? { color: "#0090FF" }
-                    : item.name === "Barcode"
                     ? { color: "#2B9A66" }
                     : item.name === "To Live"
                     ? { color: "#EA3958" }
@@ -71,11 +80,11 @@ function DistributionOverview({ releaseItems }) {
                 {item.name}
               </p>
             </div>
-            <h1>{item.value}</h1>
+            <h1>{formatNumber(item.count)}</h1>
           </div>
         ))}
       </div>
-      <PieChartComponent />
+      <PieChartComponent/>
       <Flex as="span" className="artists-flex">
         <p>Latest Releases</p>
         <Link href="#">See All</Link>
