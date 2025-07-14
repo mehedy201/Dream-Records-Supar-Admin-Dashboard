@@ -41,7 +41,7 @@ function DistributionOverview({ releaseItems }) {
 
   const [releaseSummary, setReleaseSummary] = useState();
   useEffect(() => {
-    axios.get(`http://localhost:5000/admin/api/v1/release/summary`)
+    axios.get(`http://localhost:5000/admin/api/v1/summary`)
     .then(res => {
       if(res.status === 200){
         setReleaseSummary(res.data.data)
