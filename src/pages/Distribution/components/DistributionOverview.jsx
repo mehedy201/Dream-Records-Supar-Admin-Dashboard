@@ -39,19 +39,20 @@ function DistributionOverview({ releaseItems }) {
   }, []);
 
 
-  const [releaseSummary, setReleaseSummary] = useState();
+  const [adminSummary, setAdminSummary] = useState();
   useEffect(() => {
     axios.get(`http://localhost:5000/admin/api/v1/summary`)
     .then(res => {
       if(res.status === 200){
-        setReleaseSummary(res.data.data)
+        setAdminSummary(res.data.data)
+        console.log(res.data.data)
       }
     })
   },[])
   return (
     <div>
       <div className="distribution-card-grid">
-        {releaseSummary?.releaseByStatus?.map((item, index) => (
+        {adminSummary?.releaseByStatus?.map((item, index) => (
           <div key={index} className="home-card">
             <div className="d-flex" style={{ alignItems: "center" }}>
               <div
@@ -89,7 +90,7 @@ function DistributionOverview({ releaseItems }) {
         <p>Latest Releases</p>
         <Link href="#">See All</Link>
       </Flex>
-      <ReleaseCard releaseItems={releaseItems.slice(0, releaseVisibleCount)} />
+      <ReleaseCard releaseItems={adminSummary?.latestReleases} />
       <br />
       <br />
     </div>

@@ -1,41 +1,43 @@
 import { Flex } from "@radix-ui/themes";
 import PropTypes from "prop-types";
 import "./Global.css";
-// import { Link } from "react-router-dom";
+import localDate from "../hooks/localDate";
+import { useNavigate } from "react-router-dom";
 const ReleaseCard = ({ releaseItems }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="release-container">
-      {releaseItems.map((item, index) => (
+      {releaseItems?.map((item) => (
         <div
-          // to="/single-release"
-          // state={{ release: item }}
-          key={index}
+          onClick={() => navigate('/')}
+          key={item._id}
           className="release-card"
         >
-          <img src={`src/assets/${item.img}`} alt="" />
+          <img src={item?.imgUrl} alt="" />
           <div style={{ paddingTop: "12px" }}>
             <Flex style={{ display: "flex" }}>
               <div
                 className="card-type-txt"
                 style={
-                  item.type == "Takedown"
+                  item?.status == "Takedown"
                     ? { background: "#FEEBEC", color: "#E5484D" }
-                    : item.type == "Pending"
+                    : item.status == "Pending"
                     ? { background: "#FFEBD8", color: "#FFA552" }
-                    : item.type == "Review"
+                    : item.status == "Review"
                     ? { background: "#D5EFFF", color: "#0090FF" }
-                    : item.type == "Error"
+                    : item.status == "Error"
                     ? { background: "#E8E8E8", color: "#8D8D8D" }
                     : { background: "#E6F6EB", color: "#2B9A66" }
                 }
               >
-                {item.type}
+                {item.status}
               </div>
-              <div className="card-date-txt">{item.date}</div>
+              <div className="card-date-txt">{item?.date ? localDate(item?.date) : 'Date'}</div>
             </Flex>
-            <small>{item.name}</small>
+            <small>{item.releaseTitle}</small>
             <br />
-            <small>{item.artist}</small>
+            <small>{item?.artist?.map(artist => artist.artistName).join(', ')}</small>
           </div>
         </div>
       ))}
@@ -45,11 +47,14 @@ const ReleaseCard = ({ releaseItems }) => {
 ReleaseCard.propTypes = {
   releaseItems: PropTypes.arrayOf(
     PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
-      img: PropTypes.string.isRequired,
-      date: PropTypes.string.isRequired,
-      // artist: PropTypes.string.isRequired,
+      releaseTitle: PropTypes.string.isRequired,
+      imgUrl: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired,
+      artist: PropTypes.arrayOf(
+        PropTypes.shape({
+          artistName: PropTypes.string
+        })
+      )
     })
   ).isRequired,
 };
