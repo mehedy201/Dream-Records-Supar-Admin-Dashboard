@@ -6,8 +6,12 @@ import { Flex } from "@radix-ui/themes";
 import { Link } from "react-router-dom";
 import PieChartComponent from "../../components/PieChartComponent";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import LoadingScreen from "../../components/LoadingScreen";
+import formatNumber from "../../hooks/formatNumber";
+import NotFoundPage from "../../components/NotFoundPage";
 
-function Home({ homeCardContent, releaseItems }) {
+function Home() {
   const [releaseVisibleCount, setReleaseVisibleCount] = useState(
     getReleaseInitialCount()
   );
@@ -36,6 +40,30 @@ function Home({ homeCardContent, releaseItems }) {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+
+  const [adminSummary, setAdminSummary] = useState();
+  const [overView, setOverView] = useState();
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true)
+    axios.get(`http://localhost:5000/admin/api/v1/summary`)
+    .then(res => {
+      if(res.status === 200){
+        setAdminSummary(res.data.data)
+        const statusBasedReleaseCount = res.data.data.releaseByStatus
+        const labelsWithdrawalServiceRequestPendingCount = res.data.data.labelsWithdrawalServiceRequestPendingCount
+        const totalOverView = [...statusBasedReleaseCount, ...labelsWithdrawalServiceRequestPendingCount]
+        console.log(totalOverView)
+        setOverView(totalOverView)
+        setLoading(false)
+      }
+    })
+  },[])
+
+  if(loading)return <LoadingScreen/>
+
+
   return (
     <div className="main-content">
       <div className="notice">
@@ -53,7 +81,9 @@ function Home({ homeCardContent, releaseItems }) {
         </div>
       </section> */}
       <div className="home-card-grid">
-        {homeCardContent.map((item, index) => (
+        {
+          overView &&
+          overView?.map((item, index) => (
           <div key={index} className="home-card">
             <div className="d-flex" style={{ alignItems: "center" }}>
               <div>
@@ -62,6 +92,10 @@ function Home({ homeCardContent, releaseItems }) {
                   style={
                     item.name === "QC Approval"
                       ? { background: "#FFA552" }
+                      : item.name === "In Review"
+                      ? { color: "#2B9A66" }
+                      : item.name === "To Live"
+                      ? { color: "#EA3958" }
                       : item.name === "New Users"
                       ? { background: "#0090FF" }
                       : item.name === "Labels"
@@ -78,6 +112,10 @@ function Home({ homeCardContent, releaseItems }) {
                 style={
                   item.name === "QC Approval"
                     ? { color: "#FFA552" }
+                    : item.name === "In Review"
+                    ? { color: "#2B9A66" }
+                    : item.name === "To Live"
+                    ? { color: "#EA3958" }
                     : item.name === "New Users"
                     ? { color: "#0090FF" }
                     : item.name === "Labels"
@@ -92,17 +130,25 @@ function Home({ homeCardContent, releaseItems }) {
                 {item.name}
               </p>
             </div>
-            <h1>{item.value}</h1>
+            <h1>{formatNumber(item.count)}</h1>
           </div>
-        ))}
+        ))
+        }
       </div>
 
-      <PieChartComponent />
+      {
+        adminSummary &&
+        <PieChartComponent releaseSummary={adminSummary}/>
+      }
       <Flex as="span" className="artists-flex">
         <p>Latest Releases</p>
         <Link href="#">See All</Link>
       </Flex>
-      <ReleaseCard releaseItems={releaseItems.slice(0, releaseVisibleCount)} />
+      {
+        !adminSummary && 
+        <NotFoundPage/> 
+      }
+      <ReleaseCard releaseItems={adminSummary?.latestReleases} />
       <br />
       <br />
     </div>

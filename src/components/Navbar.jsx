@@ -15,7 +15,7 @@ const Navbar = ({ toggleMobileMenu }) => {
       </div>
       <DropdownMenu.Root onOpenChange={setOpen}>
         <DropdownMenu.Trigger style={{ border: "none", background: "none" }}>
-          <span className="nav-dropdown"> S</span>{" "}
+          <span style={{padding: '15px 20px'}} className="nav-dropdown"> S</span>{" "}
           <ChevronDown className={`${open ? "rotate" : ""}`} />
         </DropdownMenu.Trigger>
         <DropdownMenu.Content className="dropdown-content navbar-dropdown-content">

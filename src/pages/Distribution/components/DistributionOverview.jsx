@@ -7,6 +7,8 @@ import ReleaseCard from "../../../components/ReleaseCard";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import formatNumber from "../../../hooks/formatNumber";
+import LoadingScreen from "../../../components/LoadingScreen";
+import NotFoundPage from "../../../components/NotFoundPage";
 
 function DistributionOverview({ releaseItems }) {
   const [releaseVisibleCount, setReleaseVisibleCount] = useState(
@@ -40,15 +42,24 @@ function DistributionOverview({ releaseItems }) {
 
 
   const [adminSummary, setAdminSummary] = useState();
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true)
     axios.get(`http://localhost:5000/admin/api/v1/summary`)
     .then(res => {
       if(res.status === 200){
         setAdminSummary(res.data.data)
+        setLoading(false)
         console.log(res.data.data)
       }
     })
   },[])
+
+  if(loading)return <LoadingScreen/>
+
+
+
+
   return (
     <div>
       <div className="distribution-card-grid">
@@ -85,11 +96,18 @@ function DistributionOverview({ releaseItems }) {
           </div>
         ))}
       </div>
-      <PieChartComponent/>
+      {
+        adminSummary &&
+        <PieChartComponent releaseSummary={adminSummary}/>
+      }
       <Flex as="span" className="artists-flex">
         <p>Latest Releases</p>
         <Link href="#">See All</Link>
       </Flex>
+      {
+        !adminSummary && 
+        <NotFoundPage/> 
+      }
       <ReleaseCard releaseItems={adminSummary?.latestReleases} />
       <br />
       <br />

@@ -9,23 +9,11 @@ import {
   Tooltip,
 } from "recharts";
 import formatNumber from "../hooks/formatNumber";
-const releaseByType = [
-  { name: "Albums", value: 9000 },
-  { name: "Singles", value: 3000 },
-];
-
-const releaseByStatus = [
-  { name: "QC Approval", value: 3000 },
-  { name: "In Review", value: 3500 },
-  { name: "Barcode", value: 2000 },
-  { name: "Live", value: 4000 },
-  { name: "Issues", value: 2500 },
-];
 
 const COLORS_TYPE = ["#00e4a5", "#0099ff"];
 const COLORS_STATUS = ["#0099ff", "#00e4a5", "#ffb129", "#ff4f4f", "#8e44ad"];
 
-function PieChartComponent() {
+function PieChartComponent({releaseSummary}) {
   const [pieTextVisibleSide, setPieTextVisibleSide] = useState(
     getInitialCount()
   );
@@ -53,15 +41,15 @@ function PieChartComponent() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const [releaseSummary, setReleaseSummary] = useState();
-  useEffect(() => {
-    axios.get(`http://localhost:5000/admin/api/v1/summary`)
-    .then(res => {
-      if(res.status === 200){
-        setReleaseSummary(res.data.data)
-      }
-    })
-  },[])
+  // const [releaseSummary, setReleaseSummary] = useState();
+  // useEffect(() => {
+  //   axios.get(`http://localhost:5000/admin/api/v1/summary`)
+  //   .then(res => {
+  //     if(res.status === 200){
+  //       setReleaseSummary(res.data.data)
+  //     }
+  //   })
+  // },[])
 
 
   return (
