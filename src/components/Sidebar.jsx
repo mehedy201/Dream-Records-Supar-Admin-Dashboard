@@ -3,7 +3,7 @@ import "./Global.css";
 
 const menuItems = [
   { name: "Home", path: "/", icon: "home.png" },
-  { name: "Users", path: "/users", icon: "users.png" },
+  { name: "Users", path: "/users/Pending/1/10", icon: "users.png" },
   { name: "Distribution", path: "/distribution", icon: "distribution.png" },
   { name: "Artists", path: "/artists", icon: "group.png" },
   { name: "Labels", path: "/Labels", icon: "Labels.png" },

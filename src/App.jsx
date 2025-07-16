@@ -128,10 +128,7 @@ function App() {
           <Route
             path="/"
             element={
-              <Home
-                homeCardContent={homeCardContent}
-                releaseItems={releaseItems}
-              />
+              <Home/>
             }
           />
           <Route
@@ -209,7 +206,7 @@ function App() {
             }
           />
           <Route
-            path="/Users"
+            path="/users/:status/:pageNumber/:perPageItem"
             element={
               <Users
                 newUsersTable={newUsersTable}
