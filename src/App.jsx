@@ -205,19 +205,15 @@ function App() {
               />
             }
           />
-          <Route
-            path="/users/:status/:pageNumber/:perPageItem"
-            element={
-              <Users
-                newUsersTable={newUsersTable}
-                activeUsersTable={activeUsersTable}
-                suspendUsersTable={suspendUsersTable}
-              />
-            }
-          />
+          {/* Users Route Start_________________________________________ */}
+          {/* __________________________________________________________ */}
           <Route path="/CreateUser" element={<CreateUser />} />
           <Route
-            path="/SingleUser"
+            path="/users/:status/:pageNumber/:perPageItem"
+            element={ <Users/> }
+          />
+          <Route
+            path="/user/:id"
             element={
               <SingleUser
                 ArtistCard={ArtistCard}
@@ -226,6 +222,8 @@ function App() {
               />
             }
           />
+          {/* Users Route End+__________________________________________ */}
+          {/* __________________________________________________________ */}
           <Route path="/Edit-User" element={<EditUser />} />
           <Route path="/Profile" element={<Profile />} />
         </Route>

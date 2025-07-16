@@ -15,15 +15,6 @@ const UserTable = ({ columns = [], data = [], renderCell }) => {
           </tr>
         </thead>
         <tbody>
-          {/* {data.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {columns.map((col, colIndex) => (
-                <td key={colIndex}>
-                  {renderCell ? renderCell(col.key, row) : row[col.key]}
-                </td>
-              ))}
-            </tr>
-          ))} */}
           {data.map((d) => (
             <tr key={d._id}>
                 <td>
@@ -49,9 +40,8 @@ const UserTable = ({ columns = [], data = [], renderCell }) => {
                 }
                 <td>
                     <Link
-                        to="/SingleUser"
+                        to={`/user/${d._id}`}
                         style={{ color: "#1C2024", textDecoration: "none" }}
-                        // state={{ user: row }}
                     >
                         <IoEyeOutline style={{ width: "24px", height: "24px" }} />
                     </Link>
