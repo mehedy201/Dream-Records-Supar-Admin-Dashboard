@@ -1,7 +1,7 @@
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Flex } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { GoLinkExternal, GoPencil } from "react-icons/go";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -17,6 +17,16 @@ import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { LablesItems } from "../../../data";
 import Table from "../../../components/Table";
 import { FaRegCheckCircle } from "react-icons/fa";
+import axios from "axios";
+import LoadingScreen from "../../../components/LoadingScreen";
+import threeDot from '../../../assets/icons/vertical-threeDots.png'
+import localDate from "../../../hooks/localDate";
+import localTime from "../../../hooks/localTime";
+
+
+
+
+
 const personalInfo = [
   { title: "User Info:" },
   { label: "First Name:", value: "Joe" },
@@ -80,6 +90,24 @@ const renderTransactionCell = (key, row) => {
   return row[key];
 };
 function SingleUser({ transactionsHistory, artistsItems }) {
+
+  const {id} = useParams()
+  
+  const [userData, setUserData] = useState();
+  const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    setLoading(true)
+    axios.get(`http://localhost:5000/admin/api/v1/users/${id}`)
+    .then(res => {
+      if(res.status === 200){
+        console.log(res.data.data)
+        setUserData(res.data.data)
+        setLoading(false)
+      }
+    })
+  },[id])
+
+
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
@@ -103,11 +131,14 @@ function SingleUser({ transactionsHistory, artistsItems }) {
     }
   }, [location.state]);
 
+
+  if(loading)return <LoadingScreen/>
+
   return (
     <div className="main-content single-user-content">
       <Flex className="singleUser-img-div">
         <div className="singleLabel-image-div">
-          <img src="src/assets/avatar.png" className="singleLabel-image" />
+          <img src={userData?.photoURL} className="singleLabel-image" />
         </div>
         <div className="singleUser-img-txt">
           <br />
@@ -118,14 +149,14 @@ function SingleUser({ transactionsHistory, artistsItems }) {
               {user?.status}
             </span>
 
-            <h1>Arpita Modak</h1>
-            <h4>ArpitaModak</h4>
+            <h1>{userData?.first_name} {userData?.last_name}</h1>
+            <h4>{userData?.userName}</h4>
           </div>
 
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <button className="dropdown-trigger singleLabel-dropdown-btn">
-                <img src="src/assets/icons/vertical-threeDots.png" />
+                <img src={threeDot} />
               </button>
             </DropdownMenu.Trigger>
 
@@ -237,45 +268,91 @@ function SingleUser({ transactionsHistory, artistsItems }) {
         </>
       )}
       <div className="singleUser-grid">
+        {/* Personal Information ________________________________ */}
         <div className="user-info">
-          {personalInfo.map((item, index) => (
-            <div key={index}>
-              <h5>{item.title}</h5>
-              <div className="d-flex">
-                <p>{item.label}</p>
-                <p className="user-value-text ">{item.value}</p>
-              </div>
-            </div>
-          ))}
+          <h5>User Info:</h5>
+          <div style={{marginTop: '14px'}} className="d-flex">
+            <p>First Name:</p>
+            <p className="user-value-text">{userData?.first_name}</p>
+          </div>
+          <div className="d-flex">
+            <p>Last Name:</p>
+            <p className="user-value-text">{userData?.last_name}</p>
+          </div>
+          <div className="d-flex">
+            <p>Email:</p>
+            <p className="user-value-text">{userData?.email}</p>
+          </div>
+          <div className="d-flex">
+            <p>Phone:</p>
+            <p className="user-value-text">{userData?.phone}</p>
+          </div>
+          <div className="d-flex">
+            <p>Created Date &amp; Time:</p>
+            <p className="user-value-text">{userData?.openingDateISO ? localDate(userData?.openingDateISO) : userData?.openingDate} {userData?.openingDateISO ? localTime(userData?.openingDateISO) : ''}</p>
+          </div>
+          <div className="d-flex">
+            <p>Last Active:</p>
+            <p className="user-value-text">{localDate(userData?.lastLogin)} {localTime(userData?.lastLogin)}</p>
+          </div>
         </div>
+
+        {/* Address ________________________________ */}
         <div className="user-info">
-          {userAddress.map((item, index) => (
-            <div key={index}>
-              <h5>{item.title}</h5>
-              <div className="d-flex">
-                <p>{item.label}</p>
-                <p className="user-value-text ">{item.value}</p>
-              </div>
+            <h5>Address</h5>
+            <div style={{marginTop: '14px'}} className="d-flex">
+              <p>Address Line 1:</p>
+              <p className="user-value-text">{userData?.addressLine1}</p>
             </div>
-          ))}
-        </div>
-        <div className="user-info">
-          {userLAbelInfo.map((item, index) => (
-            <div key={index}>
-              <h5>{item.title}</h5>
-              <div className="d-flex">
-                <p>{item.label}</p>
-                <p className="user-value-text ">
-                  {item.label === "Channel URL:" ? (
-                    <a href={item.value}>{item.value.slice(0, 50) + "..."}</a>
-                  ) : (
-                    item.value
-                  )}
-                </p>
-              </div>
+            <div className="d-flex">
+              <p>Address Line 1:</p>
+              <p className="user-value-text">{userData?.addressLine2}</p>
             </div>
-          ))}
-        </div>
+            <div className="d-flex">
+              <p>Postal Code:</p>
+              <p className="user-value-text">{userData?.postalCode}</p>
+            </div>
+            <div className="d-flex">
+              <p>City:</p>
+              <p className="user-value-text">{userData?.city}</p>
+            </div>
+            <div className="d-flex">
+              <p>State:</p>
+              <p className="user-value-text">{userData?.state?.name}</p>
+            </div>
+            <div className="d-flex">
+              <p>Country:</p>
+              <p className="user-value-text">{userData?.country?.name}</p>
+            </div>
+          </div>
+
+          {
+            !userData?.label &&
+            <div className="user-info">
+              <h5>Label Info</h5>
+              {/* {userData?.label &&  */}
+                  <div style={{marginTop: '14px'}}>
+                    <div className="d-flex">
+                      <p>Channel Name:</p>
+                      <p className="user-value-text">demo</p>
+                    </div>
+                    <div className="d-flex">
+                      <p>Channel URL:</p>
+                      <p className="user-value-text">demo</p>
+                    </div>
+                    <div className="d-flex">
+                      <p>Subscriber Count:</p>
+                      <p className="user-value-text">1</p>
+                    </div>
+                    <div className="d-flex">
+                      <p>Videos Count:</p>
+                      <p className="user-value-text">11</p>
+                    </div>
+                  </div>
+              {/* } */}
+            </div>
+          }
+        {/* Govment ID Card */}
         <div className="user-download-row">
           <div className="user-info">
             <h5 style={{ marginBottom: "10px" }}>Documents</h5>
