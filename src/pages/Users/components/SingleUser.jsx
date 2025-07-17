@@ -1,61 +1,33 @@
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Flex } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { GoLinkExternal, GoPencil } from "react-icons/go";
 import * as Dialog from "@radix-ui/react-dialog";
 import { AiOutlineDelete } from "react-icons/ai";
 import Modal from "../../../components/Modal";
-
 import * as Tabs from "@radix-ui/react-tabs";
 import "../Users.css";
 import PropTypes from "prop-types";
 import ArtistCard from "../../../components/ArtistCard";
 import SelectDropdown from "../../../components/SelectDropdown";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
-import { LablesItems } from "../../../data";
-import Table from "../../../components/Table";
 import { FaRegCheckCircle } from "react-icons/fa";
 import axios from "axios";
 import LoadingScreen from "../../../components/LoadingScreen";
 import threeDot from '../../../assets/icons/vertical-threeDots.png'
 import localDate from "../../../hooks/localDate";
 import localTime from "../../../hooks/localTime";
+import useQueryParams from "../../../hooks/useQueryParams";
+import { useSelector } from "react-redux";
+import labelPlacheholderImg from '../../../assets/lables/lables-placeholder.png'
+import TransactionTable from "../../../components/table/TransactionTable";
+import isEmptyArray from "../../../hooks/isEmptyArrayCheck";
+import Pagination from "../../../components/Pagination";
 
 
 
-
-
-const personalInfo = [
-  { title: "User Info:" },
-  { label: "First Name:", value: "Joe" },
-  { label: "Last Name:", value: "Aadil" },
-  { label: "Email:", value: "johndoe@gmail.com" },
-  { label: "Phone:", value: "+91 8001134466" },
-  { label: "Created Date & Time:", value: "31 Jan 2025, 12:45 PM" },
-  { label: "Last Active:", value: "31 Jan 2025, 12:45 PM" },
-];
-const userAddress = [
-  { title: "Address" },
-  { label: "Address Line 1:", value: "H.No 10 Ward No. Jharpuri Road Dungeja" },
-  { label: "Address Line 2:", value: "Pinanagwan, Punhana, Nuh" },
-  { label: "Postal Code:", value: "122508" },
-  { label: "City:", value: "Gurgaon" },
-  { label: "State:", value: "Haryana" },
-  { label: "Country:", value: "India" },
-];
-const userLAbelInfo = [
-  { title: "Label Info" },
-  { label: "Channel Name:", value: "AKMDigital" },
-  {
-    label: "Channel URL:",
-    value:
-      "https://open.spotify.com/?flow_ctx=7aa5a067-6601-4e29-9794-07af35e39eee%3A1738420603",
-  },
-  { label: "Subscriber Count:", value: "124616956" },
-  { label: "Videos Count:", value: "92357" },
-];
 const transactionColumns = [
   { label: "Type", key: "type" },
   { label: "Payment Method", key: "method" },
@@ -64,34 +36,23 @@ const transactionColumns = [
   { label: "Date", key: "date" },
   { label: "Action", key: "action" },
 ];
-const renderTransactionCell = (key, row) => {
-  if (key === "type") {
-    return (
-      <div className={`transactions-type ${row.type.toLowerCase()}`}>
-        <img src={`src/assets/icons/${row.type}.png`} alt="" />
-        <p style={{ margin: "8px 0" }}>{row.type}</p>
-      </div>
-    );
-  }
-  if (key === "method") {
-    return (
-      <div>
-        {row.method}
-        <p className="transaction-method-sample">{row.methoda_sample}</p>
-      </div>
-    );
-  }
-  if (key === "status") {
-    return (
-      <span className={`status ${row.status.toLowerCase()}`}>{row.status}</span>
-    );
-  }
 
-  return row[key];
-};
-function SingleUser({ transactionsHistory, artistsItems }) {
+function SingleUser() {
 
-  const {id} = useParams()
+  const navigate = useNavigate();
+  const {id, item, pageNumber, perPageItem} = useParams();
+    
+  const { yearsList} = useSelector(state => state.yearsAndStatus);
+  // Filter Query Paramitars_____________________
+  const { navigateWithParams } = useQueryParams();
+  const [filterParams] = useSearchParams();
+  const search = filterParams.get('search') || '';
+  const years = filterParams.get('years') || '';
+  const status = filterParams.get('status') || '';
+
+  const filterByYear = (yearValue) => {
+    navigateWithParams(`/user/${id}/${item}/1/${perPageItem}`, { search: search, years: yearValue, status: status });
+  }
   
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(false)
@@ -107,6 +68,56 @@ function SingleUser({ transactionsHistory, artistsItems }) {
     })
   },[id])
 
+  const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
+  const [filteredCount, setFilteredCount] = useState();
+  const [totalPages, setTotalPages] = useState();
+  const [itemData, setItemData] = useState();
+  const [itemLoading, setItemLoading] = useState(false);
+  const [notFound, setNotFound] = useState(false)
+  useEffect(() => {
+    setItemLoading(true)
+    if(item === 'artist'){
+      axios.get(`http://localhost:5000/api/v1/artist/${id}?page=${pageNumber}&limit=${perPageItem}&search=${search}&years=${years}`)
+      .then( res => {
+        if(res.status == 200){
+          setItemData(res.data.data);
+          if(isEmptyArray(res.data.data))setNotFound(true)
+          setFilteredCount(res.data.filteredCount);
+          setTotalPages(res.data.totalPages);
+          setItemLoading(false)
+        }
+      })
+      .catch(er => console.log(er));
+    }
+    if(item === 'labels'){
+      console.log('label')
+      axios.get(`http://localhost:5000/api/v1/labels/${id}?page=${pageNumber}&limit=${perPageItem}&status=${status}&search=${search}&years=${years}`)
+      .then( res => {
+        if(res.status == 200){
+          setItemData(res.data.data);
+          if(isEmptyArray(res.data.data))setNotFound(true)
+          setFilteredCount(res.data.filteredCount);
+          setTotalPages(res.data.totalPages);
+          setItemLoading(false)
+        }
+      })
+      .catch(er => console.log(er));
+    }
+    if(item === 'transactions'){
+      axios.get(`http://localhost:5000/common/api/v1/payment/${id}?page=${pageNumber}&limit=${perPageItem}`)
+      .then(res => {
+        if(res.status === 200){
+          setItemData(res.data.data)
+          if(isEmptyArray(res.data.data))setNotFound(true)
+          setFilteredCount(res.data.filteredCount);
+          setTotalPages(res.data.totalPages);
+          setItemLoading(false)
+        }
+      })
+    }
+
+  },[id, pageNumber, perPageItem, status, search, years])
+
 
   const location = useLocation();
   const [user, setUser] = useState(null);
@@ -121,8 +132,9 @@ function SingleUser({ transactionsHistory, artistsItems }) {
   }, []);
   const dropdownItem = (
     <SelectDropdown
-      options={["Account", "Profile", "Settings"]}
-      placeholder="All Time"
+      options={yearsList}
+      placeholder={`${years ? years : 'All Time'}`}
+      filterByYearAndStatus={filterByYear}
     />
   );
   useEffect(() => {
@@ -130,6 +142,23 @@ function SingleUser({ transactionsHistory, artistsItems }) {
       setUser(location.state.user);
     }
   }, [location.state]);
+
+  // Handle Page Change ________________________________
+  const handlePageChange = (page) => {
+    navigateWithParams(`/user/${id}/${item}/${page}/${perPageItem}`, { search: search, years: years, status: status });
+  }
+  // Search _____________________________________________
+  const [searchText, setSearchText] = useState();
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      navigateWithParams(`/user/${id}/${item}/1/${perPageItem}`, { search: searchText, years: years, status: status });
+    }
+  };
+
+  // Handle Per Page Item _______________________________
+  const handlePerPageItem = (perPageItem) => {
+    navigateWithParams(`/user/${id}/${item}/${pageNumber}/${perPageItem}`, { search: search, years: years, status: status });
+  }
 
 
   if(loading)return <LoadingScreen/>
@@ -376,30 +405,35 @@ function SingleUser({ transactionsHistory, artistsItems }) {
         </div>
       </div>
 
-      <Tabs.Root className="tabs-root" defaultValue="Artists">
+      <Tabs.Root className="tabs-root" defaultValue={item}>
         <Tabs.List className="tabs-list">
           <Tabs.Trigger
+            onClick={() => navigate(`/user/${id}/artist/1/10`)}
             className="tabs-trigger distribution-tabs-trigger"
-            value="Artists"
+            value="artist"
           >
             Artists
           </Tabs.Trigger>
           <Tabs.Trigger
+            onClick={() => navigate(`/user/${id}/labels/1/10`)}
             className="tabs-trigger distribution-tabs-trigger"
-            value="Labels"
+            value="labels"
           >
             Labels
           </Tabs.Trigger>
           <Tabs.Trigger
+            onClick={() => navigate(`/user/${id}/transactions/1/10`)}
             className="tabs-trigger distribution-tabs-trigger"
-            value="Transactions"
+            value="transactions"
           >
             Transactions
           </Tabs.Trigger>
         </Tabs.List>
-        <Tabs.Content className="tabs-content" value="Artists">
+        <Tabs.Content className="tabs-content" value="artist">
           <div className="search-setion">
             <input
+              onKeyPress={handleKeyPress} onChange={e => setSearchText(e.target.value)}
+              defaultValue={search}
               type="text"
               placeholder="Search..."
               style={{ width: "87%" }}
@@ -438,12 +472,14 @@ function SingleUser({ transactionsHistory, artistsItems }) {
           {user && user.status === "PENDING" ? (
             <br />
           ) : (
-            <ArtistCard artistsItems={artistsItems} />
+            <ArtistCard artistsItems={itemData} />
           )}
         </Tabs.Content>
-        <Tabs.Content className="tabs-content" value="Labels">
+        <Tabs.Content className="tabs-content" value="labels">
           <div className="search-setion">
             <input
+              onKeyPress={handleKeyPress} onChange={e => setSearchText(e.target.value)}
+              defaultValue={search}
               type="text"
               placeholder="Search..."
               style={{ width: "87%" }}
@@ -480,51 +516,58 @@ function SingleUser({ transactionsHistory, artistsItems }) {
           </div>
           <br />
           <div className="lables-container">
-            {LablesItems.map((item, index) => (
+            {itemData?.map((item, index) => (
               <Link
-                to="/single-lable"
+                // to="/single-lable"
                 state={{ lable: item }}
                 key={index}
                 className="lables-card"
               >
                 <img
-                  src={`src/assets/lables/${item.img}`}
-                  alt={`src/assets/lables/${item.img}`}
+                  src={item?.imgUrl ? item?.imgUrl : labelPlacheholderImg}
+                  alt='Labels'
                 />
                 <Flex style={{ display: "flex" }}>
                   <div
                     className="card-type-txt"
                     style={
-                      item.type == "Reject"
+                      item.status == "Rejected"
                         ? { background: "#FEEBEC", color: "#E5484D" }
-                        : item.type == "Pending"
+                        : item.status == "Pending"
                         ? { background: "#FFEBD8", color: "#FFA552" }
                         : { background: "#E6F6EB", color: "#2B9A66" }
                     }
                   >
-                    {item.type}
+                    {item.status}
                   </div>
-                  <div className="card-date-txt">{item.date}</div>
+                  <div className="card-date-txt">{localDate(item.date)}</div>
                 </Flex>
-                <p style={{ fontWeight: "500" }}>{item.name}</p>
+                <p style={{ fontWeight: "500" }}>{item.labelName}</p>
               </Link>
             ))}
           </div>
         </Tabs.Content>
-        <Tabs.Content className="tabs-content" value="Transactions">
+        <Tabs.Content className="tabs-content" value="transactions">
           <br />
           <div className="signleUser-transaction-div">
             <p>Total Balance</p>
-            <h3>€ 0.00</h3>
+            <h3>€ {userData?.balance?.amount}</h3>
           </div>
-          <Table
+          <TransactionTable
             columns={transactionColumns}
-            data={transactionsHistory}
-            renderCell={renderTransactionCell}
-            className="transaction-table"
+            data={itemData}
           />
         </Tabs.Content>
       </Tabs.Root>
+      <Pagination 
+        totalDataCount={filteredCount} 
+        totalPages={totalPages}
+        currentPage={currentPage} 
+        perPageItem={perPageItem} 
+        setCurrentPage={setCurrentPage} 
+        handlePageChange={handlePageChange}
+        customFunDropDown={handlePerPageItem}
+      />
     </div>
   );
 }

@@ -925,8 +925,11 @@ label {
   display: block;
   margin: 0 auto 16px auto;
   margin-top: 16px;
-  /* width: 100%; */
+  height: 148px;
   width: 148px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center center;
 }
 /* mobile menu */
 .mobile-menu-icon {

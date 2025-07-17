@@ -213,7 +213,7 @@ function App() {
             element={ <Users/> }
           />
           <Route
-            path="/user/:id"
+            path="/user/:id/:item/:pageNumber/:perPageItem"
             element={
               <SingleUser
                 ArtistCard={ArtistCard}
@@ -222,9 +222,9 @@ function App() {
               />
             }
           />
+          <Route path="/Edit-User" element={<EditUser />} />
           {/* Users Route End+__________________________________________ */}
           {/* __________________________________________________________ */}
-          <Route path="/Edit-User" element={<EditUser />} />
           <Route path="/Profile" element={<Profile />} />
         </Route>
 

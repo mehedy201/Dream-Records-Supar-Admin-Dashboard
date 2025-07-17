@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-
+import demoArtistImg from '../assets/artists/artist4.png'
 const ArtistCard = ({ artistsItems }) => {
   return (
     <div className="artists-container" style={{ display: "flex" }}>
-      {artistsItems.map((item, index) => (
+      {artistsItems?.map((item, index) => (
         <Link
           to="/single-artist"
           state={{ artist: item }}
@@ -12,8 +12,8 @@ const ArtistCard = ({ artistsItems }) => {
           className="artists-card"
           style={{ cursor: "pointer" }}
         >
-          <img src={`src/assets/artists/${item.img}`} alt={item.name} />
-          <p>{item.name}</p>
+          <img src={item?.imgUrl ? item?.imgUrl : demoArtistImg} alt={item.name} />
+          <p>{item?.artistName}</p>
         </Link>
       ))}
     </div>
@@ -23,8 +23,8 @@ const ArtistCard = ({ artistsItems }) => {
 ArtistCard.propTypes = {
   artistsItems: PropTypes.arrayOf(
     PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      img: PropTypes.string.isRequired,
+      artistName: PropTypes.string.isRequired,
+      imgUrl: PropTypes.string.isRequired,
     })
   ).isRequired,
 };

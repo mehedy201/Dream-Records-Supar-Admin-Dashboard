@@ -40,7 +40,7 @@ const UserTable = ({ columns = [], data = [], renderCell }) => {
                 }
                 <td>
                     <Link
-                        to={`/user/${d._id}`}
+                        to={`/user/${d._id}/artist/1/10`}
                         style={{ color: "#1C2024", textDecoration: "none" }}
                     >
                         <IoEyeOutline style={{ width: "24px", height: "24px" }} />

@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
 import "./Global.css";
-
 const menuItems = [
   { name: "Home", path: "/", icon: "home.png" },
   { name: "Users", path: "/users/Pending/1/10", icon: "users.png" },

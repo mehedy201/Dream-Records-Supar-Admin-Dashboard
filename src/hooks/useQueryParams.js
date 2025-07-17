@@ -8,6 +8,7 @@ const useQueryParams = () => {
     
     if (params.search) queryParams.push(`search=${encodeURIComponent(params.search)}`);
     if (params.years) queryParams.push(`years=${encodeURIComponent(params.years)}`);
+    if (params.status) queryParams.push(`status=${encodeURIComponent(params.status)}`);
     
     return `${basePath}${queryParams.length ? '?' + queryParams.join('&') : ''}`;
   };
