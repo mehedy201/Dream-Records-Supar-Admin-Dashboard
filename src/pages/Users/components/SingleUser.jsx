@@ -25,6 +25,8 @@ import labelPlacheholderImg from '../../../assets/lables/lables-placeholder.png'
 import TransactionTable from "../../../components/table/TransactionTable";
 import isEmptyArray from "../../../hooks/isEmptyArrayCheck";
 import Pagination from "../../../components/Pagination";
+import userDemoImg from '../../../assets/artists/artist4.png'
+import NotFoundPage from "../../../components/NotFoundPage";
 
 
 
@@ -167,7 +169,7 @@ function SingleUser() {
     <div className="main-content single-user-content">
       <Flex className="singleUser-img-div">
         <div className="singleLabel-image-div">
-          <img src={userData?.photoURL} className="singleLabel-image" />
+          <img src={userData?.photoURL ? userData?.photoURL : userDemoImg} className="singleLabel-image" />
         </div>
         <div className="singleUser-img-txt">
           <br />
@@ -471,9 +473,15 @@ function SingleUser() {
           <br />
           {user && user.status === "PENDING" ? (
             <br />
-          ) : (
-            <ArtistCard artistsItems={itemData} />
-          )}
+          ) : <div>
+            {
+              notFound && <NotFoundPage/>
+            }
+            {
+              itemData && !notFound &&
+              <ArtistCard artistsItems={itemData} />
+            }
+          </div>}
         </Tabs.Content>
         <Tabs.Content className="tabs-content" value="labels">
           <div className="search-setion">
@@ -516,7 +524,11 @@ function SingleUser() {
           </div>
           <br />
           <div className="lables-container">
-            {itemData?.map((item, index) => (
+            {
+              notFound && <NotFoundPage/>
+            }
+            { itemData && !notFound &&
+            itemData?.map((item, index) => (
               <Link
                 // to="/single-lable"
                 state={{ lable: item }}
@@ -553,10 +565,16 @@ function SingleUser() {
             <p>Total Balance</p>
             <h3>€ {userData?.balance?.amount}</h3>
           </div>
-          <TransactionTable
-            columns={transactionColumns}
-            data={itemData}
-          />
+          {
+              notFound && <NotFoundPage/>
+          }
+          {
+            itemData && !notFound &&
+            <TransactionTable
+              columns={transactionColumns}
+              data={itemData}
+            />
+          }
         </Tabs.Content>
       </Tabs.Root>
       <Pagination 
