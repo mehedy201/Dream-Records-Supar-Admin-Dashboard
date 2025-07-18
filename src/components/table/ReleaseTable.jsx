@@ -8,6 +8,7 @@ import localDate from '../../hooks/localDate';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../../../firebase.config';
 import LoadingScreen from '../LoadingScreen';
+import { Link } from 'react-router-dom';
 
 const ReleaseTable = ({ columns = [], data }) => {
     const [user, loading] = useAuthState(auth);
@@ -29,10 +30,9 @@ const ReleaseTable = ({ columns = [], data }) => {
                         data?.map((d) => 
                             <tr key={d?._id}>
                                 <td>
-                                    <div
-                                        to="/single-release"
+                                    <Link
+                                        to={`/release/${d?._id}`}
                                         style={{ color: "#1C2024", textDecoration: "none" }}
-                                        // state={{ release: row }}
                                         className="artistTable-img-row"
                                         >
                                         <img
@@ -45,7 +45,7 @@ const ReleaseTable = ({ columns = [], data }) => {
                                             ? d?.releaseTitle.slice(0, 22) + "..."
                                             : d?.releaseTitle}
                                         </p>
-                                    </div>
+                                    </Link>
                                 </td>
                                 <td>{d?.userName}</td>
                                 <td>{d?.labels?.map(label => label.labelName)}</td>
