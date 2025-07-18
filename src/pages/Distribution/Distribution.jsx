@@ -20,7 +20,7 @@ import isEmptyArray from "../../hooks/isEmptyArrayCheck";
 
 
 
-function Distribution({ releaseItems }) {
+function Distribution() {
 
 
   const navigate = useNavigate();
@@ -215,9 +215,8 @@ function Distribution({ releaseItems }) {
             <div className="segmented-content">
               {value === "QCApproval" && <QcApproval data={releaseData} setSearchText={setSearchText} handleKeyPress={handleKeyPress} search={search} years={years} filterByYear={filterByYear} yearsList={yearsList}/>}
               {value === "InReview" && <InReviewPage data={releaseData} setSearchText={setSearchText} handleKeyPress={handleKeyPress} search={search} years={years} filterByYear={filterByYear} yearsList={yearsList} />}
-              {/* {value === "Barcode" && <BarcodePage setValue={setValue} />} */}
               {value === "ToLive" && <ToLivePage data={releaseData} setSearchText={setSearchText} handleKeyPress={handleKeyPress} search={search} years={years} filterByYear={filterByYear} yearsList={yearsList} />}
-              {value === "InIssue" && <InIssuePage data={releaseData} />}
+              {value === "InIssue" && <InIssuePage data={releaseData} setSearchText={setSearchText} handleKeyPress={handleKeyPress} search={search} years={years} filterByYear={filterByYear} yearsList={yearsList} />}
 
               <Pagination 
                 totalDataCount={filteredCount} 
