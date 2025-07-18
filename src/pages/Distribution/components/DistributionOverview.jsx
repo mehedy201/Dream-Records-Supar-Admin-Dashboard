@@ -10,7 +10,7 @@ import formatNumber from "../../../hooks/formatNumber";
 import LoadingScreen from "../../../components/LoadingScreen";
 import NotFoundPage from "../../../components/NotFoundPage";
 
-function DistributionOverview({ releaseItems }) {
+function DistributionOverview({ adminSummary }) {
   const [releaseVisibleCount, setReleaseVisibleCount] = useState(
     getReleaseInitialCount()
   );
@@ -39,23 +39,6 @@ function DistributionOverview({ releaseItems }) {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-
-  const [adminSummary, setAdminSummary] = useState();
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    setLoading(true)
-    axios.get(`http://localhost:5000/admin/api/v1/summary`)
-    .then(res => {
-      if(res.status === 200){
-        setAdminSummary(res.data.data)
-        setLoading(false)
-        console.log(res.data.data)
-      }
-    })
-  },[])
-
-  if(loading)return <LoadingScreen/>
 
 
 

@@ -79,7 +79,7 @@ function Users() {
   );
 
 
-  // Fatch Release Data _______________________________________________
+  // Fatch User Data _______________________________________________
   const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
   const [filteredCount, setFilteredCount] = useState();
   const [totalPages, setTotalPages] = useState();

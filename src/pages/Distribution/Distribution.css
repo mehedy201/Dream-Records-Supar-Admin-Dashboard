@@ -67,6 +67,7 @@
 
 .segmented-item.active {
   color: black;
+  font-weight: bold;
 }
 
 .segmented-content {

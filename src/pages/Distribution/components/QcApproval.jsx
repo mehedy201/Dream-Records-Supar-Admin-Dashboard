@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
-import Pagination from "../../../components/Pagination";
-import Table from "../../../components/Table";
-import { QCApprovalTable } from "../../../data";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { LuImageDown } from "react-icons/lu";
-import { FiArrowRight } from "react-icons/fi";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
 import "../Distribution.css";
 import SelectDropdown from "../../../components/SelectDropdown";
+import ReleaseTable from "../../../components/table/ReleaseTable";
+
+
+
 const artistColumns = [
   { label: "Release", key: "releaseName" },
   { label: "User Name", key: "userName" },
@@ -19,7 +16,9 @@ const artistColumns = [
   { label: "Created At", key: "date" },
   { label: "Action", key: "action" },
 ];
-function QcApproval({ setValue }) {
+function QcApproval({ data, handleKeyPress, setSearchText, search, years, filterByYear, yearsList }) {
+
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
   useEffect(() => {
     const handleResize = () => {
@@ -29,102 +28,20 @@ function QcApproval({ setValue }) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   const dropdownItem = (
     <SelectDropdown
-      options={["Account", "Profile", "Settings"]}
-      placeholder="All Time"
+      options={yearsList}
+      placeholder={`${years ? years : 'All Time'}`}
+      filterByYearAndStatus={filterByYear}
     />
   );
-  const renderQCApprovalCell = (key, row) => {
-    if (key === "releaseName") {
-      return (
-        <Link
-          to="/single-release"
-          style={{ color: "#1C2024", textDecoration: "none" }}
-          state={{ release: row }}
-          className=" artistTable-img-row"
-        >
-          <img
-            src={`src/assets/${row.img}`}
-            alt=""
-            style={{ borderRadius: "6px" }}
-          />
-          <p>
-            {row.releaseName.length > 22
-              ? row.releaseName.slice(0, 22) + "..."
-              : row.releaseName}
-          </p>
-        </Link>
-      );
-    }
-    if (key === "action") {
-      return (
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger asChild>
-            <button className="dropdown-trigger artist-dropdown-btn">
-              <img src="src/assets/icons/vertical-threeDots.png" />
-            </button>
-          </DropdownMenu.Trigger>
-
-          <DropdownMenu.Content
-            align="left"
-            side="bottom"
-            className="dropdown-content qcApproval-dropdown-content"
-          >
-            <DropdownMenu.Item className="dropdown-item">
-              <div>
-                <LuImageDown /> Download Artwork
-              </div>
-            </DropdownMenu.Item>
-            <hr />
-            <DropdownMenu.Item className="dropdown-item">
-              <div onClick={() => setValue("InReview")}>
-                <FiArrowRight /> <span>Move to Review</span>
-              </div>
-            </DropdownMenu.Item>
-            <hr />
-            <DropdownMenu.Item className="dropdown-item">
-              <div>
-                <RiDeleteBin6Line /> <span>Reject Release</span>
-              </div>
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-      );
-    }
-    if (
-      key === "userName" ||
-      key === "label" ||
-      key === "upc" ||
-      key === "date"
-    ) {
-      return (
-        <Link
-          to="/single-release"
-          style={{ color: "#1C2024", textDecoration: "none" }}
-          state={{ release: row }}
-        >
-          {key === "userName"
-            ? row.userName
-            : key === "label"
-            ? row.label
-            : key === "upc"
-            ? row.upc
-            : key === "date"
-            ? row.date
-            : key === "action"
-            ? row.action
-            : ""}
-        </Link>
-      );
-    }
-    return row[key];
-  };
+  
 
   return (
     <div>
       <div className="search-setion">
-        <input type="text" placeholder="Search..." style={{ width: "85%" }} />
+        <input onKeyPress={handleKeyPress} defaultValue={search} onChange={e => setSearchText(e.target.value)} type="text" placeholder="Search..." style={{ width: "85%" }} />
 
         {isMobile ? (
           <DropdownMenu.Root>
@@ -155,12 +72,10 @@ function QcApproval({ setValue }) {
           dropdownItem
         )}
       </div>
-      <Table
-        data={QCApprovalTable}
+      <ReleaseTable
+        data={data}
         columns={artistColumns}
-        renderCell={renderQCApprovalCell}
       />
-      <Pagination />
     </div>
   );
 }

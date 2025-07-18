@@ -155,10 +155,32 @@ function App() {
             path="/edit-lable"
             element={<EditLable labelSocialItems={labelSocialItems} />}
           />
+          {/* Distribution Route End_________________________________________ */}
+          {/* _______________________________________________________________ */}
           <Route
             path="/distribution"
             element={<Distribution releaseItems={releaseItems} />}
           />
+          <Route
+            path="/distribution/queue/:status/:pageNumber/:perPageItem"
+            element={<Distribution releaseItems={releaseItems} />}
+          />
+          <Route
+            path="/single-release"
+            element={
+              <SingleRelease
+                releaseAlbumInfo={releaseAlbumInfo}
+                albumTrackList={albumTrackList}
+                singleReleaseATrackData={singleReleaseATrackData}
+                singleReleaseARevenueData={singleReleaseARevenueData}
+                releaseTrackDetails={releaseTrackDetails}
+                chartData={chartData}
+                releaseCredits={releaseCredits}
+              />
+            }
+          />
+          {/* Distribution Route End_________________________________________ */}
+          {/* _______________________________________________________________ */}
           <Route
             path="/ServiceRequest"
             element={
@@ -190,20 +212,6 @@ function App() {
           <Route
             path="/Settings"
             element={<Settings settingsTeamMember={settingsTeamMember} />}
-          />
-          <Route
-            path="/single-release"
-            element={
-              <SingleRelease
-                releaseAlbumInfo={releaseAlbumInfo}
-                albumTrackList={albumTrackList}
-                singleReleaseATrackData={singleReleaseATrackData}
-                singleReleaseARevenueData={singleReleaseARevenueData}
-                releaseTrackDetails={releaseTrackDetails}
-                chartData={chartData}
-                releaseCredits={releaseCredits}
-              />
-            }
           />
           {/* Users Route Start_________________________________________ */}
           {/* __________________________________________________________ */}
