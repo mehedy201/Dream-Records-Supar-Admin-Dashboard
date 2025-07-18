@@ -33,7 +33,7 @@ const UserTable = ({ columns = [], data = [], renderCell }) => {
                     <p>{d?.openingDateISO ? localDate(d?.openingDateISO) : d?.openingDate ? localDate(d?.openingDate) : '--'}</p>
                 </td>
                 {
-                    d?.status && d?.lastLogin &&
+                    d?.status === 'Suspended' && d?.lastLogin &&
                     <td>
                         <p>{d?.status === 'Suspended' ? localDate(d?.userLockedDate) : d?.lastLogin ? localDate(d?.lastLogin) : ''} </p>
                     </td>

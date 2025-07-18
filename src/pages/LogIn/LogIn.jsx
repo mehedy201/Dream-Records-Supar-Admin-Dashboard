@@ -45,6 +45,7 @@ function LogIn() {
         <label>Email</label>
 
         <input {...register("email", { required: true })} type="email" />
+        {errors.email && <p style={{color: 'red', marginTop: '-10px'}}>Email Required</p>}
         <Flex className="d-flex">
           {" "}
           <label>Password</label>
@@ -59,6 +60,7 @@ function LogIn() {
           </label>
         </Flex>
         <input {...register("password", { required: true })} type="password" className="password-input" />
+        {errors.password && <p style={{color: 'red', marginTop: '-10px'}}>Password Required</p>}
         {
           loading && <p>Loading.....</p>
         }
