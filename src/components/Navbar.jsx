@@ -2,12 +2,17 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import "./Global.css";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Menu } from "lucide-react";
 import { FaRegUser } from "react-icons/fa";
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
+import auth from "../../firebase.config";
 const Navbar = ({ toggleMobileMenu }) => {
   const [open, setOpen] = useState(false);
+  const [signOut] = useSignOut(auth);
+  const navigate = useNavigate();
+
   return (
     <div className="navbar">
       <div className="mobile-menu-icon" onClick={toggleMobileMenu}>
@@ -34,7 +39,7 @@ const Navbar = ({ toggleMobileMenu }) => {
             </DropdownMenu.Item>
           </Link>
           <hr />
-          <DropdownMenu.Item className="d-flex" style={{ marginLeft: "6px" }}>
+          <DropdownMenu.Item onClick={() => {signOut(); navigate('/login')}} className="d-flex" style={{ marginLeft: "6px" }}>
             <div>
               <img src="src/assets/icons/logout.png" width="16px" alt="" />
             </div>

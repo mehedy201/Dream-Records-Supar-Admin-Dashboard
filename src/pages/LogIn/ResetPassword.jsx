@@ -1,7 +1,12 @@
 import { useState } from "react";
 import "./logIn.css";
+import { useNavigate } from "react-router-dom";
 function ResetPassword() {
   const [isResetPassword, setIsResetPassword] = useState(false);
+
+  const navigate = useNavigate();
+
+
   return (
     <div className="logIn-pg">
       <div className="login-sideimg-div"></div>
@@ -32,7 +37,7 @@ function ResetPassword() {
           </>
         )}
 
-        <button className="theme-btn2">Return to login</button>
+        <button onClick={() => navigate('/login')} className="theme-btn2">Return to login</button>
       </div>
     </div>
   );
