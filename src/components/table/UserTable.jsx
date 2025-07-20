@@ -30,10 +30,10 @@ const UserTable = ({ columns = [], data = [], renderCell }) => {
                     <div className={`status ${d?.status.toLowerCase()}`}>{d?.status}</div>
                 </td>
                 <td>
-                    <p>{d?.openingDateISO ? localDate(d?.openingDateISO) : d?.openingDate ? localDate(d?.openingDate) : '--'}</p>
+                    <p>{d?.openingDateISO ? localDate(d?.openingDateISO) : d?.openingDate ? localDate(d?.openingDate ) : '--'}</p>
                 </td>
                 {
-                    d?.status === 'Suspended' && d?.lastLogin &&
+                    d?.status !== 'Pending' &&
                     <td>
                         <p>{d?.status === 'Suspended' ? localDate(d?.userLockedDate) : d?.lastLogin ? localDate(d?.lastLogin) : ''} </p>
                     </td>
