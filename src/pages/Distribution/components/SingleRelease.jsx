@@ -51,11 +51,22 @@ function SingleRelease() {
 
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState();
+  const [trackData, setTrackData] = useState();
   useEffect(() => {
     setLoading(true)
     axios.get(`http://localhost:5000/api/v1/release/single/${id}`)
     .then(res => {
       setData(res.data.data)
+      setTrackData(res?.data?.data?.tracks)
+      if(res.data.data.audioUrl){
+        const audioUrl = res.data.data.audioUrl;
+        const tittle = res.data.data.releaseTitle;
+        const artist = res.data.data.artist;
+        const labels = res.data.data.labels;
+        const featuring = res.data.data.featuring;
+        const genre = res.data.data.genre;
+        setTrackData([{audioUrl, tittle, artist, labels, genre, featuring}])
+      }
       setLoading(false)
     })
   },[id])
@@ -359,7 +370,8 @@ function SingleRelease() {
         <h3 className="release-album-title">Tracks</h3>
         <br />
         {
-          data?.tracks?.map((track, index) => 
+          trackData &&
+          trackData?.map((track, index) => 
             <div key={index}>
               <TrackViewCollapsSection track={track} index=''/>
             </div>
@@ -399,11 +411,11 @@ function SingleRelease() {
             <div className="analytics-card-row">
               <div className="analytics-card">
                 <h6>Total Streams</h6>
-                <h2>{totalStreams}</h2>
+                <h2>{totalStreams ? totalStreams : 0}</h2>
               </div>
               <div className="analytics-card">
                 <h6>Total Revenue</h6>
-                <h2>€{totalRevenue}</h2>
+                <h2>€ {totalRevenue ? totalRevenue : 0}</h2>
               </div>
             </div>
             <Tabs.Root
