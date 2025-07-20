@@ -167,17 +167,7 @@ function App() {
           />
           <Route
             path="/release/:id"
-            element={
-              <SingleRelease
-                releaseAlbumInfo={releaseAlbumInfo}
-                albumTrackList={albumTrackList}
-                singleReleaseATrackData={singleReleaseATrackData}
-                singleReleaseARevenueData={singleReleaseARevenueData}
-                releaseTrackDetails={releaseTrackDetails}
-                chartData={chartData}
-                releaseCredits={releaseCredits}
-              />
-            }
+            element={ <SingleRelease/> }
           />
           {/* Distribution Route End_________________________________________ */}
           {/* _______________________________________________________________ */}
