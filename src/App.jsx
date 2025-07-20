@@ -196,7 +196,7 @@ function App() {
           <Route path="/support" element={<Support support={support} />} />
           <Route path="/SupportMessageBox" element={<SupportMessageBox />} />
           <Route
-            path="/Analytics"
+            path="/analytics/:pageNumber/:perPageItem"
             element={<Analytics analyticsTable={analyticsTable} />}
           />
           <Route

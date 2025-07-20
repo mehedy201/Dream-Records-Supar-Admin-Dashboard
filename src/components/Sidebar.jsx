@@ -6,7 +6,7 @@ const menuItems = [
   { name: "Distribution", path: "/distribution", icon: "distribution.png" },
   { name: "Artists", path: "/artists", icon: "group.png" },
   { name: "Labels", path: "/Labels", icon: "Labels.png" },
-  { name: "Analytics", path: "/Analytics", icon: "analytics.png" },
+  { name: "Analytics", path: "/analytics/1/10", icon: "analytics.png" },
   {
     name: "Service Request",
     path: "/ServiceRequest",

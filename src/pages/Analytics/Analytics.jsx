@@ -12,6 +12,15 @@ import { Flex } from "@radix-ui/themes";
 import SelectDropdown from "../../components/SelectDropdown";
 import { RxCross2 } from "react-icons/rx";
 import Pagination from "../../components/Pagination";
+import axios from "axios";
+import LoadingScreen from "../../components/LoadingScreen";
+import AnalyticsTable from "../../components/table/AnalyticsTable";
+import isEmptyArray from "../../hooks/isEmptyArrayCheck";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import useQueryParams from "../../hooks/useQueryParams";
+import NotFoundPage from "../../components/NotFoundPage";
+
 const artistColumns = [
   { label: "Report ID", key: "id" },
   { label: "Report Year", key: "year" },
@@ -19,74 +28,24 @@ const artistColumns = [
   { label: "Upload Date & Time", key: "uploadDateTime" },
   { label: "Action", key: "action" },
 ];
-const renderArtistCell = (key, row) => {
-  if (key === "artistName") {
-    return (
-      <div className=" artistTable-img-row">
-        <img src={`src/assets/${row.img}`} alt="" />
-        <p>{row.artistName}</p>
-      </div>
-    );
-  }
-  if (key === "action") {
-    return (
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild>
-          <button className="dropdown-trigger analytics-dropdown-btn">
-            <img src="src/assets/icons/vertical-threeDots.png" />
-          </button>
-        </DropdownMenu.Trigger>
 
-        <DropdownMenu.Content
-          align="left"
-          side="bottom"
-          className="dropdown-content artist-dropdown-content"
-          style={{ width: "190px", left: "-200px" }}
-        >
-          <DropdownMenu.Item className="dropdown-item">
-            <div>
-              <RiFileDownloadLine /> Download Report
-            </div>
-          </DropdownMenu.Item>
-          <hr />
+function Analytics() {
 
-          <DropdownMenu.Item
-            className="dropdown-item"
-            onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
-          >
-            <Dialog.Root>
-              <Dialog.Trigger asChild>
-                <div>
-                  <RiDeleteBin6Line /> <span>Delete Report</span>
-                </div>
-              </Dialog.Trigger>
-              <Dialog.Portal>
-                <Dialog.Overlay className="dialog-overlay" />
-                <Dialog.Content className="dialog-content">
-                  <Modal title="Delete Report?">
-                    <p className="modal-description">
-                      Are you sure you want to delete this report? This action
-                      is irreversible, and you will not be able to recover the
-                      deleted data.
-                    </p>
-                    <br />
-                    <div className="analytics-deleteModal-btns">
-                      <Dialog.Close>No</Dialog.Close>
-                      <Dialog.Close>Yes, Delete</Dialog.Close>
-                    </div>
-                  </Modal>
-                </Dialog.Content>
-              </Dialog.Portal>
-            </Dialog.Root>
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-    );
+  const {pageNumber, perPageItem} = useParams();
+  const { yearsList} = useSelector(state => state.yearsAndStatus);
+
+
+  const { navigateWithParams } = useQueryParams();
+  const [filterParams] = useSearchParams();
+  const search = filterParams.get('search') || '';
+  const years = filterParams.get('years') || '';
+
+  const filterByYear = (yearValue) => {
+    navigateWithParams(`/analytics/1/${perPageItem}`, { search: search, years: yearValue });
   }
 
-  return row[key];
-};
-function Analytics({ analyticsTable }) {
+
+
   const [showReportModal, setShowReportModal] = useState(false);
   const [showReportSuccessModal, setShowReportSuccessModal] = useState(false);
 
@@ -102,11 +61,53 @@ function Analytics({ analyticsTable }) {
   const dropdownItem = (
     <>
       <SelectDropdown
-        options={["Option 1", "Option 2", "Option 3"]}
-        placeholder="All time"
+        options={yearsList}
+        placeholder={`${years ? years : 'All Time'}`}
+        filterByYearAndStatus={filterByYear}
       />
     </>
   );
+
+  // Fatch Release Data _______________________________________________
+  const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
+  const [filteredCount, setFilteredCount] = useState();
+  const [totalPages, setTotalPages] = useState();
+  const [notFound, setNotFound] = useState(false)
+  const [analyticsData, setAnalyticsData] = useState();
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true)
+    setNotFound(false)
+    axios.get(`http://localhost:5000/common/api/v1/analytics-and-balance/all-analytics?page=${pageNumber}&limit=${perPageItem}&search=${search}&years=${years}`)
+    .then(res => {
+      if(res.status === 200){
+        setAnalyticsData(res.data.data)
+        if(isEmptyArray(res.data.data))setNotFound(true)
+          setFilteredCount(res.data.filteredCount);
+        setTotalPages(res.data.totalPages);
+        setLoading(false)
+      }
+    })
+  },[pageNumber, perPageItem, search, years])
+
+  // Handle Page Change ________________________________
+  const handlePageChange = (page) => {
+    navigateWithParams(`/analytics/${page}/${perPageItem}`, { search: search, years: years });
+  }
+  // Search _____________________________________________
+  const [searchText, setSearchText] = useState();
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      navigateWithParams(`/analytics/1/${perPageItem}`, { search: searchText, years: years });
+    }
+  };
+
+  // Handle Per Page Item _______________________________
+  const handlePerPageItem = (perPageItem) => {
+    navigateWithParams(`/analytics/${pageNumber}/${perPageItem}`, { search: search, years: years });
+  }
+
+  if(loading)return <LoadingScreen/>
 
   return (
     <div className="main-content">
@@ -182,7 +183,7 @@ function Analytics({ analyticsTable }) {
       </Flex>
 
       <div className="search-setion">
-        <input type="text" placeholder="Search..." style={{ width: "87%" }} />
+        <input onKeyPress={handleKeyPress} defaultValue={search} onChange={e => setSearchText(e.target.value)} type="text" placeholder="Search..." style={{ width: "87%" }} />
         {isMobile ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
@@ -212,12 +213,23 @@ function Analytics({ analyticsTable }) {
           dropdownItem
         )}
       </div>
-      <Table
-        data={analyticsTable}
+      
+      <AnalyticsTable
+        data={analyticsData}
         columns={artistColumns}
-        renderCell={renderArtistCell}
       />
-      <Pagination />
+      {
+        notFound && <NotFoundPage/>
+      }
+      <Pagination 
+        totalDataCount={filteredCount} 
+        totalPages={totalPages}
+        currentPage={currentPage} 
+        perPageItem={perPageItem} 
+        setCurrentPage={setCurrentPage} 
+        handlePageChange={handlePageChange}
+        customFunDropDown={handlePerPageItem}
+      />
     </div>
   );
 }

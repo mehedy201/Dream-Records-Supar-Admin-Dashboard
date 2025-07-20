@@ -116,9 +116,7 @@ function Distribution() {
   // Search _____________________________________________
   const [searchText, setSearchText] = useState();
   const handleKeyPress = (event) => {
-    console.log(event)
     if (event.key === 'Enter') {
-      console.log('yes', searchText)
       navigateWithParams(`/distribution/queue/${status}/1/${perPageItem}`, { search: searchText, years: years });
     }
   };
