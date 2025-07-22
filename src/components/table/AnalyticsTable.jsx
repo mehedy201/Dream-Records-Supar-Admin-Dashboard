@@ -6,8 +6,6 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Modal from "../../components/Modal";
 
 
-import { Link } from 'react-router-dom';
-
 const AnalyticsTable = ({ columns, data }) => {
 
     return (
@@ -43,7 +41,15 @@ const AnalyticsTable = ({ columns, data }) => {
                                         >
                                         <DropdownMenu.Item className="dropdown-item">
                                             <div>
-                                            <RiFileDownloadLine /> Download Report
+                                                <a
+                                                    href={d?.modifiedFileUrl}
+                                                    download={`${d?.reportsDate}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{ textDecoration: 'none', color: 'black' }}
+                                                    >
+                                                        <RiFileDownloadLine /> Download Report
+                                                    </a>
                                             </div>
                                         </DropdownMenu.Item>
                                         <hr />
