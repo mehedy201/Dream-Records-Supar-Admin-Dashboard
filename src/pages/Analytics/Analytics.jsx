@@ -3,9 +3,7 @@ import "./Analytics.css";
 import { useEffect, useState } from "react";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import Table from "../../components/Table";
 import * as Dialog from "@radix-ui/react-dialog";
-import { RiDeleteBin6Line, RiFileDownloadLine } from "react-icons/ri";
 import Modal from "../../components/Modal";
 import PropTypes from "prop-types";
 import { Flex } from "@radix-ui/themes";
@@ -16,7 +14,7 @@ import axios from "axios";
 import LoadingScreen from "../../components/LoadingScreen";
 import AnalyticsTable from "../../components/table/AnalyticsTable";
 import isEmptyArray from "../../hooks/isEmptyArrayCheck";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useQueryParams from "../../hooks/useQueryParams";
 import NotFoundPage from "../../components/NotFoundPage";
@@ -158,7 +156,7 @@ function Analytics() {
     }
     const reportsDate = `${monthValue} ${yearValue}`
     const payloadData = {...uploadedExcel, reportsDate}
-    axios.post(`http://localhost:5000/common/api/v1/analytics-and-balance`, uploadedExcel)
+    axios.post(`http://localhost:5000/common/api/v1/analytics-and-balance`, payloadData)
     .then(res => {
         console.log(res.data.data)
         setShowReportModal(false);
