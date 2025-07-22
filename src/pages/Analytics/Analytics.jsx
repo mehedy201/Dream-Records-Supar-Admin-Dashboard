@@ -20,6 +20,11 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useQueryParams from "../../hooks/useQueryParams";
 import NotFoundPage from "../../components/NotFoundPage";
+import * as Select from "@radix-ui/react-select";
+import { Check, ChevronDown } from "lucide-react";
+import excelLogo from '../../assets/icons/Excel logo.png'
+import uploadFileIcon from '../../assets/icons/upload-img.png'
+
 
 const artistColumns = [
   { label: "Report ID", key: "id" },
@@ -28,6 +33,8 @@ const artistColumns = [
   { label: "Upload Date & Time", key: "uploadDateTime" },
   { label: "Action", key: "action" },
 ];
+
+const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 function Analytics() {
 
@@ -81,6 +88,7 @@ function Analytics() {
     axios.get(`http://localhost:5000/common/api/v1/analytics-and-balance/all-analytics?page=${pageNumber}&limit=${perPageItem}&search=${search}&years=${years}`)
     .then(res => {
       if(res.status === 200){
+        console.log(res.data.data)
         setAnalyticsData(res.data.data)
         if(isEmptyArray(res.data.data))setNotFound(true)
           setFilteredCount(res.data.filteredCount);
@@ -107,6 +115,68 @@ function Analytics() {
     navigateWithParams(`/analytics/${pageNumber}/${perPageItem}`, { search: search, years: years });
   }
 
+
+
+  const [yearValue, setYearValue] = useState();
+  const [monthValue, setMonthValue] = useState();
+  const [yearValueError, setYearValueError] = useState('');
+  const [monthValueError, setMonthValueError] = useState('');
+
+  const [uploadedExcel, setUploadedExcel] = useState();
+  const [uploadedExcelError, setUploadedExcelError] = useState();
+  const [uploadLoading, setUploadLoading] = useState(false)
+
+  const uploadExcel = (e) => {
+    setUploadedExcelError('')
+    setUploadLoading(true)
+    const file = e[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    axios.post(`http://localhost:5000/common/api/v1/analytics-and-balance/excel-upload`, formData)
+    .then(res => {
+        console.log(res)
+        setUploadLoading(false)
+        setUploadedExcel(res.data.data)
+    })
+  }
+
+  const uploadAnalyticsReport = () => {
+    setUploadedExcelError('')
+    setYearValueError('')
+    setMonthValueError('')
+    if(!uploadedExcel){
+      setUploadedExcelError('Please Select Excel File')
+      return;
+    }
+    if(!yearValue){
+      setYearValueError('Please Select Year')
+      return;
+    }
+    if(!monthValue){
+      setMonthValueError('Please Select Month')
+      return;
+    }
+    const reportsDate = `${monthValue} ${yearValue}`
+    const payloadData = {...uploadedExcel, reportsDate}
+    axios.post(`http://localhost:5000/common/api/v1/analytics-and-balance`, uploadedExcel)
+    .then(res => {
+        console.log(res.data.data)
+        setShowReportModal(false);
+        setShowReportSuccessModal(true);
+        setUploadedExcel()
+    })
+  }
+
+  const deleteExcel = () => {
+    if(!uploadedExcel) return;
+    axios.delete(`http://localhost:5000/common/api/v1/analytics-and-balance/delete/excel-file?key=${uploadedExcel?.excelFileKey}`)
+    .then(res => {
+      if(res.status === 200){
+        setUploadedExcel('')
+      }
+    })
+  }
+
   if(loading)return <LoadingScreen/>
 
   return (
@@ -122,42 +192,125 @@ function Analytics() {
           </Dialog.Trigger>
           <Modal title="Upload New Report" className="analytics-report-modal">
             <div className="analytics-modal-report">
-              <div>
-                <img src="src/assets/icons/Excel logo.png" alt="" />
-              </div>
-              <div>
-                <p>December Report</p>
-                <small>.xlsx</small>
-              </div>
-              <button>Replace File</button>
-              <RxCross2 size={24} />
+              
+              {
+                !uploadedExcel && 
+                <div style={{width: '100%'}}>
+                <label style={{height: '60px', width: '100%', margin: 'auto', position: 'relative'}} className="upload-label">
+                  <div style={{position: 'absolute', top: '50%', left: '50%', transform:'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                      <img
+                          style={{margin: 'auto'}}
+                          src={uploadFileIcon}
+                          alt="upload-img"
+                          className="upload-icon"
+                      />
+                    <p>
+                      Drop your Excel here or
+                    </p>
+                    <span className="browse-file">Browse File</span>
+                    {/* <p style={{ color: "#BBBBBB" }}>Max. File size: 50MB</p> */}
+                  </div>
+                  {
+                    uploadLoading &&
+                    <div style={{height: '60px', width: '100%', borderRadius: '10px', position: 'absolute', top: '50%', left: '50%', transform:'translate(-50%, -50%)', backgroundColor: 'black', opacity: '0.5'}}></div>
+                  }
+                  <input style={{height: '60px', width: '100%', opacity: '0'}} type="file" accept=".xls, .xlsx" id="fileInput" name='image' onChange={e => uploadExcel(e.target.files)} />
+                </label>
+                </div>
+              }
+              {
+                uploadedExcel &&
+                <>
+                  <div>
+                    <img src={excelLogo} alt="" />
+                  </div>
+                  <div>
+                    <p>{uploadedExcel?.excelFileName}</p>
+                    <small>.xlsx</small>
+                  </div>
+                  <button onClick={() => deleteExcel()} >Replace File</button>
+                  <RxCross2 onClick={() => deleteExcel()} size={24} />
+                </>
+              }
             </div>
+            {
+              uploadedExcelError && <p style={{color: 'red'}}>{uploadedExcelError}</p>
+            }
             <label htmlFor="" className="analytics-modal-label">
               Choose Year of the Report
             </label>
 
-            <SelectDropdown
-              options={["Option 1", "Option 2", "Option 3"]}
-              placeholder="Select Year"
-              className="analytics-modal-dropdown"
-            />
+            <Select.Root onValueChange={value => setYearValue(value)}>
+              <Select.Trigger className={`dropdown-trigger analytics-modal-dropdown`}>
+                <Select.Value placeholder={ "Select an Years"} />
+                <Select.Icon className="select-icon">
+                  <ChevronDown />
+                </Select.Icon>
+              </Select.Trigger>
+              <Select.Portal>
+                <Select.Content
+                  className="dropdown-content"
+                  style={{ padding: 0, overflowY: "auto", zIndex: "123" }}
+                >
+                  <Select.Viewport>
+                  {
+                    yearsList.map(year => 
+                      <Select.Item value={year} className="select-item">
+                        <Select.ItemText>{year}</Select.ItemText>
+                        <Select.ItemIndicator className="select-item-indicator">
+                          <Check size={18} />
+                        </Select.ItemIndicator>
+                      </Select.Item>
+                    )
+                  }
+                  </Select.Viewport>
+                </Select.Content>
+              </Select.Portal>
+            </Select.Root>
+            {
+              yearValueError && <p style={{color: 'red'}}>{yearValueError}</p>
+            }
+
+
             <label htmlFor="" className="analytics-modal-label">
               Choose Month of the Report
             </label>
 
-            <SelectDropdown
-              options={["Option 1", "Option 2", "Option 3"]}
-              placeholder="Select month"
-              className="analytics-modal-dropdown"
-            />
+            <Select.Root onValueChange={value => setMonthValue(value)}>
+              <Select.Trigger className={`dropdown-trigger analytics-modal-dropdown`}>
+                <Select.Value placeholder={ "Select Months"} />
+                <Select.Icon className="select-icon">
+                  <ChevronDown />
+                </Select.Icon>
+              </Select.Trigger>
+              <Select.Portal>
+                <Select.Content
+                  className="dropdown-content"
+                  style={{ padding: 0, overflowY: "auto", zIndex: "123" }}
+                >
+                  <Select.Viewport>
+                  {
+                    monthList.map(month => 
+                      <Select.Item value={month} className="select-item">
+                        <Select.ItemText>{month}</Select.ItemText>
+                        <Select.ItemIndicator className="select-item-indicator">
+                          <Check size={18} />
+                        </Select.ItemIndicator>
+                      </Select.Item>
+                    )
+                  }
+                  </Select.Viewport>
+                </Select.Content>
+              </Select.Portal>
+            </Select.Root>
+            {
+              monthValueError && <p style={{color: 'red'}}>{monthValueError}</p>
+            }
             <br />
             <div className="analytics-deleteModal-btns">
               <Dialog.Close>Cancel</Dialog.Close>
               <button
-                onClick={() => {
-                  setShowReportModal(false);
-                  setShowReportSuccessModal(true);
-                }}
+                onClick={uploadAnalyticsReport}
               >
                 Upload Report
               </button>
