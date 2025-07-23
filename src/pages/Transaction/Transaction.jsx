@@ -1,17 +1,18 @@
-// import { Flex } from "@radix-ui/themes";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import Pagination from "../../components/Pagination";
 import "./Transaction.css";
-// import * as Dialog from "@radix-ui/react-dialog";
-// import Modal from "../../components/Modal";
 import Table from "../../components/Table";
 import PropTypes from "prop-types";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useEffect, useState } from "react";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { IoEyeOutline } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import SelectDropdown from "../../components/SelectDropdown";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import useQueryParams from "../../hooks/useQueryParams";
+import TransactionTable from "../../components/table/TransactionTable";
 const transactionColumns = [
   { label: "User Name", key: "userName" },
   { label: "Email ID", key: "email" },
@@ -40,6 +41,44 @@ const renderTransactionCell = (key, row) => {
   return row[key];
 };
 const Transaction = ({ transactions }) => {
+
+  const {pageNumber, perPageItem, status} = useParams();
+
+  const { yearsList} = useSelector(state => state.yearsAndStatus);
+
+
+  const { navigateWithParams } = useQueryParams();
+  const [filterParams] = useSearchParams();
+  const search = filterParams.get('search') || '';
+  const years = filterParams.get('years') || '';
+
+  const filterByYear = (yearValue) => {
+    navigateWithParams(`/transaction/${status}/1/${perPageItem}`, { search: search, years: yearValue });
+  }
+  const filterByStatus = (statusValue) => {
+    navigateWithParams(`/transaction/${statusValue}/1/10`, { search: search, years: years });
+  }
+
+
+  const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
+  const [filteredCount, setFilteredCount] = useState();
+  const [totalPages, setTotalPages] = useState();
+  const [loading, setLoading] = useState(false);
+  const [transectionData, setTransectionData] = useState()
+  useEffect(() => {
+    axios.get(`http://localhost:5000/common/api/v1/payment/admin/withdrawal-list?page=${pageNumber}&limit=${perPageItem}&status=${status}&type=Withdraw&search=${search}&years=${years}`)
+    .then(res => {
+      console.log(res.data.data)
+      setTransectionData(res.data.data)
+      setFilteredCount(res.data.filteredCount);
+      setTotalPages(res.data.totalPages)
+      setLoading(false)
+    })
+  },[pageNumber, perPageItem, search, years])
+
+
+
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
   useEffect(() => {
     const handleResize = () => {
@@ -49,17 +88,22 @@ const Transaction = ({ transactions }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+
+  // Years and Status Dropdown______________________________________
   const dropdownItem = (
     <>
       <SelectDropdown
-        options={["Option 1", "Option 2", "Option 3"]}
-        placeholder="All time"
+        options={yearsList}
+        placeholder={`${years ? years : 'All Time'}`}
+        filterByYearAndStatus={filterByYear}
       />
 
       {isMobile && <br />}
       <SelectDropdown
-        options={["Option 1", "Option 2", "Option 3"]}
-        placeholder="All Releases"
+        options={['All', 'Pending', 'Success', 'Rejected' ]}
+        placeholder={status}
+        filterByYearAndStatus={filterByStatus}
       />
     </>
   );
@@ -76,6 +120,36 @@ const Transaction = ({ transactions }) => {
         item.action
       ),
   }));
+
+
+
+
+
+  // Handle Page Change ________________________________
+  const handlePageChange = (page) => {
+    navigateWithParams(`/transaction/${status}/${page}/${perPageItem}`, { search: search, years: years });
+  }
+  // Search _____________________________________________
+  const [searchText, setSearchText] = useState();
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      navigateWithParams(`/transaction/${status}/1/${perPageItem}`, { search: searchText, years: years });
+    }
+  };
+
+  // Handle Per Page Item _______________________________
+  const handlePerPageItem = (perPageItem) => {
+    navigateWithParams(`/transaction/${status}/${pageNumber}/${perPageItem}`, { search: search, years: years });
+  }
+
+
+
+
+
+
+
+
+
   return (
     <div className="main-content">
       <h2 style={{ fontWeight: "500" }}>Transactions</h2>
@@ -118,13 +192,27 @@ const Transaction = ({ transactions }) => {
           February, May, August, and November.
         </p>
       </div>
+      <TransactionTable
+        columns={transactionColumns}
+        data={transectionData}
+        // renderCell={renderTransactionCell}
+        className="transaction-table"
+      />
       <Table
         columns={transactionColumns}
         data={ProcessTransaction}
         renderCell={renderTransactionCell}
         className="transaction-table"
       />
-      <Pagination />
+      <Pagination 
+        totalDataCount={filteredCount} 
+        totalPages={totalPages}
+        currentPage={currentPage} 
+        perPageItem={perPageItem} 
+        setCurrentPage={setCurrentPage} 
+        handlePageChange={handlePageChange}
+        customFunDropDown={handlePerPageItem}
+      />
     </div>
   );
 };

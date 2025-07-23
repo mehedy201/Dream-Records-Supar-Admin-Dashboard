@@ -24,7 +24,7 @@ const menuItems = [
   { name: "Labels", path: "/Labels", icon: labelsIcon },
   { name: "Analytics", path: "/analytics/1/10", icon: analyticsIcon },
   { name: "Service Request", path: "/ServiceRequest",icon: serviceRequestIcon,},
-  { name: "Transactions", path: "/Transaction", icon: transactionsIcon },
+  { name: "Transactions", path: "/transaction/All/1/10", icon: transactionsIcon },
   { name: "Support", path: "/support", icon: supportIcon, divider: true },
   { name: "Help", path: "/help", icon: helpIcon },
   { name: "Profile", path: "/profile", icon: profileIcon, divider: true },

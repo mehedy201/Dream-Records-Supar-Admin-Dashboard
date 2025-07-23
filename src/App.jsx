@@ -180,12 +180,14 @@ function App() {
               />
             }
           />
+          {/* Transection Route Start________________________________________ */}
+          {/* _______________________________________________________________ */}
           <Route
-            path="/Transaction"
+            path="/transaction/:status/:pageNumber/:perPageItem"
             element={<Transaction transactions={transactions} />}
           />
           <Route
-            path="/single-transaction"
+            path="/transaction/:id"
             element={
               <SingleTransaction
                 transactionsHistory={transactionsHistory}
@@ -193,6 +195,8 @@ function App() {
               />
             }
           />
+          {/* Transection Route End__________________________________________ */}
+          {/* _______________________________________________________________ */}
           <Route path="/support" element={<Support support={support} />} />
           <Route path="/SupportMessageBox" element={<SupportMessageBox />} />
           <Route
