@@ -184,15 +184,12 @@ function App() {
           {/* _______________________________________________________________ */}
           <Route
             path="/transaction/:status/:pageNumber/:perPageItem"
-            element={<Transaction transactions={transactions} />}
+            element={<Transaction/>}
           />
           <Route
-            path="/transaction/:id"
+            path="/single-transaction/:id/:pageNumber/:perPageItem"
             element={
-              <SingleTransaction
-                transactionsHistory={transactionsHistory}
-                transactionInfo={transactionInfo}
-              />
+              <SingleTransaction/>
             }
           />
           {/* Transection Route End__________________________________________ */}

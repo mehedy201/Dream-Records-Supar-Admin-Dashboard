@@ -8,9 +8,6 @@ const TransactionTable = ({ columns, data }) => {
 
   const navigate = useNavigate();
 
-  
-
-
     return (
         <div className="table-wrapper">
       <table className={`theme-table`}>
@@ -39,7 +36,7 @@ const TransactionTable = ({ columns, data }) => {
               <td><span className={`status ${d?.type === 'Withdraw' ? d?.status.toLowerCase() : 'success'}`}>{d?.type === 'Withdraw' ? d?.status : 'Success'}</span></td>
               <td>
                   <IoEyeOutline
-                    onClick={() => navigate(`/transaction/${d._id}`)}
+                    onClick={() => navigate(`/single-transaction/${d._id}/1/10`)}
                     style={{ width: "24px", height: "24px", color: "#838383", cursor: 'pointer' }}
                   />
               </td>

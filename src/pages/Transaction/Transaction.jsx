@@ -1,13 +1,11 @@
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import Pagination from "../../components/Pagination";
 import "./Transaction.css";
-import Table from "../../components/Table";
 import PropTypes from "prop-types";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useEffect, useState } from "react";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
-import { IoEyeOutline } from "react-icons/io5";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import SelectDropdown from "../../components/SelectDropdown";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -23,29 +21,10 @@ const transactionColumns = [
   { label: "Action", key: "action" },
 ];
 
-const renderTransactionCell = (key, row) => {
-  if (key === "method") {
-    return (
-      <div>
-        {row.method}
-        <p className="transaction-method-sample">{row.methoda_sample}</p>
-      </div>
-    );
-  }
-  if (key === "status") {
-    return (
-      <span className={`status ${row.status.toLowerCase()}`}>{row.status}</span>
-    );
-  }
-
-  return row[key];
-};
-const Transaction = ({ transactions }) => {
+const Transaction = () => {
 
   const {pageNumber, perPageItem, status} = useParams();
-
   const { yearsList} = useSelector(state => state.yearsAndStatus);
-
 
   const { navigateWithParams } = useQueryParams();
   const [filterParams] = useSearchParams();
@@ -68,7 +47,6 @@ const Transaction = ({ transactions }) => {
   useEffect(() => {
     axios.get(`http://localhost:5000/common/api/v1/payment/admin/withdrawal-list?page=${pageNumber}&limit=${perPageItem}&status=${status}&type=Withdraw&search=${search}&years=${years}`)
     .then(res => {
-      console.log(res.data.data)
       setTransectionData(res.data.data)
       setFilteredCount(res.data.filteredCount);
       setTotalPages(res.data.totalPages)
@@ -107,23 +85,6 @@ const Transaction = ({ transactions }) => {
       />
     </>
   );
-  const ProcessTransaction = transactions.map((item) => ({
-    ...item,
-    action:
-      item.action === "view_icon" ? (
-        <Link to="/single-transaction" state={{ transaction: item }}>
-          <IoEyeOutline
-            style={{ width: "24px", height: "24px", color: "#838383" }}
-          />
-        </Link>
-      ) : (
-        item.action
-      ),
-  }));
-
-
-
-
 
   // Handle Page Change ________________________________
   const handlePageChange = (page) => {
@@ -144,17 +105,11 @@ const Transaction = ({ transactions }) => {
 
 
 
-
-
-
-
-
-
   return (
     <div className="main-content">
       <h2 style={{ fontWeight: "500" }}>Transactions</h2>
       <div className="search-setion">
-        <input type="text" placeholder="Search..." />
+        <input onKeyPress={handleKeyPress} onChange={e => setSearchText(e.target.value)} type="text" placeholder="Search..." />
         {isMobile ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
@@ -196,12 +151,6 @@ const Transaction = ({ transactions }) => {
         columns={transactionColumns}
         data={transectionData}
         // renderCell={renderTransactionCell}
-        className="transaction-table"
-      />
-      <Table
-        columns={transactionColumns}
-        data={ProcessTransaction}
-        renderCell={renderTransactionCell}
         className="transaction-table"
       />
       <Pagination 
