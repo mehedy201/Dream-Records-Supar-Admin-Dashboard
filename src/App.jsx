@@ -194,16 +194,25 @@ function App() {
           />
           {/* Transection Route End__________________________________________ */}
           {/* _______________________________________________________________ */}
+
+
+      
           <Route path="/support" element={<Support support={support} />} />
           <Route path="/SupportMessageBox" element={<SupportMessageBox />} />
           <Route
             path="/analytics/:pageNumber/:perPageItem"
             element={<Analytics analyticsTable={analyticsTable} />}
           />
+
+
+
+          {/* Settings Route Start___________________________________________ */}
+          {/* _______________________________________________________________ */}
           <Route
-            path="/Settings"
-            element={<Settings settingsTeamMember={settingsTeamMember} />}
+            path="/settings"
+            element={<Settings settingsTeamMember={settingsTeamMember}/>}
           />
+
           {/* Users Route Start_________________________________________ */}
           {/* __________________________________________________________ */}
           <Route path="/CreateUser" element={<CreateUser />} />

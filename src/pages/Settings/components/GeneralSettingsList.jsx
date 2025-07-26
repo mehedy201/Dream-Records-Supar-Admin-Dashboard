@@ -2,7 +2,6 @@ import * as Dialog from "@radix-ui/react-dialog";
 import "../Settings.css";
 import PropTypes from "prop-types";
 import Modal from "../../../components/Modal";
-import SelectDropdown from "../../../components/SelectDropdown";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { useRef, useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
@@ -19,9 +18,9 @@ const GeneralSettingsList = ({
   setReFetch,
   setItems,
   forFilter,
+  inputName,
 }) => {
   const [settingsListCollapse, setSettingsListCollapse] = useState(true);
-  const inputName = title.toLowerCase();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const closeRef = useRef(null);
@@ -83,16 +82,20 @@ const GeneralSettingsList = ({
               style={{ width: "100%" }}
               onChange={(e) => {
                 if(title === 'Genre'){
-                  console.log(forFilter)
                   const filtered = forFilter.filter(item =>
                     item.genre.toLowerCase().includes(e.target.value.toLowerCase())
                   );
                   setItems(filtered)
                 }
                 if(title === 'Language'){
-                  console.log(forFilter)
                   const filtered = forFilter.filter(item =>
                     item.language.toLowerCase().includes(e.target.value.toLowerCase())
+                  );
+                  setItems(filtered)
+                }
+                if(title === 'Release Rejections List'){
+                  const filtered = forFilter.filter(item =>
+                    item.option.toLowerCase().includes(e.target.value.toLowerCase())
                   );
                   setItems(filtered)
                 }
@@ -143,7 +146,7 @@ const GeneralSettingsList = ({
         <div className="generalSettingsList-item-list">
           {items.map((item, index) => (
             <div className="tag" key={index}>
-              {title === 'Genre' ? item.genre : title === 'Language' ? item.language : 'll'}
+              {title === 'Genre' ? item?.genre : title === 'Language' ? item?.language :  item?.option }
               <button
                 className="remove-btn"
                 onClick={() => handleDelete(item._id)}
