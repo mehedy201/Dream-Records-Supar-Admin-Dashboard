@@ -12,6 +12,7 @@ import {
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { Collapsible } from "radix-ui";
 import GeneralSettingsCheckBox from "./GeneralSettingsCheckBox";
+import axios from "axios";
 function GeneralSettings() {
   const [settingsHomeNoticeCollapse, setSettingsHomeNoticeCollapse] =
     useState(true);
@@ -19,17 +20,17 @@ function GeneralSettings() {
     settingsWithdrawalNoticeCollapse,
     setSettingsWithdrawalNoticeCollapse,
   ] = useState(true);
-  const [genres, setGenres] = useState([]);
+  // const [genres, setGenres] = useState([]);
   const [newGenre, setNewGenre] = useState("");
   const [subGenres, setSubGenres] = useState([]);
   const [newSubGenre, setNewSubGenre] = useState("");
-  const [language, setLanguage] = useState([]);
+  // const [language, setLanguage] = useState([]);
   const [newLanguage, setNewLanguage] = useState("");
-  const [releaseRejectionsList, setReleaseRejectionsList] = useState([]);
+  // const [releaseRejectionsList, setReleaseRejectionsList] = useState([]);
   const [newReleaseRejectionsList, setNewReleaseRejectionsList] = useState("");
-  const [labelRejectionsList, setLabelRejectionsList] = useState([]);
+  // const [labelRejectionsList, setLabelRejectionsList] = useState([]);
   const [newLabelRejectionsList, setNewLabelRejectionsList] = useState("");
-  const [serviceRejectionsList, setServiceRejectionsList] = useState([]);
+  // const [serviceRejectionsList, setServiceRejectionsList] = useState([]);
   const [newServiceRejectionsList, setNewServiceRejectionsList] = useState("");
   useEffect(() => {
     setGenres([...genreTable]);
@@ -40,41 +41,85 @@ function GeneralSettings() {
     setServiceRejectionsList([...serviceRejectionsTable]);
   }, []);
 
+
+
+  
+  
+  const [releaseRejectionsList, setReleaseRejectionsList] = useState([]);
+  const [labelRejectionsList, setLabelRejectionsList] = useState([]);
+  const [serviceRejectionsList, setServiceRejectionsList] = useState([]);
+  
+  
+  
+  const [totalReleaseRejectionsList, setTotalReleaseRejectionsList] = useState();
+  const [totalLabelRejectionsList, setTotalLabelRejectionsList] = useState();
+  const [totalServiceRejectionsList, setTotalServiceRejectionsList] = useState();
+
+  
+  
+  const [reFetchReleaseRejectList, setReFetchReleaseRejectList] = useState(1);
+  const [reFetchLabelRejectList, setReFetchRejectList] = useState(1);
+  const [reFetchServiceRejectList, setReFetchServiceRejectList] = useState(1);
+
+
+  // Genre Fetch_______________________________________________________
+  // __________________________________________________________________
+  const [genres, setGenres] = useState([]);
+  const [genreFilter, setGenreFilter] = useState();
+  const [totalGenres, setTotalGenres] = useState();
+  const [reFetchGenre, setReFetchGenre] = useState(1);
+  useEffect(() => {
+    axios.get(`http://localhost:5000/admin/api/v1/genre`)
+    .then(res => {
+      setGenres(res.data.data)
+      setGenreFilter(res.data.data)
+      setTotalGenres(res.data.dataCount)    
+    })
+  },[reFetchGenre])
+
+  // Language Fetch_____________________________________________________
+  // ___________________________________________________________________
+  const [language, setLanguage] = useState([]);
+  const [languageFilter, setLanguageFilter] = useState()
+  const [totalLanguage, setTotalLanguage] = useState();
+  const [reFetchLanguage, setReFetchLanguage] = useState(1);
+  useEffect( () => {
+    axios.get('http://localhost:5000/admin/api/v1/language')
+    .then(res => {
+      setLanguage(res.data.data);
+      setLanguageFilter(res.data.data);
+      setTotalLanguage(res.data.dataCount);
+    })
+  }, [reFetchLanguage])
+
+
+
+
+
   return (
     <div>
       {" "}
       <GeneralSettingsList
         title="Genre"
         items={genres}
-        setItems={(newList) => {
-          genreTable.length = 0;
-          genreTable.push(...newList);
-          setGenres([...newList]);
-        }}
-        newItem={newGenre}
-        setNewItem={setNewGenre}
-      />
-      <GeneralSettingsList
-        title="Sub-Genre"
-        items={subGenres}
-        setItems={(newList) => {
-          subGenreTable.length = 0;
-          subGenreTable.push(...newList);
-          setSubGenres([...newList]);
-        }}
-        newItem={newSubGenre}
-        setNewItem={setNewSubGenre}
+        forFilter={genreFilter}
+        setItems={setGenres}
+        total={totalGenres}
+        createLink={`http://localhost:5000/admin/api/v1/genre/add-genre`}
+        deleteLink={`http://localhost:5000/admin/api/v1/genre`}
+        reFetch={reFetchGenre}
+        setReFetch={setReFetchGenre}
       />
       <GeneralSettingsList
         title="Language"
+        setItems={setLanguage}
         items={language}
-        setItems={(newList) => {
-          languageTable.length = 0;
-          languageTable.push(...newList);
-          setLanguage([...newList]);
-        }}
-        newItem={newLanguage}
-        setNewItem={setNewLanguage}
+        forFilter={languageFilter}
+        total={totalLanguage}
+        createLink={`http://localhost:5000/admin/api/v1/language/add-language`}
+        deleteLink={`http://localhost:5000/admin/api/v1/language`}
+        reFetch={reFetchLanguage}
+        setReFetch={setReFetchLanguage}
       />
       <GeneralSettingsList
         title="Release Rejections List"
@@ -110,7 +155,15 @@ function GeneralSettings() {
         newItem={newServiceRejectionsList}
         setNewItem={setNewServiceRejectionsList}
       />
+
+
+
+
+
       <GeneralSettingsCheckBox />
+
+
+
       <Collapsible.Root
         open={settingsHomeNoticeCollapse}
         onOpenChange={() =>

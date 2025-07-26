@@ -2,7 +2,14 @@ import PropTypes from "prop-types";
 import { Checkbox } from "radix-ui";
 import { FaCheck } from "react-icons/fa";
 
-const CheckBox = ({ label, fromPage, defaultChecked }) => {
+const CheckBox = ({ label, fromPage, defaultChecked, customFun }) => {
+
+  const handleCheckedChange = (checked) => {
+    if (customFun) {
+      customFun(label, checked);
+    }
+  };
+
   return (
     <form>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -17,6 +24,7 @@ const CheckBox = ({ label, fromPage, defaultChecked }) => {
           className="CheckboxRoot"
           defaultChecked={defaultChecked}
           id="c1"
+          onCheckedChange={handleCheckedChange}
         >
           <Checkbox.Indicator className="CheckboxIndicator">
             <FaCheck />
