@@ -3,10 +3,9 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Dialog, Tabs } from "radix-ui";
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import SelectDropdown from "../../../components/SelectDropdown";
 import Chart from "./Chart";
 import Modal from "../../../components/Modal";
 import { FiAlertTriangle, FiArrowRight } from "react-icons/fi";
@@ -57,7 +56,6 @@ function SingleRelease() {
     axios.get(`http://localhost:5000/api/v1/release/single/${id}`)
     .then(res => {
       setData(res.data.data)
-      console.log(res.data.data)
       setTrackData(res?.data?.data?.tracks)
       if(res.data.data.audioUrl){
         const audioUrl = res.data.data.audioUrl;
@@ -463,8 +461,6 @@ function SingleRelease() {
                         <label className="singleRelease-modal-label" htmlFor="">
                           Describe issue here *
                         </label>
-                        {/* <textarea placeholder="Write your issue here"></textarea> */}
-
                         <textarea
                           placeholder="Write your issue here"
                           style={{ width: "100%" }}

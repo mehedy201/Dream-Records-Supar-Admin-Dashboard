@@ -11,7 +11,7 @@ import artistDemoImg from '../assets/artists/artist4.png'
 
 const TrackViewCollapsSection = ({track, index}) => {
 
-    console.log(track)
+    // console.log(track)
     // Get TrackInfo Data State form Redux 
     // const {tracksInfo} = useSelector(state => state.releaseData);
     // const dispatch = useDispatch()
