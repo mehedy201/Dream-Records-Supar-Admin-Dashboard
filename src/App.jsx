@@ -233,7 +233,7 @@ function App() {
           <Route path="/Edit-User" element={<EditUser />} />
           {/* Users Route End+__________________________________________ */}
           {/* __________________________________________________________ */}
-          <Route path="/Profile" element={<Profile />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
 
         {/* Route WITHOUT Sidebar & Navbar */}

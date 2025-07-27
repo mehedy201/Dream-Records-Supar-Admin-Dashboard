@@ -2,7 +2,7 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Dialog, Tabs } from "radix-ui";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
@@ -23,6 +23,7 @@ import { Check, ChevronDown } from "lucide-react";
 import SingleReleasePageTable from "../../../components/SingleReleasePageTable";
 import isEmptyArray from "../../../hooks/isEmptyArrayCheck";
 import NotFoundPage from "../../../components/NotFoundPage";
+import textToHTML from "../../../hooks/textToHTML";
 
 const dspColumn = [
   { label: "DSPs", key: "DSPs" },
@@ -42,21 +43,21 @@ const totalRevineuStreamColumn = [
 
 function SingleRelease() {
 
-
   const {id} = useParams();
   const { yearsList } = useSelector(state => state.yearsAndStatus); 
-
 
   const [analyticsCollapse, setAnalyticsCollapse] = useState(true);
 
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState();
   const [trackData, setTrackData] = useState();
+  const [reFetchData, setReFetchData] = useState(1);
   useEffect(() => {
     setLoading(true)
     axios.get(`http://localhost:5000/api/v1/release/single/${id}`)
     .then(res => {
       setData(res.data.data)
+      console.log(res.data.data)
       setTrackData(res?.data?.data?.tracks)
       if(res.data.data.audioUrl){
         const audioUrl = res.data.data.audioUrl;
@@ -69,7 +70,7 @@ function SingleRelease() {
       }
       setLoading(false)
     })
-  },[id])
+  },[id, reFetchData])
 
 
   // Analytics Table Componet Data Process_________________
@@ -168,6 +169,139 @@ function SingleRelease() {
     }
   },[data?.UPC, years])
 
+  // Change Status and Reject Function____________________________________
+  // _____________________________________________________________________
+  // Move to Review Releae Function___________________________________
+  const {userData} = useSelector((state) => state.userData);
+  const moveToReview = (id) => {
+    const payload = {
+      status: "Review",
+      reviewAdminInfo: {
+        adminEmail: userData?.email,
+        adminUserName: userData?.userName,
+        adminId: userData?._id,
+        updatedAt: new Date().toISOString()
+      }
+    }
+    axios.patch(`http://localhost:5000/admin/api/v1/release/update-release-status/${id}`, payload)
+    .then(res => {
+      if(res.status == 200){
+        setReFetchData(reFetchData + 1)
+      }
+    })
+  }
+  // Move to Live Releae Function___________________________________
+  const moveToLive = (id) => {
+    const payload = {
+      status: "Live",
+      liveAdminInfo: {
+          adminEmail: userData?.email,
+          adminUserName: userData?.userName,
+          adminId: userData?._id,
+          updatedAt: new Date().toISOString()
+      }
+    }
+    axios.patch(`http://localhost:5000/admin/api/v1/release/update-release-status/${id}`, payload)
+    .then(res => {
+      if(res.status == 200){
+        setReFetchData(reFetchData + 1)
+      }
+    })
+  }
+
+  // Reject Releae Function___________________________________
+  const [rejectType, setRejectType] = useState();
+  const [errorRejectType, setErrorRejectType] = useState('');
+  const [rejectInputText, setRejectInputText] = useState('');
+  const [errorRejectInputText, setErrorRejectInputText] = useState();
+
+  const closeRef = useRef(null);
+  const rejectRelease = (data) => {
+    setErrorRejectType('')
+    setErrorRejectInputText('')
+    if(!rejectType){
+      setErrorRejectType('Please Select Type')
+      return;
+    }
+    if(!rejectInputText){
+      setErrorRejectInputText('Reject reason required')
+      return;
+    }
+
+    const actionRequired = textToHTML(rejectInputText);
+    let actionReqHistory = {};
+    if(data?.actionReqHistory){
+      actionReqHistory = data?.actionReqHistory
+    }
+    actionReqHistory.push(actionRequired)
+
+    let payload = {}
+    if(rejectType === 'Action Required'){
+      payload = {
+        status: rejectType,
+        actionRequired,
+        actionRequiredAdminInfo: {
+            adminEmail: userData?.email,
+            adminUserName: userData?.userName,
+            adminId: userData?._id,
+            updatedAt: new Date().toISOString()
+        }
+      }
+    }else if(rejectType === 'Takedown'){
+      payload = {
+        status: rejectType,
+        actionRequired,
+        takedownAdminInfo: {
+            adminEmail: userData?.email,
+            adminUserName: userData?.userName,
+            adminId: userData?._id,
+            updatedAt: new Date().toISOString()
+        }
+      }
+    }else if(rejectType === 'Blocked'){
+      payload = {
+        status: rejectType,
+        actionRequired,
+        blockedAdminInfo: {
+            adminEmail: userData?.email,
+            adminUserName: userData?.userName,
+            adminId: userData?._id,
+            updatedAt: new Date().toISOString()
+        }
+      }
+    }else if(rejectType === 'Suspend'){
+      payload = {
+        status: rejectType,
+        actionRequired,
+        suspendAdminInfo: {
+            adminEmail: userData?.email,
+            adminUserName: userData?.userName,
+            adminId: userData?._id,
+            updatedAt: new Date().toISOString()
+        }
+      }
+    }else if(rejectType === 'Error'){
+      payload = {
+        status: rejectType,
+        actionRequired,
+        errorAdminInfo: {
+            adminEmail: userData?.email,
+            adminUserName: userData?.userName,
+            adminId: userData?._id,
+            updatedAt: new Date().toISOString()
+        }
+      }
+    }
+
+    axios.patch(`http://localhost:5000/admin/api/v1/release/update-release-status/${id}`, payload)
+    .then(res => {
+      if(res.status == 200){
+        setReFetchData(reFetchData + 1)
+      }
+    })
+    closeRef.current?.click(); // close modal  
+  }
+
 
   if(loading)return <LoadingScreen/>
 
@@ -177,18 +311,14 @@ function SingleRelease() {
         className="main-content createRelease-content-div createRelease-overview-div"
         style={{ marginBottom: "20px" }}
       >
-
-          <>
-            <div className="notice">
+        {
+          data?.actionReqHistory && data?.actionReqHistory?.map((d, index) => 
+            <div key={index} className="notice">
               <FiAlertTriangle />
-              <p>
-                We are upgrading our platform to enhance your experience. You
-                may notice new user interfaces appearing periodically. Thank you
-                for your patience as we make these improvements.
-              </p>
+              <p dangerouslySetInnerHTML={{ __html: d }}></p>
             </div>
-            <br />
-          </>
+          )
+        }
         <div className="d-flex release-overview-img-div">
           <div>
             <img
@@ -238,22 +368,30 @@ function SingleRelease() {
               >
                 <DropdownMenu.Item className="dropdown-item">
                   <div>
-                    <LuImageDown /> Download Artwork
+                    <a
+                        href={data?.imgUrl}
+                        download={`${data?.imgUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: 'none', color: 'black' }}
+                      >
+                        <LuImageDown /> Download Artwork
+                    </a>
                   </div>
                 </DropdownMenu.Item>
                 <hr style={{ margin: 0 }} />
-                <DropdownMenu.Item className="dropdown-item">
-                  <div>
-                    {
-                      data?.status === 'QC Approval' || data?.status === 'Pending' &&
-                      <><FiArrowRight /> <span>Move to Review</span></>
-                    }
-                    {
-                      data?.status === 'Review' &&
-                      <><FiArrowRight /> <span>Move to Live</span></>
-                    }
-                  </div>
-                </DropdownMenu.Item>
+                {
+                  data?.status === 'QC Approval' || data?.status === 'Pending' &&
+                  <DropdownMenu.Item onClick={() => moveToReview(data?._id)} className="dropdown-item">
+                      <div ><FiArrowRight /> <span>Move to Review</span></div>
+                  </DropdownMenu.Item>
+                }
+                {
+                  data?.status === 'Review' &&
+                  <DropdownMenu.Item  onClick={() => moveToLive(data?._id)} className="dropdown-item">
+                      <div><FiArrowRight /> <span>Move to Live</span></div>
+                  </DropdownMenu.Item>
+                }
                 <hr style={{ margin: 0 }} />
                 <DropdownMenu.Item
                   className="dropdown-item"
@@ -280,19 +418,72 @@ function SingleRelease() {
                         <label className="singleRelease-modal-label" htmlFor="">
                           Reject Type
                         </label>
-                        <SelectDropdown
-                          options={["Account", "Profile", "Settings"]}
-                          placeholder="Takedown"
-                          className="singleRelease-modal-dropdown"
-                        />
+                        <Select.Root onValueChange={value => {
+                          setRejectType(value)
+                          setErrorRejectType('')
+                        }}>
+                          <Select.Trigger className={`dropdown-trigger analytics-modal-dropdown`}>
+                            <Select.Value placeholder={ "Select Reject Type"} />
+                            <Select.Icon className="select-icon">
+                              <ChevronDown />
+                            </Select.Icon>
+                          </Select.Trigger>
+                          <Select.Portal>
+                            <Select.Content
+                              className="dropdown-content"
+                              style={{ padding: 0, overflowY: "auto", zIndex: "123" }}
+                            >
+                              <Select.Viewport>
+                                <Select.Item value='Action Required' className="select-item">
+                                  <Select.ItemText>Action Required</Select.ItemText>
+                                  <Select.ItemIndicator className="select-item-indicator">
+                                    <Check size={18} />
+                                  </Select.ItemIndicator>
+                                </Select.Item>
+                                <Select.Item value='Takedown' className="select-item">
+                                  <Select.ItemText>Takedown</Select.ItemText>
+                                  <Select.ItemIndicator className="select-item-indicator">
+                                    <Check size={18} />
+                                  </Select.ItemIndicator>
+                                </Select.Item>
+                                <Select.Item value='Blocked' className="select-item">
+                                  <Select.ItemText>Blocked</Select.ItemText>
+                                  <Select.ItemIndicator className="select-item-indicator">
+                                    <Check size={18} />
+                                  </Select.ItemIndicator>
+                                </Select.Item>
+                              </Select.Viewport>
+                            </Select.Content>
+                          </Select.Portal>
+                        </Select.Root>
+                        {
+                          errorRejectType && <p style={{color: 'red'}}>{errorRejectType}</p>
+                        }
 
                         <label className="singleRelease-modal-label" htmlFor="">
                           Describe issue here *
                         </label>
-                        <textarea placeholder="Write your issue here"></textarea>
+                        {/* <textarea placeholder="Write your issue here"></textarea> */}
+
+                        <textarea
+                          placeholder="Write your issue here"
+                          style={{ width: "100%" }}
+                          value={rejectInputText}
+                          onChange={(e) => {
+                            setRejectInputText(e.target.value)
+                            setErrorRejectInputText('')
+                          }}
+                          onKeyDown={(e) => e.stopPropagation()}
+                        ></textarea>
+                        {
+                          errorRejectInputText && <p style={{color: 'red'}}>{errorRejectInputText}</p>
+                        }
                       </div>
-                      <Dialog.Close className="close-button">
-                        Reject
+                      <button onClick={() => rejectRelease(data)} className="close-button">Reject</button>
+
+                      {/* Hidden Dialog.Close for programmatic close */}
+                      <Dialog.Close asChild>
+                        <button ref={closeRef} style={{ display: 'none' }} />
                       </Dialog.Close>
                     </Modal>
                   </Dialog.Root>

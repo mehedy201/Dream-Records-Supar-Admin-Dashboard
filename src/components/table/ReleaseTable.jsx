@@ -5,15 +5,25 @@ import { LuImageDown } from 'react-icons/lu';
 import { FiArrowRight } from 'react-icons/fi';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import localDate from '../../hooks/localDate';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import auth from '../../../firebase.config';
-import LoadingScreen from '../LoadingScreen';
 import { Link } from 'react-router-dom';
 
 const ReleaseTable = ({ columns = [], data }) => {
-    const [user, loading] = useAuthState(auth);
-    console.log(user)
-    if(loading)return <LoadingScreen/>
+
+    // const handleDownloadImage = async (link) => {
+        // const imageUrl = link;
+        // const response = await fetch(imageUrl);
+        // const blob = await response.blob();
+        // const url = window.URL.createObjectURL(blob);
+        // const a = document.createElement("a");
+        // a.href = url;
+        // a.download = "Artwork.jpg"; // ✅ আপনি চাইলে ডাইনামিক নামও বসাতে পারেন
+        // document.body.appendChild(a);
+        // a.click();
+        // a.remove();
+        // window.URL.revokeObjectURL(url);
+    // };
+
+
 
     return (
         <div className="table-wrapper">
@@ -65,7 +75,15 @@ const ReleaseTable = ({ columns = [], data }) => {
                                         >
                                             <DropdownMenu.Item className="dropdown-item">
                                             <div>
-                                                <LuImageDown /> Download Artwork
+                                                <a
+                                                    href={d?.imgUrl}
+                                                    download={`${d?.imgUrl}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{ textDecoration: 'none', color: 'black' }}
+                                                    >
+                                                        <LuImageDown /> Download Artwork
+                                                </a>
                                             </div>
                                             </DropdownMenu.Item>
                                             <hr />
@@ -73,11 +91,11 @@ const ReleaseTable = ({ columns = [], data }) => {
                                             <div>
                                                 {
                                                     d?.status === 'QC Approval' || d?.status === 'Pending' &&
-                                                    <><FiArrowRight /> <span>Move to Review</span></>
+                                                    <><FiArrowRight /> <span onClick={() => moveToReview(d)}>Move to Review</span></>
                                                 }
                                                 {
                                                     d?.status === 'Review' &&
-                                                    <><FiArrowRight /> <span>Move to Live</span></>
+                                                    <><FiArrowRight /> <span onClick={() => moveToLive(d)}>Move to Live</span></>
                                                 }
                                             </div>
                                             </DropdownMenu.Item>
