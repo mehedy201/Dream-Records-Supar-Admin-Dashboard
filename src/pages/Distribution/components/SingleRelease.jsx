@@ -24,6 +24,8 @@ import isEmptyArray from "../../../hooks/isEmptyArrayCheck";
 import NotFoundPage from "../../../components/NotFoundPage";
 import textToHTML from "../../../hooks/textToHTML";
 import { setData, setReleaseAlbumInfo, setTracksInfo } from "../../../redux/features/releaseDataHandleSlice/releaseDataHandleSlice";
+import AlbumInfoEditComponent from "../EditRelease/AlbumInfoEditComponent";
+
 
 const dspColumn = [
   { label: "DSPs", key: "DSPs" },
@@ -45,7 +47,7 @@ function SingleRelease() {
 
   const {id} = useParams();
   const { yearsList } = useSelector(state => state.yearsAndStatus);
-  const { tracksInfo, data } = useSelector(state => state.releaseData);
+  const { tracksInfo, data, releaseAlbumInfo } = useSelector(state => state.releaseData);
   const dispatch = useDispatch();
 
   const [analyticsCollapse, setAnalyticsCollapse] = useState(true);
@@ -61,7 +63,7 @@ function SingleRelease() {
       dispatch(setData(res.data.data))
       // Set Album Info________________
       const albumInfo = {...res.data.data};
-      console.log('albumInfo', albumInfo)
+      // console.log('albumInfo', albumInfo)
       delete albumInfo?.tracks
       dispatch(setReleaseAlbumInfo(albumInfo))
       // Set Tracks Info______________
@@ -310,6 +312,25 @@ function SingleRelease() {
   }
 
 
+  const modalCss = {
+    background: 'white',
+    padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.2)',
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    maxWidth: '1100px',
+    overflowY: 'auto',
+    maxHeight: '90vh',
+    scrollbarWidth: 'thin',
+    zIndex: '3',
+    width: '80%'
+  }
+
+
+
   if(loading)return <LoadingScreen/>
 
   return (
@@ -500,9 +521,33 @@ function SingleRelease() {
         <hr />
         <div className="d-flex" style={{ justifyContent: "space-between" }}>
           <h3 className="release-album-title">Album Info</h3>
-          <button className="singleRelease-editAlbum-btn">
-            <GoPencil /> Edit Album
-          </button>
+          <Dialog.Root>
+            <Dialog.Trigger
+              style={{
+                background: "none",
+                border: "none",
+                padding: 0,
+              }}
+              className="dropdown-item"
+            >
+              <span className="singleRelease-editAlbum-btn">
+                <GoPencil /> Edit Album
+              </span>
+              </Dialog.Trigger>
+                <Dialog.Portal style={{padding: '100px'}}>
+                  <Dialog.Overlay className="modal-overlay" />
+                  <Dialog.Content style={modalCss}>
+                    {
+                      releaseAlbumInfo &&
+                      <AlbumInfoEditComponent closeRef={closeRef} releaseAlbumInfo={releaseAlbumInfo}/>
+                    }
+                    {/* Hidden Dialog.Close for programmatic close */}
+                      <Dialog.Close asChild>
+                        <button ref={closeRef} style={{ display: 'none' }} />
+                      </Dialog.Close>
+                  </Dialog.Content>
+                </Dialog.Portal>
+             </Dialog.Root>
         </div>
         <div className="release-album-info-row">
           <div className="d-flex">
@@ -569,14 +614,11 @@ function SingleRelease() {
           tracksInfo &&
           tracksInfo?.map((track, index) => 
             <div key={index}>
-              <TrackViewCollapsSection track={track} index=''/>
+              <TrackViewCollapsSection track={track} index={index}/>
             </div>
           )
         }
       </div>
-
-
-
       <div className="release-analytics">
         <Collapsible.Root
           defaultOpen={true}

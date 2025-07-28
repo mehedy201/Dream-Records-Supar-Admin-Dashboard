@@ -1,0 +1,63 @@
+.editTrack-content-div {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+}
+.editTrack-content-div input {
+  width: 100%;
+  font-size: 16px;
+}
+.editTrack-content-div label {
+  font-size: 14px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  display: block;
+}
+.editTrack-content-div .radio-group label {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.editTrack-content-div .form-grid {
+  row-gap: 0px;
+}
+.editTrack-content-div .dropdown-trigger {
+  color: rgba(0, 7, 27, 0.5);
+  font-weight: 500;
+}
+
+.editTrack-content-div .releaseDtae-radio-group label span {
+  /* margin: -20px 0 0 20px; */
+  display: block;
+  display: flex;
+  justify-content: center;
+}
+
+.createRelease-dropdown {
+    width: 100%;
+}
+.editTrack-content-div textarea {
+    box-shadow: inset 0 1.5px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 9, 50, 0.12);
+    border-radius: 6px;
+    font-family: "Inter", sans-serif;
+    box-sizing: border-box;
+    padding: 12px;
+    width: 100%;
+}
+
+
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 16px;
+  position: relative;
+}
+
+
+@media screen and (max-width: 785px) {
+    .form-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}

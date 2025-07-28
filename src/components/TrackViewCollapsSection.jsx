@@ -10,11 +10,6 @@ import AudioPlayerForTracViewTab from "./AudioPlayer/AudioPlayerForTracViewTab";
 import artistDemoImg from '../assets/artists/artist4.png'
 
 const TrackViewCollapsSection = ({track, index}) => {
-
-    // console.log(track)
-    // Get TrackInfo Data State form Redux 
-    // const {tracksInfo} = useSelector(state => state.releaseData);
-    // const dispatch = useDispatch()
     
     const [albumOverviewSong, setAlbumOverviewSong] = useState(false);
     const trackTittle = track.tittle;
@@ -44,7 +39,7 @@ const TrackViewCollapsSection = ({track, index}) => {
 
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
             <div style={{flexGrow: 1}}>
-                <AudioPlayerForTracViewTab data={dataForAudioPlayer}/>
+                <AudioPlayerForTracViewTab track={track} index={index} data={dataForAudioPlayer}/>
             </div>
             <div style={{flexShrink: 0, display: 'flex', alignItems: 'center', gap: '15px'}}>
                 {/* {

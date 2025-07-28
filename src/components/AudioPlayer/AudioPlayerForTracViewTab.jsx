@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 import { IoPauseCircleOutline, IoPlayCircleOutline } from 'react-icons/io5';
 import { RiDownloadLine } from 'react-icons/ri';
 import Modal from '../Modal';
+import TrackInfoEditComponent from "../../pages/Distribution/EditRelease/TrackInfoEditComponent";
 
 const formatTime = (time) => {
   if (isNaN(time)) return '00:00';
@@ -11,7 +12,8 @@ const formatTime = (time) => {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
-const AudioPlayerForTracViewTab = ({data}) => {
+const AudioPlayerForTracViewTab = ({track, index, data}) => {
+
   const audioRef = useRef(null);
   const progressBarRef = useRef(null);
   const animationRef = useRef(null);
@@ -219,21 +221,12 @@ const handleDownload = (url) => {
                         Edit Track
                     </p>
                     </Dialog.Trigger>
-                  
-
-
-                      
-
-
-
-
                     <Dialog.Portal style={{padding: '100px'}}>
                       <Dialog.Overlay className="modal-overlay" />
                       <Dialog.Content style={modalCss}>
                         <h3 style={{ fontWeight: "500", marginTop: 0 }}>Edit Track</h3>
 
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim commodi illum fugiat facere iste quidem voluptatem in magnam ducimus blanditiis tempora tenetur excepturi aliquid rerum fuga, at rem quam consequatur aliquam reiciendis earum. Ut numquam voluptate temporibus a minima eum laborum debitis. Amet quisquam voluptatum, facilis corporis laudantium natus. Similique, sapiente explicabo asperiores nulla qui odio laborum voluptatibus molestias aliquam necessitatibus tenetur natus distinctio dolorum praesentium temporibus et pariatur rerum ullam quam, itaque magni voluptates libero dolore debitis? Sequi dicta nostrum itaque ipsam eum? Quisquam, iusto saepe possimus veniam in sint, cumque dicta illum ex eligendi eos enim quos facilis.</p>
-
+                          <TrackInfoEditComponent closeRef={closeRef} track={track} index={index}/>
 
                         {/* Hidden Dialog.Close for programmatic close */}
                           <Dialog.Close asChild>
@@ -241,22 +234,8 @@ const handleDownload = (url) => {
                           </Dialog.Close>
                       </Dialog.Content>
                     </Dialog.Portal>
-
-
-
-
-
                   </Dialog.Root>
-
                 </div>
-
-
-
-
-                  
-
-
-
             </div>
         </div>
     </>

@@ -103,6 +103,7 @@ function Distribution() {
       .then(res => {
         // console.log(res.data.data)
         setReleaseData(res.data.data)
+        console.log(res.data.data)
         if(isEmptyArray(res.data.data))setNotFound(true)
         setFilteredCount(res.data.filteredCount);
         setTotalPages(res.data.totalPages);
