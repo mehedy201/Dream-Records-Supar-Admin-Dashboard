@@ -47,10 +47,10 @@ const TrackViewCollapsSection = ({track, index}) => {
                 <AudioPlayerForTracViewTab data={dataForAudioPlayer}/>
             </div>
             <div style={{flexShrink: 0, display: 'flex', alignItems: 'center', gap: '15px'}}>
-                {
+                {/* {
                   index && 
                   <X size={18} onClick={() => deleteTrack(index)} style={{color: 'red', cursor: 'pointer'}}/>
-                }
+                } */}
                 <Collapsible.Trigger asChild>
                         {albumOverviewSong ? (
                             <MdKeyboardArrowUp className="release-album-arrowIcon" />
@@ -143,13 +143,13 @@ const TrackViewCollapsSection = ({track, index}) => {
                       </p>
                       <div>
                         {
-                            track?.artist?.map(data => {
-                                <div className="d-flex">
+                            track?.artist?.map((data, index) => {
+                                <div key={index} className="d-flex">
                                     <img
-                                        src={'akldf'}
+                                        src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
                                         alt=""
                                     />
-                                    <p>l;kasd</p>
+                                    <p>{data?.artistName}</p>
                                 </div>
                             })
                         }
@@ -161,8 +161,8 @@ const TrackViewCollapsSection = ({track, index}) => {
                       </p>
                       <div>
                         {   
-                            track?.lyricist?.map(data => 
-                                <div className="d-flex">
+                            track?.lyricist?.map((data, index) => 
+                                <div key={index} className="d-flex">
                                     <img
                                         src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
                                         alt=""
@@ -179,8 +179,8 @@ const TrackViewCollapsSection = ({track, index}) => {
                       </p>
                       <div>
                         {   
-                            track?.featuring?.map(data => 
-                                <div className="d-flex">
+                            track?.featuring?.map((data, index) => 
+                                <div key={index} className="d-flex">
                                     <img
                                         src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
                                         alt=""
@@ -197,8 +197,8 @@ const TrackViewCollapsSection = ({track, index}) => {
                       </p>
                       <div>
                         {   
-                            track?.composer?.map(data => 
-                                <div className="d-flex">
+                            track?.composer?.map((data, index) => 
+                                <div key={index} className="d-flex">
                                     <img
                                         src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
                                         alt=""

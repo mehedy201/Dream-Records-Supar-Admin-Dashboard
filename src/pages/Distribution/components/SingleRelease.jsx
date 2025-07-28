@@ -16,13 +16,14 @@ import LoadingScreen from "../../../components/LoadingScreen";
 import threeDotImg from '../../../assets/icons/vertical-threeDots.png'
 import localDate from "../../../hooks/localDate";
 import TrackViewCollapsSection from "../../../components/TrackViewCollapsSection";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as Select from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
 import SingleReleasePageTable from "../../../components/SingleReleasePageTable";
 import isEmptyArray from "../../../hooks/isEmptyArrayCheck";
 import NotFoundPage from "../../../components/NotFoundPage";
 import textToHTML from "../../../hooks/textToHTML";
+import { setData, setReleaseAlbumInfo, setTracksInfo } from "../../../redux/features/releaseDataHandleSlice/releaseDataHandleSlice";
 
 const dspColumn = [
   { label: "DSPs", key: "DSPs" },
@@ -43,20 +44,28 @@ const totalRevineuStreamColumn = [
 function SingleRelease() {
 
   const {id} = useParams();
-  const { yearsList } = useSelector(state => state.yearsAndStatus); 
+  const { yearsList } = useSelector(state => state.yearsAndStatus);
+  const { tracksInfo, data } = useSelector(state => state.releaseData);
+  const dispatch = useDispatch();
 
   const [analyticsCollapse, setAnalyticsCollapse] = useState(true);
 
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState();
-  const [trackData, setTrackData] = useState();
+  // const [data, setData] = useState();
   const [reFetchData, setReFetchData] = useState(1);
   useEffect(() => {
     setLoading(true)
     axios.get(`http://localhost:5000/api/v1/release/single/${id}`)
     .then(res => {
-      setData(res.data.data)
-      setTrackData(res?.data?.data?.tracks)
+      // Set Full Release Data_________
+      dispatch(setData(res.data.data))
+      // Set Album Info________________
+      const albumInfo = {...res.data.data};
+      console.log('albumInfo', albumInfo)
+      delete albumInfo?.tracks
+      dispatch(setReleaseAlbumInfo(albumInfo))
+      // Set Tracks Info______________
+      dispatch(setTracksInfo(res?.data?.data?.tracks))
       if(res.data.data.audioUrl){
         const audioUrl = res.data.data.audioUrl;
         const tittle = res.data.data.releaseTitle;
@@ -64,7 +73,7 @@ function SingleRelease() {
         const labels = res.data.data.labels;
         const featuring = res.data.data.featuring;
         const genre = res.data.data.genre;
-        setTrackData([{audioUrl, tittle, artist, labels, genre, featuring}])
+        dispatch(setTracksInfo([{audioUrl, tittle, artist, labels, genre, featuring}]))
       }
       setLoading(false)
     })
@@ -328,7 +337,7 @@ function SingleRelease() {
           <div className="d-flex" style={{ width: "100%" }}>
             <div>
               <span
-                className={`status card-type-txt ${data?.status.toLowerCase()}`}
+                className={`status card-type-txt ${data?.status?.toLowerCase()}`}
                 style={
                     data?.status == "Takedown"
                     ? { background: "#FEEBEC", color: "#E5484D" }
@@ -557,8 +566,8 @@ function SingleRelease() {
         <h3 className="release-album-title">Tracks</h3>
         <br />
         {
-          trackData &&
-          trackData?.map((track, index) => 
+          tracksInfo &&
+          tracksInfo?.map((track, index) => 
             <div key={index}>
               <TrackViewCollapsSection track={track} index=''/>
             </div>

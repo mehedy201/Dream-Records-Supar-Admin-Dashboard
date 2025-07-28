@@ -1,6 +1,8 @@
+import * as Dialog from "@radix-ui/react-dialog";
 import { useRef, useState, useEffect } from 'react';
 import { IoPauseCircleOutline, IoPlayCircleOutline } from 'react-icons/io5';
 import { RiDownloadLine } from 'react-icons/ri';
+import Modal from '../Modal';
 
 const formatTime = (time) => {
   if (isNaN(time)) return '00:00';
@@ -92,6 +94,31 @@ const handleDownload = (url) => {
     document.body.removeChild(anchor);
   };
 
+
+  const closeRef = useRef(null);
+  const editTrack = () => {
+    console.log('edit track')
+  }
+
+
+
+  const modalCss = {
+    background: 'white',
+    padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.2)',
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    maxWidth: '1100px',
+    overflowY: 'auto',
+    maxHeight: '90vh',
+    scrollbarWidth: 'thin',
+    zIndex: '3',
+    width: '80%'
+  }
+
   return (
     <>
 
@@ -174,6 +201,62 @@ const handleDownload = (url) => {
                 <button onClick={() => handleDownload(data?.audioUrl)} className="release-track-download-btn">
                     <RiDownloadLine /> Download
                 </button>
+                <div>
+                {/* <button onClick={() => editTrack(data)} className="release-track-download-btn">
+                    Edit Track
+                </button> */}
+                <Dialog.Root>
+                    <Dialog.Trigger
+                      style={{
+                        width: "100%",
+                        background: "none",
+                        border: "none",
+                        padding: 0,
+                      }}
+                      className="dropdown-item"
+                    >
+                      <p className="release-track-download-btn">
+                        Edit Track
+                    </p>
+                    </Dialog.Trigger>
+                  
+
+
+                      
+
+
+
+
+                    <Dialog.Portal style={{padding: '100px'}}>
+                      <Dialog.Overlay className="modal-overlay" />
+                      <Dialog.Content style={modalCss}>
+                        <h3 style={{ fontWeight: "500", marginTop: 0 }}>Edit Track</h3>
+
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim commodi illum fugiat facere iste quidem voluptatem in magnam ducimus blanditiis tempora tenetur excepturi aliquid rerum fuga, at rem quam consequatur aliquam reiciendis earum. Ut numquam voluptate temporibus a minima eum laborum debitis. Amet quisquam voluptatum, facilis corporis laudantium natus. Similique, sapiente explicabo asperiores nulla qui odio laborum voluptatibus molestias aliquam necessitatibus tenetur natus distinctio dolorum praesentium temporibus et pariatur rerum ullam quam, itaque magni voluptates libero dolore debitis? Sequi dicta nostrum itaque ipsam eum? Quisquam, iusto saepe possimus veniam in sint, cumque dicta illum ex eligendi eos enim quos facilis.</p>
+
+
+                        {/* Hidden Dialog.Close for programmatic close */}
+                          <Dialog.Close asChild>
+                            <button ref={closeRef} style={{ display: 'none' }} />
+                          </Dialog.Close>
+                      </Dialog.Content>
+                    </Dialog.Portal>
+
+
+
+
+
+                  </Dialog.Root>
+
+                </div>
+
+
+
+
+                  
+
+
+
             </div>
         </div>
     </>
