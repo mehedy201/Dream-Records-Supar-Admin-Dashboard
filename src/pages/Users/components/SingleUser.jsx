@@ -1,6 +1,6 @@
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Flex } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { GoLinkExternal, GoPencil } from "react-icons/go";
@@ -27,6 +27,9 @@ import isEmptyArray from "../../../hooks/isEmptyArrayCheck";
 import Pagination from "../../../components/Pagination";
 import userDemoImg from '../../../assets/artists/artist4.png'
 import NotFoundPage from "../../../components/NotFoundPage";
+import toast from "react-hot-toast";
+import { Lock } from "lucide-react";
+import textToHTML from "../../../hooks/textToHTML";
 
 
 
@@ -58,17 +61,17 @@ function SingleUser() {
   
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(false)
+  const [reFetchUser, setRefetchUser] = useState(1);
   useEffect(() => {
     setLoading(true)
     axios.get(`http://localhost:5000/admin/api/v1/users/${id}`)
     .then(res => {
       if(res.status === 200){
-        console.log(res.data.data)
         setUserData(res.data.data)
         setLoading(false)
       }
     })
-  },[id])
+  },[id, reFetchUser])
 
   const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
   const [filteredCount, setFilteredCount] = useState();
@@ -163,10 +166,63 @@ function SingleUser() {
   }
 
 
+
+  const closeRef = useRef(null);
+  const [suspendReason, setSuspendReason] = useState('');
+  const [suspendReasonErr, setSuspendReasonErr] = useState(); 
+  const userLocked = (id) => {
+    console.log('yes')
+    console.log('suspendReason', suspendReason)
+    setSuspendReasonErr('')
+    if(!suspendReason){
+      console.log('yes not suspend reason')
+      setSuspendReasonErr('Please describe suspend reason!')
+      return;
+    }
+    const date = new Date().toISOString();     
+    const userLocked = true;
+    const userLockedDate = date;
+    const status = "Suspended";
+    const payload = {userLocked, userLockedDate, suspendReason: textToHTML(suspendReason), status}
+    axios.patch(`http://localhost:5000/api/v1/users/suspend-and-unsuspend/${id}`, payload)
+    .then(res => {
+      if(res.status == 200){
+        setRefetchUser(reFetchUser + 1)
+        toast.success('User Locked')
+        closeRef.current?.click(); // close modal
+      } 
+    })
+  }
+
+  const userUnlocked = (id) => {
+    const userLocked = false;
+    const userLockedDate = '';
+    const suspendReason = ''
+    const status = "Active"
+    const payload = {userLocked, userLockedDate, suspendReason, status}
+    axios.patch(`http://localhost:5000/api/v1/users/suspend-and-unsuspend/${id}`, payload)
+    .then(res => {
+      if(res.status == 200){
+        setRefetchUser(reFetchUser + 1)
+        toast.success('User Unlocked')
+      } 
+    })
+  }
+
+
+
+
   if(loading)return <LoadingScreen/>
 
   return (
     <div className="main-content single-user-content">
+      {
+        userData?.suspendReason &&
+        <div className="notice">
+          <InfoCircledIcon />
+          <p dangerouslySetInnerHTML={{ __html: userData?.suspendReason }} ></p>
+        </div>
+      }
       <Flex className="singleUser-img-div">
         <div className="singleLabel-image-div">
           <img src={userData?.photoURL ? userData?.photoURL : userDemoImg} className="singleLabel-image" />
@@ -235,51 +291,78 @@ function SingleUser() {
                   </DropdownMenu.Item>
                   <hr />
 
-                  <DropdownMenu.Item
-                    className="dropdown-item"
-                    onSelect={(e) => e.preventDefault()}
-                  >
-                    <Dialog.Root>
-                      <Dialog.Trigger asChild>
-                        <span>
-                          <AiOutlineDelete />
-                          Suspend User
-                        </span>
-                      </Dialog.Trigger>
-                      <Dialog.Portal>
-                        <Dialog.Overlay className="dialog-overlay" />
-                        <Dialog.Content className="dialog-content">
-                          <Modal title="Provide Suspend Details">
-                            <p className="modal-description">
-                              Please Provide Suspend Details Below
-                            </p>
-                            <label
-                              htmlFor=""
-                              style={{
-                                fontSize: "12px",
-                                marginBottom: "8px",
-                                display: "block",
-                              }}
-                            >
-                              Describe suspend reason here
-                            </label>
-                            <textarea
-                              name=""
-                              id=""
-                              placeholder="Write reason here"
-                              style={{ width: "100%" }}
-                            ></textarea>
-                            <Dialog.DialogClose
-                              className="theme-btn"
-                              style={{ width: "100%", margin: "16px 0 0 0" }}
-                            >
-                              Suspend
-                            </Dialog.DialogClose>
-                          </Modal>
-                        </Dialog.Content>
-                      </Dialog.Portal>
-                    </Dialog.Root>
-                  </DropdownMenu.Item>
+                  {
+                    userData?.userLocked === true &&
+                    <DropdownMenu.Item onClick={() => userUnlocked(userData?._id)} className="dropdown-item">
+                      <Link
+                        style={{
+                          cursor: "pointer",
+                          color: "#202020",
+                          textDecoration: "none",
+                        }}
+                      >
+                        <Lock />
+                        Unsuspend
+                      </Link>
+                    </DropdownMenu.Item>
+                  }
+
+                  {
+                    (userData?.userLocked === false || userData?.userLocked === undefined) &&
+                    <DropdownMenu.Item
+                      className="dropdown-item"
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      <Dialog.Root>
+                        <Dialog.Trigger asChild>
+                          <span>
+                            <AiOutlineDelete />
+                            Suspend User
+                          </span>
+                        </Dialog.Trigger>
+                        <Dialog.Portal>
+                          <Dialog.Overlay className="dialog-overlay" />
+                          <Dialog.Content className="dialog-content">
+                            <Modal title="Provide Suspend Details">
+                              <p className="modal-description">
+                                Please Provide Suspend Details Below
+                              </p>
+                              <label
+                                htmlFor=""
+                                style={{
+                                  fontSize: "12px",
+                                  marginBottom: "8px",
+                                  display: "block",
+                                }}
+                              >
+                                Describe suspend reason here
+                              </label>
+                              <textarea
+                                name=""
+                                id=""
+                                placeholder="Write reason here"
+                                style={{ width: "100%" }}
+                                onChange={e => {console.log(e.target.value); setSuspendReason(e.target.value); setSuspendReasonErr('')}}
+                                onKeyDown={(e) => e.stopPropagation()}
+                              ></textarea>
+                              {
+                                suspendReasonErr && <p style={{color: 'red'}}>{suspendReasonErr}</p>
+                              }
+
+                              <button style={{ width: "100%", margin: "16px 0 0 0" }} className="theme-btn" onClick={() =>userLocked(userData?._id)}>Suspend</button>
+
+
+
+                              {/* Hidden Dialog.Close for programmatic close */}
+                              <Dialog.Close asChild>
+                                  <button ref={closeRef} style={{ display: 'none' }} />
+                              </Dialog.Close>
+                            </Modal>
+                          </Dialog.Content>
+                        </Dialog.Portal>
+                      </Dialog.Root>
+                    </DropdownMenu.Item>
+                  }
                 </>
               )}
             </DropdownMenu.Content>
