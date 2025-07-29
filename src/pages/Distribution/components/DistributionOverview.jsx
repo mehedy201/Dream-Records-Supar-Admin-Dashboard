@@ -1,13 +1,9 @@
 import { Flex } from "@radix-ui/themes";
 import PieChartComponent from "../../../components/PieChartComponent";
-import { DistributionOverviewContent } from "../../../data";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import ReleaseCard from "../../../components/ReleaseCard";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import formatNumber from "../../../hooks/formatNumber";
-import LoadingScreen from "../../../components/LoadingScreen";
 import NotFoundPage from "../../../components/NotFoundPage";
 
 function DistributionOverview({ adminSummary }) {
