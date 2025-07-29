@@ -130,7 +130,7 @@ function Home() {
                 {item.name}
               </p>
             </div>
-            <h1>{formatNumber(item.count)}</h1>
+            <h1>{item.count}</h1>
           </div>
         ))
         }
