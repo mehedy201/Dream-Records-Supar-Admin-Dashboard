@@ -1204,6 +1204,12 @@ label {
   z-index: 9999 !important;
 }
 
+
+@media screen and (max-width: 830px) {
+    .onlyForDesktop {
+        display: none;
+    }
+}
 /* .popover-content {
   z-index: 9999 !important;
 } */

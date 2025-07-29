@@ -2,7 +2,6 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { useRef, useState, useEffect } from 'react';
 import { IoPauseCircleOutline, IoPlayCircleOutline } from 'react-icons/io5';
 import { RiDownloadLine } from 'react-icons/ri';
-import Modal from '../Modal';
 import TrackInfoEditComponent from "../../pages/Distribution/EditRelease/TrackInfoEditComponent";
 
 const formatTime = (time) => {
@@ -98,11 +97,6 @@ const handleDownload = (url) => {
 
 
   const closeRef = useRef(null);
-  const editTrack = () => {
-    console.log('edit track')
-  }
-
-
 
   const modalCss = {
     background: 'white',
@@ -147,7 +141,7 @@ const handleDownload = (url) => {
                 <p>{data?.tittle}</p>
                 <small>Ayuska Bhowmik</small>
             </div>
-            <div className="d-flex release-album-RangeDiv">
+            <div className="d-flex release-album-RangeDiv onlyForDesktop">
                 {/* Duration _______________________________________ */}
                 <div className='audioDuration' style={{ fontSize: '14px', minWidth: '60px', marginRight: '24px' }}>
                     {formatTime(currentTime)} / {formatTime(duration)}

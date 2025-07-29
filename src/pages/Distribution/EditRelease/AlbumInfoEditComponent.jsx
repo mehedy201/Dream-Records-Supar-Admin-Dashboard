@@ -1,24 +1,22 @@
 import { useEffect, useState } from 'react';
 import SelectDropdownForCreateRelease from '../../../components/SelectDropdownForCreateRelease';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
 import ReleaseImgUpload from '../../../components/ReleaseImgUpload';
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import SearchDropdown from '../../../components/SearchDropdown';
 import './EditReleaseCss.css'
-import { setReleaseAlbumInfo } from '../../../redux/features/releaseDataHandleSlice/releaseDataHandleSlice';
+import { useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const AlbumInfoEditComponent = ({releaseAlbumInfo, closeRef}) => {
 
 
+    const {id} = useParams();
     const {userNameIdRoll} = useSelector((state) => state.userData);
     const { yearsList } = useSelector(state => state.yearsAndStatus);
-    // const { releaseAlbumInfo } = useSelector(state => state.releaseData);
     const { reFetchLabel, reFetchArtist } = useSelector(state => state.reFetchSlice);
-
-    const dispatch = useDispatch()
-
 
     const [imgLink, setImgLink] = useState(releaseAlbumInfo ? releaseAlbumInfo?.imgUrl : '');
     const defaultImgURL = releaseAlbumInfo.imgURL;
@@ -74,11 +72,16 @@ const AlbumInfoEditComponent = ({releaseAlbumInfo, closeRef}) => {
         };
         if(data.haveUPCean === 'no') delete data?.UPC
         if(data.isVariousArtists === 'no') delete data?.globalArtist
-        const albumInfoData = {...data, ...uploadedImage}
+        const payload = {...data, ...uploadedImage}
 
-        console.log(albumInfoData)  
-        closeRef.current?.click(); // close modal  
-        // dispatch(setReleaseAlbumInfo(albumInfoData))     
+        axios.patch(`http://localhost:5000/admin/api/v1/release/update-release-album-info/${id}`, payload)
+        .then(res => {
+            if(res.status == 200){
+                closeRef.current?.click(); // close modal   
+                toast.success(res.data.message)
+                window.location.reload();
+            }
+        })
     }
 
 

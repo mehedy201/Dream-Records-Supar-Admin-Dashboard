@@ -3,20 +3,22 @@ import { X } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import ReleaseAudioUpload from "../../../components/ReleaseAudioUpload";
 import SearchDropdown from "../../../components/SearchDropdown";
 import SelectDropdownForCreateRelease from "../../../components/SelectDropdownForCreateRelease";
+import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const TrackInfoEditComponent = ({track, index, closeRef}) => {
+
+    const {id} = useParams();
 
     const { trackFormat, tracksInfo} = useSelector(state => state.releaseData);
     const { reFetchArtist } = useSelector(state => state.reFetchSlice);
 
     const {userNameIdRoll} = useSelector((state) => state.userData);
     const { yearsList } = useSelector(state => state.yearsAndStatus);
-    const dispatch = useDispatch();
-
 
     // Genre and Language Data Get Form API ____________________________
     const [allGenre, setAllGenre] = useState()
@@ -54,19 +56,23 @@ const TrackInfoEditComponent = ({track, index, closeRef}) => {
     const [audioErr, setAudioErr] = useState();
 
     const [isISRC, setIsISRC] = useState(track.isISRC);
-    const {register, handleSubmit, setValue, watch, reset, control, formState: {errors}} = useForm({
+    const {register, handleSubmit, setValue, watch, control, formState: {errors}} = useForm({
         defaultValues: track
     })
 
     const onSubmit = async (data) => {
         setAudioErr('')
-        closeRef.current?.click(); // close modal   
-             
-    }
+        const updatedTracks = [...tracksInfo]; // This is tracks array of object 
+        updatedTracks[index] = data;
 
-    const closeForm = () => {
-        setShowForm(false)
-        reset()
+         axios.patch(`http://localhost:5000/admin/api/v1/release/update-release-tracks-info/${id}`, {tracks: updatedTracks})
+        .then(res => {
+            if(res.status == 200){
+                closeRef.current?.click(); // close modal   
+                toast.success('Tracks Updated!')
+                window.location.reload();
+            }
+        })
     }
 
 
