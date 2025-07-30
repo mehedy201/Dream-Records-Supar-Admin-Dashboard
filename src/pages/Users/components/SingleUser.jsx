@@ -184,7 +184,7 @@ function SingleUser() {
     const userLockedDate = date;
     const status = "Suspended";
     const payload = {userLocked, userLockedDate, suspendReason: textToHTML(suspendReason), status}
-    axios.patch(`http://localhost:5000/api/v1/users/suspend-and-unsuspend/${id}`, payload)
+    axios.patch(`http://localhost:5000/admin/api/v1/users/suspend-and-unsuspend/${id}`, payload)
     .then(res => {
       if(res.status == 200){
         setRefetchUser(reFetchUser + 1)
@@ -200,7 +200,7 @@ function SingleUser() {
     const suspendReason = ''
     const status = "Active"
     const payload = {userLocked, userLockedDate, suspendReason, status}
-    axios.patch(`http://localhost:5000/api/v1/users/suspend-and-unsuspend/${id}`, payload)
+    axios.patch(`http://localhost:5000/admin/api/v1/users/suspend-and-unsuspend/${id}`, payload)
     .then(res => {
       if(res.status == 200){
         setRefetchUser(reFetchUser + 1)
