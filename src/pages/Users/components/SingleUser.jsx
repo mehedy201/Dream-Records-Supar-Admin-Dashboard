@@ -68,6 +68,7 @@ function SingleUser() {
     .then(res => {
       if(res.status === 200){
         setUserData(res.data.data)
+        console.log(res.data.data)
         setLoading(false)
       }
     })
@@ -171,8 +172,6 @@ function SingleUser() {
   const [suspendReason, setSuspendReason] = useState('');
   const [suspendReasonErr, setSuspendReasonErr] = useState(); 
   const userLocked = (id) => {
-    console.log('yes')
-    console.log('suspendReason', suspendReason)
     setSuspendReasonErr('')
     if(!suspendReason){
       console.log('yes not suspend reason')

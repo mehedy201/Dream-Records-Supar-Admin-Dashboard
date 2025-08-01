@@ -146,7 +146,7 @@ function Distribution() {
             Overview
           </Tabs.Trigger>
           <Tabs.Trigger
-            onClick={() => navigate(`/distribution/queue/pending/1/10`)}
+            onClick={() => navigate(`/distribution/queue/QC Approval/1/10`)}
             className="tabs-trigger distribution-tabs-trigger"
             value="queue"
           >
@@ -175,9 +175,9 @@ function Distribution() {
               <button
                 ref={QCApproval}
                 className={`segmented-item ${
-                  status === "pending" ? "active" : ""
+                  status === "QC Approval" ? "active" : ""
                 }`}
-                onClick={() => {setValue("QCApproval"); navigate(`/distribution/queue/pending/1/10`)}}
+                onClick={() => {setValue("QCApproval"); navigate(`/distribution/queue/QC Approval/1/10`)}}
               >
                 QC Approval {`(${countForQueue?.QC_Approval})`}
               </button>
@@ -196,7 +196,7 @@ function Distribution() {
                 className={`segmented-item ${
                   status === "approved" ? "active" : ""
                 }`}
-                onClick={() => {setValue("ToLive"); navigate(`/distribution/queue/approved/1/10`) }}
+                onClick={() => {setValue("ToLive"); navigate(`/distribution/queue/live/1/10`) }}
               >
                 To Live {`(${countForQueue?.toLive})`}
               </button>
