@@ -1,21 +1,27 @@
-import Modal from "../../../components/Modal";
-import * as Dialog from "@radix-ui/react-dialog";
+import { Flex } from "@radix-ui/themes";
 import PropTypes from "prop-types";
 import Table from "../../../components/Table";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { useEffect, useState } from "react";
-import { IoEyeOutline } from "react-icons/io5";
-import CheckBox from "../../../components/CheckBox";
 import SelectDropdown from "../../../components/SelectDropdown";
-const contentIDColumns = [
-  { label: "Release", key: "release" },
-  { label: "User Name", key: "username" },
-  { label: "Created At", key: "date" },
-  { label: "Status", key: "status" },
-  { label: "Reason", key: "reason" },
-];
-function ContentID({ Release_Claim, renderReleaseCell }) {
+import { useSelector } from "react-redux";
+import NotFoundComponent from "../../../components/NotFoundComponent";
+import { useParams } from "react-router-dom";
+
+function ContentID({
+  years,
+  notFound,
+  filterByYear,
+  filterByStatus,
+  handleKeyPress,
+  setSearchText,
+}) {
+
+  const {status} = useParams();
+  const {serviceRequestData} = useSelector((state) => state.serviceRequestPageSlice);
+  const { yearsList } = useSelector(state => state.yearsAndStatus);
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
   useEffect(() => {
     const handleResize = () => {
@@ -26,105 +32,31 @@ function ContentID({ Release_Claim, renderReleaseCell }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   const dropdownItem = (
-    <>
-      <SelectDropdown
-        options={["Option 1", "Option 2", "Option 3"]}
-        placeholder="All time"
-      />
-
-      {isMobile && <br />}
-      <SelectDropdown
-        options={["Option 1", "Option 2", "Option 3"]}
-        placeholder="All Releases"
-      />
-    </>
+      <>
+        <SelectDropdown
+          options={yearsList}
+          placeholder={`${years ? years : 'All Time'}`}
+          filterByYearAndStatus={filterByYear}
+        />
+  
+        {isMobile && <br />}
+        <SelectDropdown
+          options={['All', 'Pending', 'Solved','Rejected']}
+          placeholder={status}
+          filterByYearAndStatus={filterByStatus}
+        />
+      </>
   );
-  const ProcessContent_Id = Release_Claim.map((item, index) => ({
-    ...item,
-    reason:
-      item.reason === "info_icon" ? (
-        <Dialog.Root key={index}>
-          <Dialog.Trigger className="serviceRequest-view-trigger">
-            <IoEyeOutline style={{ width: "24px", height: "24px" }} />
-          </Dialog.Trigger>
-          <Modal title="Content ID" className="serviceRequest-modal-content">
-            <div className=" serviceRequest-tableModal-info">
-              <div className="d-flex">
-                <p>Tittle:</p>
-                <p>{item.release}</p>
-              </div>
-              <div className="d-flex">
-                <p>UPC:</p>
-                <p>{item.release_sample}</p>
-              </div>
-              <div className="d-flex">
-                <p>Created At:</p>
-                <p>{item.date}</p>
-              </div>
-              <p>Change Status: </p>
 
-              <SelectDropdown
-                className="serviceRequest-modal-dropdown"
-                options={["Rejected", "Solved", "Pending"]}
-                placeholder={item.status}
-              />
-              {item.status === "REJECTED" ? (
-                <>
-                  <br />
-                  <CheckBox
-                    label="Reason 1"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 2"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 3"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 4"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 5"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <p style={{ marginTop: "8px" }}>Reject Reason: </p>
-                  <textarea
-                    name=""
-                    id=""
-                    placeholder="Enter reject description"
-                    style={{ width: "100%" }}
-                  ></textarea>
-                  <p
-                    className="messageBox-time"
-                    style={{ paddingRight: 0, marginBottom: 0 }}
-                  >
-                    21 Jan 2025, 19:25
-                  </p>
-                </>
-              ) : (
-                <br />
-              )}
-              <Dialog.Close className="close-button">Submit</Dialog.Close>
-            </div>
-          </Modal>
-        </Dialog.Root>
-      ) : (
-        item.reason
-      ),
-  }));
+
   return (
     <div>
+      {" "}
+      <Flex className="page-heading serviceRequest-heading">
+        <h2 style={{ fontWeight: "500", fontSize: "24px" }}>Service Request</h2>
+      </Flex>
       <div className="search-setion">
-        <input type="text" placeholder="Search..." />
+        <input type="text" onKeyPress={handleKeyPress} onChange={e => setSearchText(e.target.value)} placeholder="Search..." />
         {isMobile ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
@@ -154,11 +86,16 @@ function ContentID({ Release_Claim, renderReleaseCell }) {
           dropdownItem
         )}
       </div>
-      <Table
-        columns={contentIDColumns}
-        data={ProcessContent_Id}
-        renderCell={renderReleaseCell}
-      />
+      {
+        serviceRequestData &&
+        <Table
+          serviceRequestData={serviceRequestData}
+          tableFor="ContentID"
+        />
+      }
+      {
+        notFound && <NotFoundComponent/> 
+      }
     </div>
   );
 }
@@ -167,9 +104,5 @@ ContentID.propTypes = {
   setModalReleaseDropdown1: PropTypes.func.isRequired,
   Release_Claim: PropTypes.array.isRequired,
   renderReleaseCell: PropTypes.func.isRequired,
-  selectedOption1: PropTypes.bool.isRequired,
-  setSelectedOption1: PropTypes.func.isRequired,
-  selectedOption2: PropTypes.bool.isRequired,
-  setSelectedOption2: PropTypes.func.isRequired,
 };
 export default ContentID;

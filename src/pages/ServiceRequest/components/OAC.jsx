@@ -1,27 +1,29 @@
 import { useEffect, useState } from "react";
-
+import { Flex } from "@radix-ui/themes";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import PropTypes from "prop-types";
 import Table from "../../../components/Table";
-import { IoEyeOutline } from "react-icons/io5";
 import SelectDropdown from "../../../components/SelectDropdown";
-import * as Dialog from "@radix-ui/react-dialog";
-import CheckBox from "../../../components/CheckBox";
-import Modal from "../../../components/Modal";
-const OACColumns = [
-  { label: "Release", key: "release" },
-  { label: "User Name", key: "username" },
-  { label: "Topic Channel Link", key: "url" },
-  { label: "Created At", key: "date" },
-  { label: "Status", key: "status" },
-  { label: "Action", key: "reason" },
-];
-function OAC({
-  Release_Claim,
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import NotFoundComponent from "../../../components/NotFoundComponent";
 
-  renderReleaseCell,
+
+function OAC({
+  years,
+  notFound,
+  filterByYear,
+  filterByStatus,
+  handleKeyPress,
+  setSearchText,
 }) {
+
+  const {status} = useParams();
+  const {serviceRequestData} = useSelector((state) => state.serviceRequestPageSlice);
+  const { yearsList } = useSelector(state => state.yearsAndStatus);
+
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
   useEffect(() => {
     const handleResize = () => {
@@ -34,166 +36,27 @@ function OAC({
   const dropdownItem = (
     <>
       <SelectDropdown
-        options={["Option 1", "Option 2", "Option 3"]}
-        placeholder="All time"
+        options={yearsList}
+        placeholder={`${years ? years : 'All Time'}`}
+        filterByYearAndStatus={filterByYear}
       />
-
       {isMobile && <br />}
       <SelectDropdown
-        options={["Option 1", "Option 2", "Option 3"]}
-        placeholder="All Releases"
+        options={['All', 'Pending', 'Solved','Rejected']}
+        placeholder={status}
+        filterByYearAndStatus={filterByStatus}
       />
     </>
   );
-  const ProcessOAC = Release_Claim.map((item, index) => ({
-    ...item,
-    reason:
-      item.reason === "info_icon" ? (
-        <Dialog.Root key={index}>
-          <Dialog.Trigger className="serviceRequest-view-trigger">
-            <IoEyeOutline style={{ width: "24px", height: "24px" }} />
-          </Dialog.Trigger>
-          <Modal title="Content ID" className="serviceRequest-modal-content">
-            <div className=" serviceRequest-tableModal-info">
-              <div className="d-flex">
-                <p>Choose Artist:</p>
-                <p>Arpita Modak</p>
-              </div>
-              <div className="serviceRequest-track-div">
-                <p>Track 1</p>
-                <div className="d-flex">
-                  <p>Tittle:</p>
-                  <p>{item.release}</p>
-                </div>
-                <div className="d-flex">
-                  <p>UPC:</p>
-                  <p>{item.release_sample}</p>
-                </div>
-              </div>
-              <div className="serviceRequest-track-div">
-                <p>Track 2</p>
-                <div className="d-flex">
-                  <p>Tittle:</p>
-                  <p>{item.release}</p>
-                </div>
-                <div className="d-flex">
-                  <p>UPC:</p>
-                  <p>{item.release_sample}</p>
-                </div>
-              </div>
-              <div className="serviceRequest-track-div">
-                <p>Track 3</p>
-                <div className="d-flex">
-                  <p>Tittle:</p>
-                  <p>{item.release}</p>
-                </div>
-                <div className="d-flex">
-                  <p>UPC:</p>
-                  <p>{item.release_sample}</p>
-                </div>
-              </div>
-              <div className="serviceRequest-track-div">
-                <p>Track 4</p>
-                <div className="d-flex">
-                  <p>Tittle:</p>
-                  <p>{item.release}</p>
-                </div>
-                <div className="d-flex">
-                  <p>UPC:</p>
-                  <p>{item.release_sample}</p>
-                </div>
-              </div>
-              <div className="serviceRequest-track-div">
-                <p>Track 5</p>
-                <div className="d-flex">
-                  <p>Tittle:</p>
-                  <p>{item.release}</p>
-                </div>
-                <div className="d-flex">
-                  <p>UPC:</p>
-                  <p>{item.release_sample}</p>
-                </div>
-              </div>
-              <div className="d-flex">
-                <p>Artist’s Topic channel link</p>
-                <p>
-                  {item.url.length > 30
-                    ? item.url.slice(0, 30) + "..."
-                    : item.url}
-                </p>
-              </div>
-              <div className="d-flex">
-                <p>Artist’s YoutTube channel link</p>
-                <p>
-                  {item.url.length > 30
-                    ? item.url.slice(0, 30) + "..."
-                    : item.url}
-                </p>
-              </div>
-              <p>Change Status: </p>
 
-              <SelectDropdown
-                className="serviceRequest-modal-dropdown"
-                options={["Account", "Profile", "Settings"]}
-                placeholder={item.status}
-              />
-              {item.status === "REJECTED" ? (
-                <>
-                  <br />
-                  <CheckBox
-                    label="Reason 1"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 2"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 3"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 4"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 5"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <p style={{ marginTop: "8px" }}>Reject Reason: </p>
-                  <textarea
-                    name=""
-                    id=""
-                    placeholder="Enter reject description"
-                    style={{ width: "100%" }}
-                  ></textarea>
-                  <p
-                    className="messageBox-time"
-                    style={{ paddingRight: 0, marginBottom: 0 }}
-                  >
-                    21 Jan 2025, 19:25
-                  </p>
-                </>
-              ) : (
-                <br />
-              )}
-              <Dialog.Close className="close-button">Submit</Dialog.Close>
-            </div>
-          </Modal>
-        </Dialog.Root>
-      ) : (
-        item.reason
-      ),
-  }));
+
   return (
     <div>
+      <Flex className="page-heading serviceRequest-heading">
+        <h2 style={{ fontWeight: "500", fontSize: "24px" }}>Service Request</h2>
+      </Flex>
       <div className="search-setion">
-        <input type="text" placeholder="Search..." />
+        <input onKeyPress={handleKeyPress} onChange={e => setSearchText(e.target.value)}  type="text" placeholder="Search..." />
         {isMobile ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
@@ -223,11 +86,16 @@ function OAC({
           dropdownItem
         )}
       </div>
-      <Table
-        columns={OACColumns}
-        data={ProcessOAC}
-        renderCell={renderReleaseCell}
-      />
+      {
+        serviceRequestData &&
+        <Table
+          serviceRequestData={serviceRequestData}
+          tableFor="OAC"
+        />
+      }
+      {
+        notFound && <NotFoundComponent/> 
+      }
     </div>
   );
 }
@@ -236,10 +104,7 @@ OAC.propTypes = {
   setModalReleaseDropdown1: PropTypes.func.isRequired,
   Release_Claim: PropTypes.array.isRequired,
   renderReleaseCell: PropTypes.func.isRequired,
-  selectedOption1: PropTypes.bool.isRequired,
-  setSelectedOption1: PropTypes.func.isRequired,
-  selectedOption2: PropTypes.bool.isRequired,
-  setSelectedOption2: PropTypes.func.isRequired,
+
   artistsItems: PropTypes.array.isRequired,
 };
 export default OAC;

@@ -23,7 +23,7 @@ const menuItems = [
   { name: "Artists", path: "/artists", icon: groupIcon },
   { name: "Labels", path: "/Labels", icon: labelsIcon },
   { name: "Analytics", path: "/analytics/1/10", icon: analyticsIcon },
-  { name: "Service Request", path: "/ServiceRequest",icon: serviceRequestIcon,},
+  { name: "Service Request", path: "/service-request/Release-Claim/1/10/All",icon: serviceRequestIcon,},
   { name: "Transactions", path: "/transaction/All/1/10", icon: transactionsIcon },
   { name: "Support", path: "/support", icon: supportIcon, divider: true },
   { name: "Help", path: "/help", icon: helpIcon },

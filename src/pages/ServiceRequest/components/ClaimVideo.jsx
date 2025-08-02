@@ -1,23 +1,31 @@
 import { useEffect, useState } from "react";
+import { Flex } from "@radix-ui/themes";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import * as Dialog from "@radix-ui/react-dialog";
-import Modal from "../../../components/Modal";
-// import SearchDropdown from "../../../components/SearchDropdown";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import PropTypes from "prop-types";
 import Table from "../../../components/Table";
-import { IoEyeOutline } from "react-icons/io5";
-import CheckBox from "../../../components/CheckBox";
 import SelectDropdown from "../../../components/SelectDropdown";
-const ClaimVideoColumns = [
-  { label: "Release", key: "release" },
-  { label: "User Name", key: "username" },
-  { label: "Video Link", key: "url" },
-  { label: "Created At", key: "date" },
-  { label: "Status", key: "status" },
-  { label: "Action", key: "reason" },
-];
-function ClaimVideo({ Release_Claim, renderReleaseCell }) {
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import NotFoundComponent from "../../../components/NotFoundComponent";
+
+
+
+function ClaimVideo({
+    years,
+    notFound,
+    filterByYear,
+    filterByStatus,
+    handleKeyPress,
+    setSearchText,
+}) {
+
+
+  const {status} = useParams();
+  const {serviceRequestData} = useSelector((state) => state.serviceRequestPageSlice);
+  const { yearsList } = useSelector(state => state.yearsAndStatus);
+
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
   useEffect(() => {
     const handleResize = () => {
@@ -27,116 +35,31 @@ function ClaimVideo({ Release_Claim, renderReleaseCell }) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  
   const dropdownItem = (
     <>
       <SelectDropdown
-        options={["Option 1", "Option 2", "Option 3"]}
-        placeholder="All time"
+        options={yearsList}
+        placeholder={`${years ? years : 'All Time'}`}
+        filterByYearAndStatus={filterByYear}
       />
-
       {isMobile && <br />}
       <SelectDropdown
-        options={["Option 1", "Option 2", "Option 3"]}
-        placeholder="All Releases"
+        options={['All', 'Pending', 'Solved','Rejected']}
+        placeholder={status}
+        filterByYearAndStatus={filterByStatus}
       />
     </>
   );
-  const ProcessClaimVideo = Release_Claim.map((item, index) => ({
-    ...item,
-    reason:
-      item.reason === "info_icon" ? (
-        <Dialog.Root key={index}>
-          <Dialog.Trigger className="serviceRequest-view-trigger">
-            <IoEyeOutline style={{ width: "24px", height: "24px" }} />
-          </Dialog.Trigger>
-          <Modal title="Claim Video" className="serviceRequest-modal-content">
-            <div className=" serviceRequest-tableModal-info">
-              <div className="d-flex">
-                <p>Tittle:</p>
-                <p>{item.release}</p>
-              </div>
-              <div className="d-flex">
-                <p>UPC:</p>
-                <p>{item.release_sample}</p>
-              </div>
-              {item.status === "REJECTED" && (
-                <div className="d-flex">
-                  <p>Type:</p>
-                  <p>{item.type}</p>
-                </div>
-              )}
-              <div className="d-flex">
-                <p>URL:</p>
-                <p>{item.url}</p>
-              </div>
-              <div className="d-flex">
-                <p>Created At:</p>
-                <p>{item.date}</p>
-              </div>
-              <p>Change Status: </p>
 
-              <SelectDropdown
-                className="serviceRequest-modal-dropdown"
-                options={["Rejected", "Solved", "Pending"]}
-                placeholder={item.status}
-              />
-              {item.status === "REJECTED" ? (
-                <>
-                  <br />
-                  <CheckBox
-                    label="Reason 1"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 2"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 3"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 4"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <CheckBox
-                    label="Reason 5"
-                    fromPage="serviceRequestPage"
-                    defaultChecked={true}
-                  />
-                  <p style={{ marginTop: "8px" }}>Reject Reason: </p>
-                  <textarea
-                    name=""
-                    id=""
-                    placeholder="Enter reject description"
-                    style={{ width: "100%" }}
-                  ></textarea>
-                  <p
-                    className="messageBox-time"
-                    style={{ paddingRight: 0, marginBottom: 0 }}
-                  >
-                    21 Jan 2025, 19:25
-                  </p>
-                </>
-              ) : (
-                <br />
-              )}
-              <Dialog.Close className="close-button">Submit</Dialog.Close>
-            </div>
-          </Modal>
-        </Dialog.Root>
-      ) : (
-        item.reason
-      ),
-  }));
   return (
     <div>
+      <Flex className="page-heading serviceRequest-heading">
+        <h2 style={{ fontWeight: "500", fontSize: "24px" }}>Service Request</h2>
+      </Flex>
       <div className="search-setion">
-        <input type="text" placeholder="Search..." />
+        <input onKeyPress={handleKeyPress} onChange={e => setSearchText(e.target.value)} type="text" placeholder="Search..." />
         {isMobile ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
@@ -166,22 +89,21 @@ function ClaimVideo({ Release_Claim, renderReleaseCell }) {
           dropdownItem
         )}
       </div>
-      <Table
-        columns={ClaimVideoColumns}
-        data={ProcessClaimVideo}
-        renderCell={renderReleaseCell}
-      />
+      {
+        serviceRequestData &&
+        <Table
+          serviceRequestData={serviceRequestData}
+          tableFor="ClaimVideo"
+        />
+      }
+      {
+        notFound && <NotFoundComponent/> 
+      }
     </div>
   );
 }
 ClaimVideo.propTypes = {
-  modalReleaseDropdown1: PropTypes.bool.isRequired,
-  setModalReleaseDropdown1: PropTypes.func.isRequired,
   Release_Claim: PropTypes.array.isRequired,
   renderReleaseCell: PropTypes.func.isRequired,
-  selectedOption1: PropTypes.bool.isRequired,
-  setSelectedOption1: PropTypes.func.isRequired,
-  selectedOption2: PropTypes.bool.isRequired,
-  setSelectedOption2: PropTypes.func.isRequired,
 };
 export default ClaimVideo;

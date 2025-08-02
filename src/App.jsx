@@ -171,8 +171,10 @@ function App() {
           />
           {/* Distribution Route End_________________________________________ */}
           {/* _______________________________________________________________ */}
+          {/* Service Request Route Start____________________________________ */}
+          {/* _______________________________________________________________ */}
           <Route
-            path="/ServiceRequest"
+            path="/service-request/:request/:pageNumber/:perPageItem/:status"
             element={
               <ServiceRequest
                 artistsItems={artistsItems}
@@ -180,6 +182,8 @@ function App() {
               />
             }
           />
+          {/* Service Request Route End______________________________________ */}
+          {/* _______________________________________________________________ */}
           {/* Transection Route Start________________________________________ */}
           {/* _______________________________________________________________ */}
           <Route
