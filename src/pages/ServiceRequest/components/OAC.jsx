@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Flex } from "@radix-ui/themes";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
@@ -8,6 +8,12 @@ import SelectDropdown from "../../../components/SelectDropdown";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import NotFoundComponent from "../../../components/NotFoundComponent";
+import { Dialog } from "radix-ui";
+import Modal from "../../../components/Modal";
+import localDate from "../../../hooks/localDate";
+import { IoEyeOutline } from "react-icons/io5";
+import releasePlaceHolderImg from '../../../assets/release-placeholder.png'
+import ServiceRequestStatusUpdateForm from "../../../components/FormForUpdateStatus/ServiceRequestStatusUpdateForm";
 
 
 function OAC({
@@ -49,6 +55,8 @@ function OAC({
     </>
   );
 
+  const closeRef = useRef(null);
+
 
   return (
     <div>
@@ -86,13 +94,145 @@ function OAC({
           dropdownItem
         )}
       </div>
-      {
+
+
+
+      {/* Tabel  */}
+      <div className="table-wrapper">
+        <table className='theme-table'>
+          <thead>
+            <tr>
+              <th>Release</th>
+              <th>Topic Channel Link</th>
+              <th>Created At</th>
+              <th>Status</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              serviceRequestData ?
+              serviceRequestData?.map((data, index) => 
+                <tr key={index}>
+                    <td>
+                      {
+                        Array.isArray(data?.release) &&
+                        data?.release?.map(item => 
+                          <div style={{margin: '3px'}} key={item?._id} className="release-table-img-td">
+                            <img src={item?.imgUrl ? item?.imgUrl : releasePlaceHolderImg} alt="" />
+                            <div>
+                              <p>{item?.releaseTitle}</p>
+                              <small>UPC: {item?.UPC}</small>
+                            </div>
+                          </div>
+                        )
+                      }
+                      {
+                        typeof data?.release === 'object' && data?.release?.releaseTitle &&
+                        <div className="release-table-img-td">
+                          <img src={data?.release?.imgUrl ? data?.release?.imgUrl : releasePlaceHolderImg} alt="" />
+                          <div>
+                            <p>{data?.release?.releaseTitle}</p>
+                            <small>UPC: {data?.release?.UPC}</small>
+                          </div>
+                        </div>
+                      }
+                    </td>
+                    <td>Topic Channel Link</td>
+                    <td>{data?.isoDate ? localDate(data?.isoDate) : '--'}</td>
+                    <td><span className={`status ${data?.status?.toLowerCase()}`}>{data?.status}</span></td>
+                    <td>
+                      <Dialog.Root>
+                        <Dialog.Trigger className="serviceRequest-view-trigger">
+                          <IoEyeOutline style={{ width: "24px", height: "24px" }} />
+                        </Dialog.Trigger>
+                        <Modal title='OAC'>
+                          {
+                            Array.isArray(data?.release) &&
+                            data?.release?.map(item => 
+                              <div key={item?._id} style={{gap: '10px'}} className="d-flex">
+                                <p>Tittle:</p>
+                                <p>{item?.releaseTitle}</p>
+                              </div>
+                            )
+                          }
+                          { data?.release?.releaseTitle &&
+                            <div style={{gap: '10px'}} className="d-flex">
+                                <p>Tittle:</p>
+                                <p>{data?.release?.releaseTitle}</p>
+                            </div>
+                          }
+                         <div style={{gap: '10px'}} className="d-flex">
+                            <p>Artist's:</p>
+                            <p>{data?.artist?.map(artist => artist.artistName).join(', ')}</p>
+                          </div>
+                          <div style={{gap: '10px'}} className="d-flex">
+                            <p>Topic Channel Link:</p>
+                            <p>{data?.artistsTopicChannelLink}</p>
+                          </div>
+                          <div style={{gap: '10px'}} className="d-flex">
+                            <p>Artist Youtube Link:</p>
+                            <p>{data?.artistsYoutubeChannelLink}</p>
+                          </div>
+                          <div style={{gap: '10px'}} className="d-flex">
+                            <p>Created At:</p>
+                            <p>{data?.isoDate ? localDate(data?.isoDate) : '--'}</p>
+                          </div>
+                          <div style={{gap: '10px'}} className="d-flex">
+                            <p>Status:</p>
+                            <p>{data?.status}</p>
+                          </div>
+                          {
+                            data?.actionRequired &&
+                            <div style={{gap: '10px'}} className="">
+                              <p style={{ fontSize: "14px", color: "#838383" }}>
+                                Reject Reason:
+                              </p>
+                              <div dangerouslySetInnerHTML={{ __html: data?.actionRequired }} />
+                            </div>
+                          }
+
+                          {
+                            data?.rejectionReasons && 
+                            <div>
+                              {
+                                data?.rejectionReasons?.map((r, index) => 
+                                  <div key={index}>
+                                    <p style={{fontWeight: '14px'}}>{r}</p>
+                                  </div>
+                                )
+                              }
+                            </div>
+                          }
+                          <br />
+                          <hr />
+                          <br />
+                          {/* Update Claim Status Form  */}
+                          <ServiceRequestStatusUpdateForm id={data._id} closeRef={closeRef}/>
+                          {/* Hidden Dialog.Close for programmatic close */}
+                          <Dialog.Close asChild>
+                            <button ref={closeRef} style={{ display: 'none' }} />
+                          </Dialog.Close>
+                        </Modal>
+                      </Dialog.Root>
+                    </td>
+                </tr>
+              ) : null
+            }
+          </tbody>
+        </table>
+      </div>
+
+
+
+
+      {/* {
         serviceRequestData &&
         <Table
           serviceRequestData={serviceRequestData}
           tableFor="OAC"
         />
-      }
+      } */}
       {
         notFound && <NotFoundComponent/> 
       }

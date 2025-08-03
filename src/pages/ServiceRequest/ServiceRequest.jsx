@@ -360,19 +360,24 @@ const ServiceRequest = () => {
     .then(res => {
       if(res.status === 200){
         setServiceCount(res.data.data)
+        setLoading(false)
       }
     })
     axios.get(`http://localhost:5000/common/api/v1/claim-release/all-claim/?type=${request}&page=${pageNumber}&limit=${perPageItem}&status=${status}&search=${search}&years=${years}`)
     .then(res => {
         if(res.status === 200){
+          console.log(res.data.data)
           dispatch(setServiceRequestData(res.data.data))
-          if(isEmptyArray(res.data.data))setNotFound(true)
+          if(isEmptyArray(res.data.data)){
+            setNotFound(true)
+          }else{
+            setNotFound(false)
+          }
           setFilteredCount(res.data.filteredCount);
           setTotalPages(res.data.totalPages);
           setLoading(false)
         }
     })
-    setLoading(false)
   },[pageNumber, perPageItem, years, search, reFetchServiceRequest])
 
   // Handle Page Change ________________________________
@@ -408,43 +413,43 @@ const ServiceRequest = () => {
           <Tabs.Trigger onClick={() => navigate('/service-request/Release-Claim/1/10/All')} className="tabs-trigger" value="Release Claim">
             Release Claim
             <div className="tabs-notification">
-              <p>{serviceCount?.ReleaseClaim ? serviceCount?.ReleaseClaim : 0}</p>
+              <p>{serviceCount?.ReleaseClaim}</p>
             </div>
           </Tabs.Trigger>
           <Tabs.Trigger onClick={() => navigate('/service-request/Content-ID/1/10/All')} className="tabs-trigger" value="Content ID">
             Content ID
             <div className="tabs-notification">
-              <p>{serviceCount?.ContentID ? serviceCount?.ContentID : 0}</p>
+              <p>{serviceCount?.ContentID}</p>
             </div>
           </Tabs.Trigger>
           <Tabs.Trigger onClick={() => navigate('/service-request/Claim-Video/1/10/All')} className="tabs-trigger" value="Claim Video">
             Claim Video
             <div className="tabs-notification">
-              <p>{serviceCount?.ClaimVideo ? serviceCount?.ClaimVideo : 0}</p>
+              <p>{serviceCount?.ClaimVideo}</p>
             </div>
           </Tabs.Trigger>
           <Tabs.Trigger onClick={() => navigate('/service-request/Blocked-Video/1/10/All')} className="tabs-trigger" value="Blocked Video">
             Blocked Video
             <div className="tabs-notification">
-              <p>{serviceCount?.BlockedVideo ? serviceCount?.BlockedVideo : 0}</p>
+              <p>{serviceCount?.BlockedVideo}</p>
             </div>
           </Tabs.Trigger>
           <Tabs.Trigger onClick={() => navigate('/service-request/OAC/1/10/All')} className="tabs-trigger" value="OAC">
             OAC
             <div className="tabs-notification">
-              <p>{serviceCount?.OAC ? serviceCount?.OAC : 0}</p>
+              <p>{serviceCount?.OAC}</p>
             </div>
           </Tabs.Trigger>
           <Tabs.Trigger onClick={() => navigate('/service-request/Profile-Linking/1/10/All')} className="tabs-trigger" value="Profile Linking">
             Profile Linking{" "}
             <div className="tabs-notification">
-              <p>{serviceCount?.ProfileLinking ? serviceCount?.ProfileLinking : 0}</p>
+              <p>{serviceCount?.ProfileLinking}</p>
             </div>
           </Tabs.Trigger>
           <Tabs.Trigger onClick={() => navigate('/service-request/Whitelist/1/10/All')} className="tabs-trigger" value="Whitelist">
             Whitelist{" "}
             <div className="tabs-notification">
-              <p>{serviceCount?.Whitelist ? serviceCount?.Whitelist : 0}</p>
+              <p>{serviceCount?.Whitelist}</p>
             </div>
           </Tabs.Trigger>
         </Tabs.List>
