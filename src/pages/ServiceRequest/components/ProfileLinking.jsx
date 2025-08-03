@@ -3,7 +3,6 @@ import { Flex } from "@radix-ui/themes";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import PropTypes from "prop-types";
-import Table from "../../../components/Table";
 import SelectDropdown from "../../../components/SelectDropdown";
 import { useSelector } from "react-redux";
 import NotFoundComponent from "../../../components/NotFoundComponent";

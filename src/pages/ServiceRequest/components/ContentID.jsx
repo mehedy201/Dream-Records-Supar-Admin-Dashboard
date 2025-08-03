@@ -1,6 +1,5 @@
 import { Flex } from "@radix-ui/themes";
 import PropTypes from "prop-types";
-import Table from "../../../components/Table";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { useEffect, useRef, useState } from "react";
