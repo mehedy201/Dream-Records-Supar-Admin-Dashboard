@@ -10,9 +10,12 @@ import localDate from '../../hooks/localDate';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Modal from '../Modal';
 import { Check, ChevronDown } from 'lucide-react';
+import * as Checkbox from '@radix-ui/react-checkbox';
+import { FaCheck } from 'react-icons/fa';
+import textToHTML from '../../hooks/textToHTML';
 
 const ReleaseTable = ({ columns = [], data }) => {
 
@@ -20,6 +23,16 @@ const ReleaseTable = ({ columns = [], data }) => {
     // _____________________________________________________________________
     // Move to Review Releae Function___________________________________
     const {userData} = useSelector((state) => state.userData);
+
+    const [releaseRejectionsList, setReleaseRejectionsList] = useState([]);
+    useEffect( () => {
+        axios.get(`http://localhost:5000/admin/api/v1/settings/release-rejections-list`)
+        .then(res => {
+        if(res.status == 200){
+            setReleaseRejectionsList(res.data.data);
+        }
+        })
+    }, [])
 
     const moveToReview = (id) => {
         const payload = {
@@ -34,7 +47,7 @@ const ReleaseTable = ({ columns = [], data }) => {
         axios.patch(`http://localhost:5000/admin/api/v1/release/update-release-status/${id}`, payload)
         .then(res => {
         if(res.status == 200){
-            setReFetchData(reFetchData + 1)
+            window.location.reload();
         }
         })
     }
@@ -52,7 +65,7 @@ const ReleaseTable = ({ columns = [], data }) => {
         axios.patch(`http://localhost:5000/admin/api/v1/release/update-release-status/${id}`, payload)
         .then(res => {
         if(res.status == 200){
-            setReFetchData(reFetchData + 1)
+            window.location.reload();
         }
         })
     }
@@ -62,11 +75,14 @@ const ReleaseTable = ({ columns = [], data }) => {
     const [errorRejectType, setErrorRejectType] = useState('');
     const [rejectInputText, setRejectInputText] = useState('');
     const [errorRejectInputText, setErrorRejectInputText] = useState();
-
+    const [selectedReasons, setSelectedReasons] = useState([]);
+    const [rejectedReasonErr, setRejectedReasonErr] = useState('')
     const closeRef = useRef(null);
-    const rejectRelease = (data) => {
+    const rejectRelease = (id) => {
+
         setErrorRejectType('')
         setErrorRejectInputText('')
+        setRejectedReasonErr('')
         if(!rejectType){
             setErrorRejectType('Please Select Type')
             return;
@@ -75,19 +91,23 @@ const ReleaseTable = ({ columns = [], data }) => {
             setErrorRejectInputText('Reject reason required')
             return;
         }
+        if(selectedReasons.length === 0){
+            setRejectedReasonErr('At least one reason is required')
+            return;
+        }
 
         const actionRequired = textToHTML(rejectInputText);
-        let actionReqHistory = {};
-        if(data?.actionReqHistory){
-            actionReqHistory = data?.actionReqHistory
-        }
-        actionReqHistory.push(actionRequired)
+        let actionReqHistory = Array.isArray(data?.actionReqHistory)
+            ? [...data.actionReqHistory]
+            : [];
+        actionReqHistory.push(actionRequired);
 
         let payload = {}
         if(rejectType === 'Action Required'){
         payload = {
             status: rejectType,
             actionRequired,
+            rejectionReasons: selectedReasons,
             actionRequiredAdminInfo: {
                 adminEmail: userData?.email,
                 adminUserName: userData?.userName,
@@ -99,6 +119,7 @@ const ReleaseTable = ({ columns = [], data }) => {
         payload = {
             status: rejectType,
             actionRequired,
+            rejectionReasons: selectedReasons,
             takedownAdminInfo: {
                 adminEmail: userData?.email,
                 adminUserName: userData?.userName,
@@ -110,6 +131,7 @@ const ReleaseTable = ({ columns = [], data }) => {
         payload = {
             status: rejectType,
             actionRequired,
+            rejectionReasons: selectedReasons,
             blockedAdminInfo: {
                 adminEmail: userData?.email,
                 adminUserName: userData?.userName,
@@ -121,6 +143,7 @@ const ReleaseTable = ({ columns = [], data }) => {
         payload = {
             status: rejectType,
             actionRequired,
+            rejectionReasons: selectedReasons,
             suspendAdminInfo: {
                 adminEmail: userData?.email,
                 adminUserName: userData?.userName,
@@ -132,6 +155,7 @@ const ReleaseTable = ({ columns = [], data }) => {
         payload = {
             status: rejectType,
             actionRequired,
+            rejectionReasons: selectedReasons,
             errorAdminInfo: {
                 adminEmail: userData?.email,
                 adminUserName: userData?.userName,
@@ -141,15 +165,29 @@ const ReleaseTable = ({ columns = [], data }) => {
         }
         }
 
+        console.log(data)
+
         axios.patch(`http://localhost:5000/admin/api/v1/release/update-release-status/${id}`, payload)
         .then(res => {
         if(res.status == 200){
-            setReFetchData(reFetchData + 1)
+            console.log(res)
+            window.location.reload();
+            closeRef.current?.click(); // close modal  
         }
         })
-        closeRef.current?.click(); // close modal  
     }
 
+
+
+    
+
+  const toggleReason = (reason) => {
+    setSelectedReasons((prev) =>
+      prev.includes(reason)
+        ? prev.filter((r) => r !== reason)
+        : [...prev, reason]
+    );
+  };
 
 
     return (
@@ -294,6 +332,37 @@ const ReleaseTable = ({ columns = [], data }) => {
                                                         errorRejectType && <p style={{color: 'red'}}>{errorRejectType}</p>
                                                         }
 
+                                                        <p>Rejected Reasons</p>
+                                                        {releaseRejectionsList?.map((option) => {
+                                                            const isChecked = selectedReasons.includes(option.option);
+                                                            return (
+                                                            <div
+                                                                key={option._id}
+                                                                style={{display: 'flex', gap: '5px', alignItems: 'center'}}
+                                                                className="checkbox-container"
+                                                            >
+                                                                <Checkbox.Root
+                                                                id={option._id}
+                                                                className="CheckboxRoot"
+                                                                checked={isChecked}
+                                                                onCheckedChange={() => {toggleReason(option.option); setRejectedReasonErr('')}}
+                                                                >
+                                                                <Checkbox.Indicator className="CheckboxIndicator">
+                                                                    <FaCheck />
+                                                                </Checkbox.Indicator>
+                                                                </Checkbox.Root>
+                                                                <label htmlFor={option._id} className="checkbox-label">
+                                                                {option.option}
+                                                                </label>
+                                                            </div>
+                                                            );
+                                                        })}
+
+
+                                                        { rejectedReasonErr && (
+                                                            <p style={{ color: 'red' }}>{rejectedReasonErr}</p>
+                                                        )}
+
                                                         <label className="singleRelease-modal-label" htmlFor="">
                                                         Describe issue here *
                                                         </label>
@@ -311,7 +380,7 @@ const ReleaseTable = ({ columns = [], data }) => {
                                                         errorRejectInputText && <p style={{color: 'red'}}>{errorRejectInputText}</p>
                                                         }
                                                     </div>
-                                                    <button onClick={() => rejectRelease(data)} className="close-button">Reject</button>
+                                                    <button onClick={() => rejectRelease(d._id)} className="close-button">Reject</button>
 
                                                     {/* Hidden Dialog.Close for programmatic close */}
                                                     <Dialog.Close asChild>

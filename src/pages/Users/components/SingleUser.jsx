@@ -67,8 +67,8 @@ function SingleUser() {
     axios.get(`http://localhost:5000/admin/api/v1/users/${id}`)
     .then(res => {
       if(res.status === 200){
-        setUserData(res.data.data)
         console.log(res.data.data)
+        setUserData(res.data.data)
         setLoading(false)
       }
     })
@@ -114,6 +114,7 @@ function SingleUser() {
       .then(res => {
         if(res.status === 200){
           setItemData(res.data.data)
+          console.log(res.data.data)
           if(isEmptyArray(res.data.data))setNotFound(true)
           setFilteredCount(res.data.filteredCount);
           setTotalPages(res.data.totalPages);
@@ -172,6 +173,8 @@ function SingleUser() {
   const [suspendReason, setSuspendReason] = useState('');
   const [suspendReasonErr, setSuspendReasonErr] = useState(); 
   const userLocked = (id) => {
+    console.log('yes')
+    console.log('suspendReason', suspendReason)
     setSuspendReasonErr('')
     if(!suspendReason){
       console.log('yes not suspend reason')
@@ -219,7 +222,7 @@ function SingleUser() {
         userData?.suspendReason &&
         <div className="notice">
           <InfoCircledIcon />
-          <p dangerouslySetInnerHTML={{ __html: userData?.suspendReason }} ></p>
+          <p style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word',}} dangerouslySetInnerHTML={{ __html: userData?.suspendReason }} ></p>
         </div>
       }
       <Flex className="singleUser-img-div">

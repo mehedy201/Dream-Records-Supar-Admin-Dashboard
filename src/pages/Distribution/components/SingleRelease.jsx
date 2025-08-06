@@ -57,8 +57,9 @@ function SingleRelease() {
   const [reFetchData, setReFetchData] = useState(1);
   useEffect(() => {
     setLoading(true)
-    axios.get(`http://localhost:5000/api/v1/release/single/${id}`)
+    axios.get(`http://localhost:5000/api/v1/release/release/${id}`)
     .then(res => {
+      console.log(res)
       // Set Full Release Data_________
       dispatch(setData(res.data.data))
       // Set Album Info________________
@@ -68,15 +69,6 @@ function SingleRelease() {
       dispatch(setReleaseAlbumInfo(albumInfo))
       // Set Tracks Info______________
       dispatch(setTracksInfo(res?.data?.data?.tracks))
-      if(res.data.data.audioUrl){
-        const audioUrl = res.data.data.audioUrl;
-        const tittle = res.data.data.releaseTitle;
-        const artist = res.data.data.artist;
-        const labels = res.data.data.labels;
-        const featuring = res.data.data.featuring;
-        const genre = res.data.data.genre;
-        dispatch(setTracksInfo([{audioUrl, tittle, artist, labels, genre, featuring}]))
-      }
       setLoading(false)
     })
   },[id, reFetchData])
@@ -151,13 +143,16 @@ function SingleRelease() {
   const [dataNotFound, setDataNotFound] = useState(false)
   useEffect(() => {
     setDataNotFound(false)
+    console.log('not go')
     if(data?.UPC){
+      console.log('yes go')
       axios.get(`http://localhost:5000/common/api/v1/analytics-and-balance/upc-analytics?UPC=${data?.UPC}&years=${years}`)
       .then(res => {
+        console.log('Res', res)
         if(res.status === 200){
           if(isEmptyArray(res?.data?.data))setDataNotFound(true)
-          setTotalStreams(res?.data?.totalRevenue)
-          setTotalRevenue(res?.data?.totalStreams)
+          setTotalStreams(res?.data?.totalStreams)
+          setTotalRevenue(res?.data?.totalRevenue)
           dspAndTerittoriGet(res?.data?.data)
 
           const rawData = res?.data?.data
@@ -343,7 +338,7 @@ function SingleRelease() {
           data?.actionReqHistory && data?.actionReqHistory?.map((d, index) => 
             <div key={index} className="notice">
               <FiAlertTriangle />
-              <p dangerouslySetInnerHTML={{ __html: d }}></p>
+              <p style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word',}} dangerouslySetInnerHTML={{ __html: d }}></p>
             </div>
           )
         }
@@ -462,8 +457,8 @@ function SingleRelease() {
                               style={{ padding: 0, overflowY: "auto", zIndex: "123" }}
                             >
                               <Select.Viewport>
-                                <Select.Item value='Action Required' className="select-item">
-                                  <Select.ItemText>Action Required</Select.ItemText>
+                                <Select.Item value='Error' className="select-item">
+                                  <Select.ItemText>Error</Select.ItemText>
                                   <Select.ItemIndicator className="select-item-indicator">
                                     <Check size={18} />
                                   </Select.ItemIndicator>
@@ -560,7 +555,7 @@ function SingleRelease() {
           </div>
           <div className="d-flex">
             <p>Primary Artist:</p>
-            <p>{data?.artist?.map(artist => artist.artistName).join(', ')}</p>
+            <p>{data?.artist?.map(artist => artist.artistName).join(', ')} {data?.primaryArtist?.map(artist => artist.artistName).join(', ')}</p>
           </div>
           <div className="d-flex">
             <p>Format:</p>
@@ -653,7 +648,7 @@ function SingleRelease() {
               </div>
               <div className="analytics-card">
                 <h6>Total Revenue</h6>
-                <h2>€ {totalRevenue ? totalRevenue : 0}</h2>
+                <h2>&#8377; {totalRevenue ? totalRevenue : 0}</h2>
               </div>
             </div>
             <Tabs.Root

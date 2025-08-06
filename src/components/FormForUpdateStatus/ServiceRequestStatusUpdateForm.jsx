@@ -14,7 +14,7 @@ const ServiceRequestStatusUpdateForm = ({id, closeRef}) => {
     // ___________________________________________________________________
     const [serviceRejectionsList, setServiceRejectionsList] = useState([]);
     useEffect( () => {
-        axios.get('http://localhost:5000/admin/api/v1/settings/service-rejections-list')
+        axios.get(`http://localhost:5000/admin/api/v1/settings/service-rejections-list`)
         .then(res => {
         if(res.status == 200){
             setServiceRejectionsList(res.data.data);

@@ -293,7 +293,11 @@ function GeneralSettings() {
             homePageNotices.map(notice => 
               <div style={{padding: '10px', borderRadius: '10px', border: '0.5px solid #8e8e8eff', margin: '6px'}}>
                 <div style={{display: 'flex', justifyContent:'space-between',}}>
-                  <div dangerouslySetInnerHTML={{ __html: notice?.notice }} />
+                  <div style={{
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'break-word',
+                  }} dangerouslySetInnerHTML={{ __html: notice?.notice }} />
                   <X onClick={() => deleteHomePageNotice(notice._id)} style={{color: '#ea3958'}}/>
                 </div>
               </div>
@@ -346,7 +350,7 @@ function GeneralSettings() {
             withdrawPageNotices.map(notice => 
               <div style={{padding: '10px', borderRadius: '10px', border: '0.5px solid #8e8e8eff', margin: '6px'}}>
                 <div style={{display: 'flex', justifyContent:'space-between',}}>
-                  <div dangerouslySetInnerHTML={{ __html: notice?.notice }} />
+                  <div style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word',}} dangerouslySetInnerHTML={{ __html: notice?.notice }} />
                   <X onClick={() => deleteWithdrawPageNotice(notice._id)} style={{color: '#ea3958'}}/>
                 </div>
               </div>

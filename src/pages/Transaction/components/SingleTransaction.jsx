@@ -162,7 +162,7 @@ const handleRemoveInvoice = (id) => {
             <div>
               <br />
               <span
-                className={`status ${withdrawData?.status.toLowerCase()}`}
+                className={`status ${withdrawData?.status?.toLowerCase()}`}
               >
                 {withdrawData?.status}
               </span>

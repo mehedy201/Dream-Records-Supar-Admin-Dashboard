@@ -138,7 +138,10 @@ function Analytics() {
     })
   }
 
+
+  const [loadingForSubmit, setLoadingForSubmit] = useState(false);
   const uploadAnalyticsReport = () => {
+    setLoadingForSubmit(true)
     setUploadedExcelError('')
     setYearValueError('')
     setMonthValueError('')
@@ -162,6 +165,7 @@ function Analytics() {
         setShowReportModal(false);
         setShowReportSuccessModal(true);
         setUploadedExcel()
+        setLoadingForSubmit(false)
     })
   }
 
@@ -305,6 +309,9 @@ function Analytics() {
               monthValueError && <p style={{color: 'red'}}>{monthValueError}</p>
             }
             <br />
+            {
+              loadingForSubmit && <p>Loading......</p>
+            }
             <div className="analytics-deleteModal-btns">
               <Dialog.Close>Cancel</Dialog.Close>
               <button

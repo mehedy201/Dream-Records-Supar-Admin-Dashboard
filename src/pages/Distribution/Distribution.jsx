@@ -79,6 +79,7 @@ function Distribution() {
       .then(res => {
         if(res.status === 200){
           setAdminSummary(res.data.data)
+          console.log(res.data)
           setLoading(false)
           const dataForQueue = {
             QC_Approval: res.data.data.releaseByStatus[0].count,
@@ -194,7 +195,7 @@ function Distribution() {
               <button
                 ref={ToLive}
                 className={`segmented-item ${
-                  status === "approved" ? "active" : ""
+                  status === "live" ? "active" : ""
                 }`}
                 onClick={() => {setValue("ToLive"); navigate(`/distribution/queue/live/1/10`) }}
               >

@@ -186,7 +186,7 @@ function Whitelist({
                               <p style={{ fontSize: "14px", color: "#838383" }}>
                                 Reject Reason:
                               </p>
-                              <div dangerouslySetInnerHTML={{ __html: data?.actionRequired }} />
+                              <div style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word',}} dangerouslySetInnerHTML={{ __html: data?.actionRequired }} />
                             </div>
                           }
 

@@ -4,9 +4,18 @@ import localDate from '../../hooks/localDate';
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Dialog from "@radix-ui/react-dialog";
 import Modal from "../../components/Modal";
+import axios from 'axios';
+import { useState } from 'react';
 
 
 const AnalyticsTable = ({ columns, data }) => {
+
+    const deleteAnalytics = (id) => {
+        console.log(id)
+       axios.delete(`http://localhost:5000/common/api/v1/analytics-and-balance/${id}`)
+       .then(res => {console.log(res); window.location.reload();})
+
+    }
 
     return (
         <div className="table-wrapper">
@@ -75,7 +84,8 @@ const AnalyticsTable = ({ columns, data }) => {
                                                     <br />
                                                     <div className="analytics-deleteModal-btns">
                                                     <Dialog.Close>No</Dialog.Close>
-                                                    <Dialog.Close>Yes, Delete</Dialog.Close>
+                                                    <Dialog.Close onClick={() => deleteAnalytics(d._id)}>Yes, Delete</Dialog.Close>
+                                                    {/* Hidden Dialog.Close for programmatic close */}
                                                     </div>
                                                 </Modal>
                                                 </Dialog.Content>
