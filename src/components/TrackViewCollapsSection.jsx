@@ -8,12 +8,16 @@ import { X } from "lucide-react";
 import axios from "axios";
 import AudioPlayerForTracViewTab from "./AudioPlayer/AudioPlayerForTracViewTab";
 import artistDemoImg from "../assets/artists/artist4.png";
+import { object } from "prop-types";
 
 const TrackViewCollapsSection = ({ track, index }) => {
+  // console.log(track)
+  console.log('track.artist', track.artist)
+  console.log('track.composera', track.composer)
   const [albumOverviewSong, setAlbumOverviewSong] = useState(false);
-  const trackTittle = track.tittle;
-  const trackAudioUrl = track.audioUrl;
-  const dataForAudioPlayer = { tittle: trackTittle, audioUrl: trackAudioUrl };
+  // const trackTittle = track.tittle;
+  // const trackAudioUrl = track.audioUrl;
+  // const dataForAudioPlayer = { tittle: trackTittle, audioUrl: trackAudioUrl };
 
   // const deleteTrack = (indexNumber) => {
   //   const updatedTracks = tracksInfo.filter((item, index) => index !== indexNumber);
@@ -45,7 +49,6 @@ const TrackViewCollapsSection = ({ track, index }) => {
             <AudioPlayerForTracViewTab
               track={track}
               index={index}
-              data={dataForAudioPlayer}
             />
           </div>
           <div
@@ -147,7 +150,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
               <Tabs.Content className="tabs-content" value="Credits">
                 <div className="form-grid releaseCredit-formGrid">
                   <div className="d-flex releaseCredit-items">
-                    <p className="releaseCredit-items-title">Primary Atrist</p>
+                    <p className="releaseCredit-items-title">Primary Artist</p>
                     <div>
                       {track?.artist?.map((data, index) => {
                         <div key={index} className="d-flex">
@@ -156,7 +159,16 @@ const TrackViewCollapsSection = ({ track, index }) => {
                             alt=""
                           />
                           <p>{data?.artistName}</p>
-                        </div>;
+                        </div>
+                      })}
+                      {track?.primaryArtist?.map((data, index) => {
+                        <div key={index} className="d-flex">
+                          <img
+                            src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
+                            alt=""
+                          />
+                          <p>{data?.artistName}</p>
+                        </div>
                       })}
                     </div>
                   </div>
@@ -211,5 +223,6 @@ const TrackViewCollapsSection = ({ track, index }) => {
     </div>
   );
 };
+
 
 export default TrackViewCollapsSection;

@@ -11,7 +11,7 @@ const formatTime = (time) => {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
-const AudioPlayerForTracViewTab = ({track, index, data}) => {
+const AudioPlayerForTracViewTab = ({track, index}) => {
 
   const audioRef = useRef(null);
   const progressBarRef = useRef(null);
@@ -120,7 +120,7 @@ const handleDownload = (url) => {
 
         <div className="release-album-list">
             <div>
-                <audio ref={audioRef} src={data?.audioUrl} preload="metadata" />
+                <audio ref={audioRef} src={track?.audioUrl} preload="metadata" />
                 <button
                     onClick={togglePlay}
                     style={{
@@ -138,8 +138,11 @@ const handleDownload = (url) => {
                 </button>
             </div>
             <div>
-                <p>{data?.tittle}</p>
-                <small>Ayuska Bhowmik</small>
+                <p>{track?.tittle}</p>
+                <small>{track?.artist?.map((artist) => artist.artistName).join(", ")}{" "}
+              {track?.primaryArtist
+                ?.map((artist) => artist.artistName)
+                .join(", ")}</small>
             </div>
             <div className="d-flex release-album-RangeDiv onlyForDesktop">
                 {/* Duration _______________________________________ */}

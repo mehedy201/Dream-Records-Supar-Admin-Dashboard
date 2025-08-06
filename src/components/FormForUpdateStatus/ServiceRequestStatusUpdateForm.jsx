@@ -51,6 +51,7 @@ const ServiceRequestStatusUpdateForm = ({ id, closeRef }) => {
       payload = {
         actionRequired,
         ansDate,
+        status: data?.status,
         rejectionReasons: data.rejectionReasons,
       };
     }
