@@ -12,39 +12,33 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import LoadingScreen from "../../components/LoadingScreen";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import Pagination from "../../components/Pagination";
 import { useSelector } from "react-redux";
 import useQueryParams from "../../hooks/useQueryParams";
 import isEmptyArray from "../../hooks/isEmptyArrayCheck";
 
-
-
 function Distribution() {
-
-
   const navigate = useNavigate();
-  const {status, pageNumber, perPageItem} = useParams();
-  const { yearsList} = useSelector(state => state.yearsAndStatus);
+  const { status, pageNumber, perPageItem } = useParams();
+  const { yearsList } = useSelector((state) => state.yearsAndStatus);
 
   const location = useLocation();
   const currentPath = location.pathname;
-  const pathSegments = currentPath.split('/');
+  const pathSegments = currentPath.split("/");
   const queueSegment = pathSegments[2];
-
 
   const { navigateWithParams } = useQueryParams();
   const [filterParams] = useSearchParams();
-  const search = filterParams.get('search') || '';
-  const years = filterParams.get('years') || '';
+  const search = filterParams.get("search") || "";
+  const years = filterParams.get("years") || "";
 
   const filterByYear = (yearValue) => {
-    navigateWithParams(`/distribution/queue/${status}/1/${perPageItem}`, { search: search, years: yearValue });
-  }
-
-
-
-
+    navigateWithParams(`/distribution/queue/${status}/1/${perPageItem}`, {
+      search: search,
+      years: yearValue,
+    });
+  };
 
   const [value, setValue] = useState("QCApproval");
   const [thumbStyle, setThumbStyle] = useState({ left: 0 });
@@ -69,66 +63,79 @@ function Distribution() {
     }
   }, [value]);
 
-
-    const [adminSummary, setAdminSummary] = useState();
-    const [loading, setLoading] = useState(false);
-    const [countForQueue, setCountForQueue] = useState();
-    useEffect(() => {
-      setLoading(true)
-      axios.get(`http://localhost:5000/admin/api/v1/summary`)
-      .then(res => {
-        if(res.status === 200){
-          setAdminSummary(res.data.data)
-          console.log(res.data)
-          setLoading(false)
+  const [adminSummary, setAdminSummary] = useState();
+  const [loading, setLoading] = useState(false);
+  const [countForQueue, setCountForQueue] = useState();
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/summary`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setAdminSummary(res.data.data);
+          console.log(res.data);
+          setLoading(false);
           const dataForQueue = {
             QC_Approval: res.data.data.releaseByStatus[0].count,
             toLive: res.data.data.releaseByStatus[1].count,
             inReview: res.data.data.releaseByStatus[2].count,
-            inIssues: res.data.data.releaseByStatus[3].count
+            inIssues: res.data.data.releaseByStatus[3].count,
           };
-          setCountForQueue(dataForQueue)
+          setCountForQueue(dataForQueue);
         }
-      })
-    },[])
+      });
+  }, []);
 
-
-    // Fatch Release Data _______________________________________________
-    const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
-    const [filteredCount, setFilteredCount] = useState();
-    const [totalPages, setTotalPages] = useState();
-    const [notFound, setNotFound] = useState(false)
-    const [releaseData, setReleaseData] = useState();
-    useEffect(() => {
-      axios.get(`http://localhost:5000/admin/api/v1/release?status=${status}&page=${pageNumber}&limit=${perPageItem}&search=${search}&years=${years}`)
-      .then(res => {
+  // Fatch Release Data _______________________________________________
+  const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
+  const [filteredCount, setFilteredCount] = useState();
+  const [totalPages, setTotalPages] = useState();
+  const [notFound, setNotFound] = useState(false);
+  const [releaseData, setReleaseData] = useState();
+  useEffect(() => {
+    axios
+      .get(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release?status=${status}&page=${pageNumber}&limit=${perPageItem}&search=${search}&years=${years}`
+      )
+      .then((res) => {
         // console.log(res.data.data)
-        setReleaseData(res.data.data)
-        console.log(res.data.data)
-        if(isEmptyArray(res.data.data))setNotFound(true)
+        setReleaseData(res.data.data);
+        console.log(res.data.data);
+        if (isEmptyArray(res.data.data)) setNotFound(true);
         setFilteredCount(res.data.filteredCount);
         setTotalPages(res.data.totalPages);
-      })
-    },[status, pageNumber, perPageItem, search, years])
+      });
+  }, [status, pageNumber, perPageItem, search, years]);
 
   // Handle Page Change ________________________________
   const handlePageChange = (page) => {
-    navigateWithParams(`/distribution/queue/${status}/${page}/${perPageItem}`, { search: search, years: years });
-  }
+    navigateWithParams(`/distribution/queue/${status}/${page}/${perPageItem}`, {
+      search: search,
+      years: years,
+    });
+  };
   // Search _____________________________________________
   const [searchText, setSearchText] = useState();
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      navigateWithParams(`/distribution/queue/${status}/1/${perPageItem}`, { search: searchText, years: years });
+    if (event.key === "Enter") {
+      navigateWithParams(`/distribution/queue/${status}/1/${perPageItem}`, {
+        search: searchText,
+        years: years,
+      });
     }
   };
 
   // Handle Per Page Item _______________________________
   const handlePerPageItem = (perPageItem) => {
-    navigateWithParams(`/distribution/queue/${status}/${pageNumber}/${perPageItem}`, { search: search, years: years });
-  }
+    navigateWithParams(
+      `/distribution/queue/${status}/${pageNumber}/${perPageItem}`,
+      { search: search, years: years }
+    );
+  };
 
-    if(loading)return <LoadingScreen/>
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="main-content">
@@ -178,7 +185,10 @@ function Distribution() {
                 className={`segmented-item ${
                   status === "QC Approval" ? "active" : ""
                 }`}
-                onClick={() => {setValue("QCApproval"); navigate(`/distribution/queue/QC Approval/1/10`)}}
+                onClick={() => {
+                  setValue("QCApproval");
+                  navigate(`/distribution/queue/QC Approval/1/10`);
+                }}
               >
                 QC Approval {`(${countForQueue?.QC_Approval})`}
               </button>
@@ -187,7 +197,10 @@ function Distribution() {
                 className={`segmented-item ${
                   status === "review" ? "active" : ""
                 }`}
-                onClick={() => {setValue("InReview"); navigate(`/distribution/queue/review/1/10`)}}
+                onClick={() => {
+                  setValue("InReview");
+                  navigate(`/distribution/queue/review/1/10`);
+                }}
               >
                 In Review {`(${countForQueue?.inReview})`}
               </button>
@@ -197,7 +210,10 @@ function Distribution() {
                 className={`segmented-item ${
                   status === "live" ? "active" : ""
                 }`}
-                onClick={() => {setValue("ToLive"); navigate(`/distribution/queue/live/1/10`) }}
+                onClick={() => {
+                  setValue("ToLive");
+                  navigate(`/distribution/queue/live/1/10`);
+                }}
               >
                 To Live {`(${countForQueue?.toLive})`}
               </button>
@@ -206,24 +222,67 @@ function Distribution() {
                 className={`segmented-item ${
                   status === "issue" ? "active" : ""
                 }`}
-                onClick={() => {setValue("InIssue"); navigate(`/distribution/queue/issue/1/10`)}}
+                onClick={() => {
+                  setValue("InIssue");
+                  navigate(`/distribution/queue/issue/1/10`);
+                }}
               >
                 In Issue {`(${countForQueue?.inIssues})`}
               </button>
             </div>
 
             <div className="segmented-content">
-              {value === "QCApproval" && <QcApproval data={releaseData} setSearchText={setSearchText} handleKeyPress={handleKeyPress} search={search} years={years} filterByYear={filterByYear} yearsList={yearsList}/>}
-              {value === "InReview" && <InReviewPage data={releaseData} setSearchText={setSearchText} handleKeyPress={handleKeyPress} search={search} years={years} filterByYear={filterByYear} yearsList={yearsList} />}
-              {value === "ToLive" && <ToLivePage data={releaseData} setSearchText={setSearchText} handleKeyPress={handleKeyPress} search={search} years={years} filterByYear={filterByYear} yearsList={yearsList} />}
-              {value === "InIssue" && <InIssuePage data={releaseData} setSearchText={setSearchText} handleKeyPress={handleKeyPress} search={search} years={years} filterByYear={filterByYear} yearsList={yearsList} />}
+              {value === "QCApproval" && (
+                <QcApproval
+                  data={releaseData}
+                  setSearchText={setSearchText}
+                  handleKeyPress={handleKeyPress}
+                  search={search}
+                  years={years}
+                  filterByYear={filterByYear}
+                  yearsList={yearsList}
+                />
+              )}
+              {value === "InReview" && (
+                <InReviewPage
+                  data={releaseData}
+                  setSearchText={setSearchText}
+                  handleKeyPress={handleKeyPress}
+                  search={search}
+                  years={years}
+                  filterByYear={filterByYear}
+                  yearsList={yearsList}
+                />
+              )}
+              {value === "ToLive" && (
+                <ToLivePage
+                  data={releaseData}
+                  setSearchText={setSearchText}
+                  handleKeyPress={handleKeyPress}
+                  search={search}
+                  years={years}
+                  filterByYear={filterByYear}
+                  yearsList={yearsList}
+                />
+              )}
+              {value === "InIssue" && (
+                <InIssuePage
+                  data={releaseData}
+                  setSearchText={setSearchText}
+                  handleKeyPress={handleKeyPress}
+                  search={search}
+                  years={years}
+                  filterByYear={filterByYear}
+                  yearsList={yearsList}
+                />
+              )}
 
-              <Pagination 
-                totalDataCount={filteredCount} 
+              <Pagination
+                totalDataCount={filteredCount}
                 totalPages={totalPages}
-                currentPage={currentPage} 
-                perPageItem={perPageItem} 
-                setCurrentPage={setCurrentPage} 
+                currentPage={currentPage}
+                perPageItem={perPageItem}
+                setCurrentPage={setCurrentPage}
                 handlePageChange={handlePageChange}
                 customFunDropDown={handlePerPageItem}
               />

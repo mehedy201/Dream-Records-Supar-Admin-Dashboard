@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {confirmPasswordReset, applyActionCode} from 'firebase/auth'
 import auth from "../../../firebase.config";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 function NewPassword() {
 
   const navigate = useNavigate()
 
+  const { email } = useParams();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const oobCode = queryParams.get('oobCode');
@@ -50,28 +52,32 @@ function NewPassword() {
 
 
     const [passwordError, setPasswordError] = useState();
+    const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false)
     const { register, handleSubmit, formState: { errors }} = useForm();
     const onSubmit = async (data) => {
-        setLoading(true)
-        setPasswordError('');
-        const pass1 = data.password1;
-        const pass2 = data.password2;
+      setLoading(true);
+      setMessage("");
+      let newPassword;
+      if (data.password1 === data.password2) {
+        newPassword = data.password1;
+      } else {
+        setMessage("Password Not Match");
+        return;
+      }
 
-        if(pass1 !== pass2){
-            setPasswordError('Password Not Matched');
-            setLoading(false)
-            return;
-        }
+      const payload = { newPassword, otp: data.otp, email: data.email };
+      const res = await axios.post(
+        "https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/reset-password",
+        payload
+      );
 
-        const newPassword = pass1;
-        await confirmPasswordReset(auth, oobCode, newPassword)
-        .then(response => {
-            console.log(response)
-            navigate('/login')
-        })
-        .catch(err => console.log('err', err.message))
-        setLoading(false)
+      if (res.data.token) {
+        setMessage(res.data.message);
+        localStorage.setItem("token", res.data.token); // ✅ Token save
+        navigate("/"); // redirect
+        setLoading(false);
+      }
     }
 
     const [inputType1, setInputType1] = useState('password')
@@ -107,42 +113,47 @@ function NewPassword() {
           & revenue.
         </h5>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <label>New Password</label>
-          <div>
-            <input
-              // type={inputType1}
-              type="password"
-              className="password-input"
-              {...register("password1", { required: true})}
-            />
-            {errors.password1 && <p style={{color: 'red', marginTop: '-10px'}}>Password Required</p>}
-          </div>
-          <label>Confirm Password</label>
-
+          <label>Email</label>
           <input
-            type='password'
-            className="password-input"
-            {...register("password2", { required: true})}
+            value={email}
+            type="email"
+            {...register("email", { required: true })}
           />
-          {errors.password2 && <p style={{color: 'red', marginTop: '-10px'}}>Password Required</p>}
-          {
-            loading && <p>Loading....</p>
-          }
-          {
-            passwordError && <p style={{color: 'red'}}>{passwordError}</p>
-          }
-          {
-            errMessage && <p style={{color: 'red'}}>{errMessage}</p>
-          }
+          {errors.otp && <span>OTP Required</span>}
+
+          <label>OTP</label>
+          <input type="text" {...register("otp", { required: true })} />
+          {errors.otp && <span>OTP Required</span>}
+
+          <label>New Password</label>
+          <input
+            type="text"
+            name="Enter your password"
+            className="password-input"
+            {...register("password1", { required: true })}
+          />
+          {errors.password1 && <span>New Password Required</span>}
+          <label>Confirm Password</label>
+          <input
+            type="text"
+            name="Enter your password"
+            className="password-input"
+            {...register("password2", { required: true })}
+          />
+          {errors.password2 && <span>Confirm Password Required</span>}
+          {loading && <FormSubmitLoading />}
+          {message && <p>{message}</p>}
           <button
             className="theme-btn"
             style={{ width: "100%", margin: "0 0 24px 0" }}
             type="submit"
           >
-            Update Password sd
+            Update Password
           </button>
         </form>
-        <button onClick={() => navigate('/login')} className="theme-btn2">Return to login</button>
+        <button onClick={() => navigate("/login")} className="theme-btn2">
+          Return to login
+        </button>
       </div>
     </div>
   );

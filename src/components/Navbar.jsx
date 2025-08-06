@@ -11,43 +11,50 @@ import auth from "../../firebase.config";
 import LoadingScreen from "./LoadingScreen";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserData, setUserNameIdRoll } from "../redux/features/userDataHandleSlice/userDataHandleSlice";
-import logOutIcon from '../assets/icons/logout.png'
-
-
+import {
+  setUserData,
+  setUserNameIdRoll,
+} from "../redux/features/userDataHandleSlice/userDataHandleSlice";
+import logOutIcon from "../assets/icons/logout.png";
 
 const Navbar = ({ toggleMobileMenu }) => {
   const [open, setOpen] = useState(false);
   const [signOut] = useSignOut(auth);
   const navigate = useNavigate();
 
-
   const [user, loading] = useAuthState(auth);
   const dispatch = useDispatch();
-  const {userData} = useSelector((state) => state.userData);
+  const { userData } = useSelector((state) => state.userData);
 
   useEffect(() => {
     if (user) {
       const userNameIdRoll = user?.displayName?.split("'__'");
       dispatch(setUserNameIdRoll(userNameIdRoll));
-      axios.get(`http://localhost:5000/api/v1/users/${userNameIdRoll[1]}`)
+      axios
+        .get(
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/users/${userNameIdRoll[1]}`
+        )
         .then((res) => {
           if (res.status === 200) {
             const data = res.data.data;
             const date = new Date().toISOString();
             const formData = { ...data, lastLogin: date };
-            axios.put(`http://localhost:5000/api/v1/users/${userNameIdRoll[1]}`,formData)
-            .then(res => {
-              if(res.status === 200){
-                dispatch(setUserData(formData))
-              }
-            })
+            axios
+              .put(
+                `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/users/${userNameIdRoll[1]}`,
+                formData
+              )
+              .then((res) => {
+                if (res.status === 200) {
+                  dispatch(setUserData(formData));
+                }
+              });
           }
         });
     }
   }, [user]);
 
-  if(loading)return <LoadingScreen/>
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="navbar">
@@ -56,14 +63,21 @@ const Navbar = ({ toggleMobileMenu }) => {
       </div>
       <DropdownMenu.Root onOpenChange={setOpen}>
         <DropdownMenu.Trigger style={{ border: "none", background: "none" }}>
-          <span style={{padding: '15px 20px'}} className="nav-dropdown"> S</span>{" "}
+          <span style={{ padding: "15px 20px" }} className="nav-dropdown">
+            {" "}
+            S
+          </span>{" "}
           <ChevronDown className={`${open ? "rotate" : ""}`} />
         </DropdownMenu.Trigger>
         <DropdownMenu.Content className="dropdown-content navbar-dropdown-content">
           <div className="d-flex">
-            <button className="nav-dropdown">{userData?.first_name?.slice(0,1)}</button>
+            <button className="nav-dropdown">
+              {userData?.first_name?.slice(0, 1)}
+            </button>
             <div>
-              <p>{userData?.first_name} {userData?.last_name}</p>
+              <p>
+                {userData?.first_name} {userData?.last_name}
+              </p>
               <small>{userData?.email}</small>
             </div>
             <ChevronUp />
@@ -75,7 +89,14 @@ const Navbar = ({ toggleMobileMenu }) => {
             </DropdownMenu.Item>
           </Link>
           <hr />
-          <DropdownMenu.Item onClick={() => {signOut(); navigate('/login')}} className="d-flex" style={{ marginLeft: "6px" }}>
+          <DropdownMenu.Item
+            onClick={() => {
+              signOut();
+              navigate("/login");
+            }}
+            className="d-flex"
+            style={{ marginLeft: "6px" }}
+          >
             <div>
               <img src={logOutIcon} width="16px" alt="" />
             </div>

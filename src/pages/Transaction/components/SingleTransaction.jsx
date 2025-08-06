@@ -9,8 +9,8 @@ import PropTypes from "prop-types";
 import InvoiceUpload from "./InvoiceUpload";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import axios from "axios";
-import demoUserImg from '../../../assets/artists/artist4.png'
-import threeDotImg from '../../../assets/icons/vertical-threeDots.png'
+import demoUserImg from "../../../assets/artists/artist4.png";
+import threeDotImg from "../../../assets/icons/vertical-threeDots.png";
 import localDate from "../../../hooks/localDate";
 import localTime from "../../../hooks/localTime";
 import SpecificUserTransaactionTable from "../../../components/table/SpecificUserTransaactionTable";
@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import NotFoundPage from "../../../components/NotFoundPage";
 import { useForm } from "react-hook-form";
 import textToHTML from "../../../hooks/textToHTML";
-import demoFileImg from '../../../assets/icons/upload-file.png'
+import demoFileImg from "../../../assets/icons/upload-file.png";
 import { RiDownloadLine } from "react-icons/ri";
 import { X } from "lucide-react";
 
@@ -33,119 +33,135 @@ const transactionColumns = [
   { label: "Action", key: "action" },
 ];
 
-
 function SingleTransaction() {
-
-
-  const {id, pageNumber, perPageItem} = useParams();
+  const { id, pageNumber, perPageItem } = useParams();
   const navigate = useNavigate();
   const [reFetch, setReFetch] = useState(1);
 
   const [masterUserId, setMasterUserId] = useState();
   const [withdrawData, setWithdrawData] = useState();
   useEffect(() => {
-    axios.get(`http://localhost:5000/common/api/v1/payment/single-withdrawal/${id}`)
-    .then(res => {
-      if(res.status === 200){
-        setWithdrawData(res.data.data)
-        setMasterUserId(res.data.data.masterUserId)
-        console.log(res.data.data)
-      }
-    })
-  },[id, reFetch])
+    axios
+      .get(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/payment/single-withdrawal/${id}`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setWithdrawData(res.data.data);
+          setMasterUserId(res.data.data.masterUserId);
+          console.log(res.data.data);
+        }
+      });
+  }, [id, reFetch]);
 
   const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
   const [filteredCount, setFilteredCount] = useState();
   const [totalPages, setTotalPages] = useState();
   // const [loading, setLoading] = useState(false);
-  const [notFound, setNotFound] = useState(false)
+  const [notFound, setNotFound] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState();
   useEffect(() => {
-    if(masterUserId){
-      axios.get(`http://localhost:5000/common/api/v1/payment/${masterUserId}?page=${pageNumber}&limit=${perPageItem}`)
-        .then(res => {
-          if(res.status === 200){
-            setPaymentDetails(res.data.data)
-            if(isEmptyArray(res.data.data))setNotFound(true)
+    if (masterUserId) {
+      axios
+        .get(
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/payment/${masterUserId}?page=${pageNumber}&limit=${perPageItem}`
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            setPaymentDetails(res.data.data);
+            if (isEmptyArray(res.data.data)) setNotFound(true);
             setFilteredCount(res.data.filteredCount);
             setTotalPages(res.data.totalPages);
           }
-        })
+        });
     }
-  },[masterUserId, pageNumber, perPageItem, reFetch])
+  }, [masterUserId, pageNumber, perPageItem, reFetch]);
 
   // Handle Page Change ________________________________
   const handlePageChange = (page) => {
-    navigate(`/single-transaction/${id}/${page}/${perPageItem}`)
-  }
+    navigate(`/single-transaction/${id}/${page}/${perPageItem}`);
+  };
 
   // Handle Per Page Item _______________________________
   const handlePerPageItem = (perPageItem) => {
-    navigate(`/single-transaction/${id}/${pageNumber}/${perPageItem}`)
-  }
+    navigate(`/single-transaction/${id}/${pageNumber}/${perPageItem}`);
+  };
 
-
-
-// Approved Withdrwal Status
+  // Approved Withdrwal Status
   const handleUpdateStatusApproved = (id) => {
-      axios.patch(`http://localhost:5000/common/api/v1/payment/admin/approved-withdrawal-request/single/${id}`)
-      .then(res => {
-          if(res.status == 200){
-            setReFetch(reFetch + 1)
-            toast.success('Withdrawal Status Updated!');
-          }
-      })
-  }
+    axios
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/payment/admin/approved-withdrawal-request/single/${id}`
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          setReFetch(reFetch + 1);
+          toast.success("Withdrawal Status Updated!");
+        }
+      });
+  };
 
   // Reject Withdrwal _______________________________________________
   const [open, setOpen] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = data => {
-      const rejectResoan = textToHTML(data.rejectResoan)
-      const payload ={rejectResoan}
-      axios.patch(`http://localhost:5000/common/api/v1/payment/admin/cancle-withdrawal-request/single/${id}`, payload)
-      .then(res => {
-          if(res.status == 200){
-              setReFetch(reFetch + 1)
-              toast.success('Withdrawal Status Updated!');
-          }
-      })
-    console.log(rejectResoan)
-    setOpen(false)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data) => {
+    const rejectResoan = textToHTML(data.rejectResoan);
+    const payload = { rejectResoan };
+    axios
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/payment/admin/cancle-withdrawal-request/single/${id}`,
+        payload
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          setReFetch(reFetch + 1);
+          toast.success("Withdrawal Status Updated!");
+        }
+      });
+    console.log(rejectResoan);
+    setOpen(false);
   };
 
-
-// Upload Invoice _______________________________________________________________________________________
+  // Upload Invoice _______________________________________________________________________________________
   const [invoiceUploadErr, setInvoiceUploadErr] = useState();
   const uploadWithdrawalInvoice = (e) => {
-    setInvoiceUploadErr('')
+    setInvoiceUploadErr("");
     const file = e[0];
     if (file.size > 2 * 1024 * 1024) {
       setInvoiceUploadErr("File size must be less than 2MB.");
       return;
     }
     const formData = new FormData();
-    formData.append('file', file);        
-    axios.patch(`http://localhost:5000/common/api/v1/payment/admin/withdrawal-invoice-upload/${id}`, formData)
-    .then(res => {
-        if(res.status == 200){
-            setReFetch(reFetch + 1)
-            toast.success('File Uploaded')
+    formData.append("file", file);
+    axios
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/payment/admin/withdrawal-invoice-upload/${id}`,
+        formData
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          setReFetch(reFetch + 1);
+          toast.success("File Uploaded");
         }
-    })
-  }
+      });
+  };
 
-
-// Delete Invoice _______________________________________________________________________________________
-const handleRemoveInvoice = (id) => {
-  axios.delete(`http://localhost:5000/common/api/v1/payment/admin/delete-withdrawal-invoice/single/${id}`)
-  .then(res => {
-      if(res.status == 200){
-          setReFetch(reFetch + 1)
-      }
-  })
-};
-
+  // Delete Invoice _______________________________________________________________________________________
+  const handleRemoveInvoice = (id) => {
+    axios
+      .delete(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/payment/admin/delete-withdrawal-invoice/single/${id}`
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          setReFetch(reFetch + 1);
+        }
+      });
+  };
 
   return (
     <div className="main-content transaction-detail-content">
@@ -153,7 +169,9 @@ const handleRemoveInvoice = (id) => {
         <div className="single-transaction-img-row">
           <div className="single-transaction-img-div">
             <img
-              src={withdrawData?.photoURL ? withdrawData?.photoURL : demoUserImg }
+              src={
+                withdrawData?.photoURL ? withdrawData?.photoURL : demoUserImg
+              }
               className="single-transaction-img"
               alt=""
             />
@@ -161,14 +179,15 @@ const handleRemoveInvoice = (id) => {
           <div className="singleTransaction-img-txt">
             <div>
               <br />
-              <span
-                className={`status ${withdrawData?.status?.toLowerCase()}`}
-              >
+              <span className={`status ${withdrawData?.status?.toLowerCase()}`}>
                 {withdrawData?.status}
               </span>
               <h5>{withdrawData?.userName}</h5>
               <h1>€ {withdrawData?.amount}</h1>
-              <p>{localDate(withdrawData?.date)} &nbsp;&nbsp; {localTime(withdrawData?.date)}</p>
+              <p>
+                {localDate(withdrawData?.date)} &nbsp;&nbsp;{" "}
+                {localTime(withdrawData?.date)}
+              </p>
             </div>
             {withdrawData?.status === "Pending" && (
               <DropdownMenu.Root>
@@ -183,7 +202,12 @@ const handleRemoveInvoice = (id) => {
                   side="bottom"
                   className="dropdown-content singleTransaction-dropdown-content"
                 >
-                  <DropdownMenu.Item onClick={() => handleUpdateStatusApproved(withdrawData?._id)} className="dropdown-item">
+                  <DropdownMenu.Item
+                    onClick={() =>
+                      handleUpdateStatusApproved(withdrawData?._id)
+                    }
+                    className="dropdown-item"
+                  >
                     <IoIosCheckmarkCircleOutline /> Approve Transaction
                   </DropdownMenu.Item>
                   <hr />
@@ -211,19 +235,29 @@ const handleRemoveInvoice = (id) => {
                             </p>
                             <form onSubmit={handleSubmit(onSubmit)}>
                               <textarea
-                                {...register("rejectResoan", { required: true })}
+                                {...register("rejectResoan", {
+                                  required: true,
+                                })}
                                 placeholder="Enter reject description"
-                                style={{ width: "100%", minHeight: "100px", resize: "vertical" }}
+                                style={{
+                                  width: "100%",
+                                  minHeight: "100px",
+                                  resize: "vertical",
+                                }}
                                 onKeyDown={(e) => {
                                   if (e.key === " " || e.key === "Enter") {
-                                    e.stopPropagation(); 
+                                    e.stopPropagation();
                                   }
                                 }}
                               />
                               {errors.rejectResoan && (
-                                <span style={{ color: "red" }}>Please enter a reject reason</span>
+                                <span style={{ color: "red" }}>
+                                  Please enter a reject reason
+                                </span>
                               )}
-                              <button className="close-button" type="submit">Reject</button>
+                              <button className="close-button" type="submit">
+                                Reject
+                              </button>
                             </form>
 
                             <textarea name="" id=""></textarea>
@@ -241,14 +275,15 @@ const handleRemoveInvoice = (id) => {
         {withdrawData?.status === "Rejected" && (
           <div className="notice">
             <InfoCircledIcon />
-            <div dangerouslySetInnerHTML={{ __html: withdrawData?.rejectResoan }} />
+            <div
+              dangerouslySetInnerHTML={{ __html: withdrawData?.rejectResoan }}
+            />
           </div>
         )}
         <div className="singleTransaction-info-grid">
           <div className="singleTransaction-info-div">
             <h6>Payment Info</h6>
-            {
-              withdrawData?.bankInfo?.paymentMethod === 'Bank Account' &&
+            {withdrawData?.bankInfo?.paymentMethod === "Bank Account" && (
               <>
                 <div className="d-flex">
                   <p>Payment Method:</p>
@@ -287,10 +322,8 @@ const handleRemoveInvoice = (id) => {
                   <p>{withdrawData?.bankInfo?.GSTNumber}</p>
                 </div>
               </>
-
-            }
-            {
-              !withdrawData?.bankInfo?.paymentMethod &&
+            )}
+            {!withdrawData?.bankInfo?.paymentMethod && (
               <>
                 <div className="d-flex">
                   <p>Payment Method:</p>
@@ -329,17 +362,19 @@ const handleRemoveInvoice = (id) => {
                   <p>{withdrawData?.bankInfo?.GSTNumber}</p>
                 </div>
               </>
-            }
-
-
+            )}
           </div>
           <div className="singleTransaction-invoice-div">
             <h6>Add Invoice</h6>
-            {
-              withdrawData?.invoice ?
+            {withdrawData?.invoice ? (
               <div>
                 <div className="image-summary-row">
-                  <img src={demoFileImg} style={{transform: 'rotate(3.142rad)'}} alt="Preview" className="image-thumb" />
+                  <img
+                    src={demoFileImg}
+                    style={{ transform: "rotate(3.142rad)" }}
+                    alt="Preview"
+                    className="image-thumb"
+                  />
                   <div className="image-info">
                     <p className="file-name">
                       {withdrawData?.invoice?.fileName.length > 25
@@ -359,20 +394,21 @@ const handleRemoveInvoice = (id) => {
                       </button>
                     </a>
 
-                    <button className="icon-button" onClick={() => handleRemoveInvoice(id)}>
+                    <button
+                      className="icon-button"
+                      onClick={() => handleRemoveInvoice(id)}
+                    >
                       <X size={24} />
                     </button>
-                    
                   </div>
                 </div>
-              </div> :
+              </div>
+            ) : (
               <InvoiceUpload
                 uploadWithdrawalInvoice={uploadWithdrawalInvoice}
               />
-            }
-            {
-              invoiceUploadErr && <p>{invoiceUploadErr}</p>
-            }
+            )}
+            {invoiceUploadErr && <p>{invoiceUploadErr}</p>}
           </div>
         </div>
       </div>
@@ -381,15 +417,13 @@ const handleRemoveInvoice = (id) => {
         columns={transactionColumns}
         data={paymentDetails}
       />
-      {
-        notFound && <NotFoundPage/>
-      }
-      <Pagination 
-        totalDataCount={filteredCount} 
+      {notFound && <NotFoundPage />}
+      <Pagination
+        totalDataCount={filteredCount}
         totalPages={totalPages}
-        currentPage={currentPage} 
-        perPageItem={perPageItem} 
-        setCurrentPage={setCurrentPage} 
+        currentPage={currentPage}
+        perPageItem={perPageItem}
+        setCurrentPage={setCurrentPage}
         handlePageChange={handlePageChange}
         customFunDropDown={handlePerPageItem}
       />

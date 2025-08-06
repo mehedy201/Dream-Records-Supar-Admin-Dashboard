@@ -1,7 +1,13 @@
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Flex } from "@radix-ui/themes";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { GoLinkExternal, GoPencil } from "react-icons/go";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -16,22 +22,20 @@ import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { FaRegCheckCircle } from "react-icons/fa";
 import axios from "axios";
 import LoadingScreen from "../../../components/LoadingScreen";
-import threeDot from '../../../assets/icons/vertical-threeDots.png'
+import threeDot from "../../../assets/icons/vertical-threeDots.png";
 import localDate from "../../../hooks/localDate";
 import localTime from "../../../hooks/localTime";
 import useQueryParams from "../../../hooks/useQueryParams";
 import { useSelector } from "react-redux";
-import labelPlacheholderImg from '../../../assets/lables/lables-placeholder.png'
+import labelPlacheholderImg from "../../../assets/lables/lables-placeholder.png";
 import TransactionTable from "../../../components/table/TransactionTable";
 import isEmptyArray from "../../../hooks/isEmptyArrayCheck";
 import Pagination from "../../../components/Pagination";
-import userDemoImg from '../../../assets/artists/artist4.png'
+import userDemoImg from "../../../assets/artists/artist4.png";
 import NotFoundPage from "../../../components/NotFoundPage";
 import toast from "react-hot-toast";
 import { Lock } from "lucide-react";
 import textToHTML from "../../../hooks/textToHTML";
-
-
 
 const transactionColumns = [
   { label: "Type", key: "type" },
@@ -43,88 +47,101 @@ const transactionColumns = [
 ];
 
 function SingleUser() {
-
   const navigate = useNavigate();
-  const {id, item, pageNumber, perPageItem} = useParams();
-    
-  const { yearsList} = useSelector(state => state.yearsAndStatus);
+  const { id, item, pageNumber, perPageItem } = useParams();
+
+  const { yearsList } = useSelector((state) => state.yearsAndStatus);
   // Filter Query Paramitars_____________________
   const { navigateWithParams } = useQueryParams();
   const [filterParams] = useSearchParams();
-  const search = filterParams.get('search') || '';
-  const years = filterParams.get('years') || '';
-  const status = filterParams.get('status') || '';
+  const search = filterParams.get("search") || "";
+  const years = filterParams.get("years") || "";
+  const status = filterParams.get("status") || "";
 
   const filterByYear = (yearValue) => {
-    navigateWithParams(`/user/${id}/${item}/1/${perPageItem}`, { search: search, years: yearValue, status: status });
-  }
-  
+    navigateWithParams(`/user/${id}/${item}/1/${perPageItem}`, {
+      search: search,
+      years: yearValue,
+      status: status,
+    });
+  };
+
   const [userData, setUserData] = useState();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [reFetchUser, setRefetchUser] = useState(1);
   useEffect(() => {
-    setLoading(true)
-    axios.get(`http://localhost:5000/admin/api/v1/users/${id}`)
-    .then(res => {
-      if(res.status === 200){
-        console.log(res.data.data)
-        setUserData(res.data.data)
-        setLoading(false)
-      }
-    })
-  },[id, reFetchUser])
+    setLoading(true);
+    axios
+      .get(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/users/${id}`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res.data.data);
+          setUserData(res.data.data);
+          setLoading(false);
+        }
+      });
+  }, [id, reFetchUser]);
 
   const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
   const [filteredCount, setFilteredCount] = useState();
   const [totalPages, setTotalPages] = useState();
   const [itemData, setItemData] = useState();
   const [itemLoading, setItemLoading] = useState(false);
-  const [notFound, setNotFound] = useState(false)
+  const [notFound, setNotFound] = useState(false);
   useEffect(() => {
-    setItemLoading(true)
-    if(item === 'artist'){
-      axios.get(`http://localhost:5000/api/v1/artist/${id}?page=${pageNumber}&limit=${perPageItem}&search=${search}&years=${years}`)
-      .then( res => {
-        if(res.status == 200){
-          setItemData(res.data.data);
-          if(isEmptyArray(res.data.data))setNotFound(true)
-          setFilteredCount(res.data.filteredCount);
-          setTotalPages(res.data.totalPages);
-          setItemLoading(false)
-        }
-      })
-      .catch(er => console.log(er));
+    setItemLoading(true);
+    if (item === "artist") {
+      axios
+        .get(
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/artist/${id}?page=${pageNumber}&limit=${perPageItem}&search=${search}&years=${years}`
+        )
+        .then((res) => {
+          if (res.status == 200) {
+            setItemData(res.data.data);
+            if (isEmptyArray(res.data.data)) setNotFound(true);
+            setFilteredCount(res.data.filteredCount);
+            setTotalPages(res.data.totalPages);
+            setItemLoading(false);
+          }
+        })
+        .catch((er) => console.log(er));
     }
-    if(item === 'labels'){
-      console.log('label')
-      axios.get(`http://localhost:5000/api/v1/labels/${id}?page=${pageNumber}&limit=${perPageItem}&status=${status}&search=${search}&years=${years}`)
-      .then( res => {
-        if(res.status == 200){
-          setItemData(res.data.data);
-          if(isEmptyArray(res.data.data))setNotFound(true)
-          setFilteredCount(res.data.filteredCount);
-          setTotalPages(res.data.totalPages);
-          setItemLoading(false)
-        }
-      })
-      .catch(er => console.log(er));
+    if (item === "labels") {
+      console.log("label");
+      axios
+        .get(
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/labels/${id}?page=${pageNumber}&limit=${perPageItem}&status=${status}&search=${search}&years=${years}`
+        )
+        .then((res) => {
+          if (res.status == 200) {
+            setItemData(res.data.data);
+            if (isEmptyArray(res.data.data)) setNotFound(true);
+            setFilteredCount(res.data.filteredCount);
+            setTotalPages(res.data.totalPages);
+            setItemLoading(false);
+          }
+        })
+        .catch((er) => console.log(er));
     }
-    if(item === 'transactions'){
-      axios.get(`http://localhost:5000/common/api/v1/payment/${id}?page=${pageNumber}&limit=${perPageItem}`)
-      .then(res => {
-        if(res.status === 200){
-          setItemData(res.data.data)
-          console.log(res.data.data)
-          if(isEmptyArray(res.data.data))setNotFound(true)
-          setFilteredCount(res.data.filteredCount);
-          setTotalPages(res.data.totalPages);
-          setItemLoading(false)
-        }
-      })
+    if (item === "transactions") {
+      axios
+        .get(
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/payment/${id}?page=${pageNumber}&limit=${perPageItem}`
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            setItemData(res.data.data);
+            console.log(res.data.data);
+            if (isEmptyArray(res.data.data)) setNotFound(true);
+            setFilteredCount(res.data.filteredCount);
+            setTotalPages(res.data.totalPages);
+            setItemLoading(false);
+          }
+        });
     }
-
-  },[id, pageNumber, perPageItem, status, search, years])
-
+  }, [id, pageNumber, perPageItem, status, search, years]);
 
   const location = useLocation();
   const [user, setUser] = useState(null);
@@ -140,7 +157,7 @@ function SingleUser() {
   const dropdownItem = (
     <SelectDropdown
       options={yearsList}
-      placeholder={`${years ? years : 'All Time'}`}
+      placeholder={`${years ? years : "All Time"}`}
       filterByYearAndStatus={filterByYear}
     />
   );
@@ -152,82 +169,111 @@ function SingleUser() {
 
   // Handle Page Change ________________________________
   const handlePageChange = (page) => {
-    navigateWithParams(`/user/${id}/${item}/${page}/${perPageItem}`, { search: search, years: years, status: status });
-  }
+    navigateWithParams(`/user/${id}/${item}/${page}/${perPageItem}`, {
+      search: search,
+      years: years,
+      status: status,
+    });
+  };
   // Search _____________________________________________
   const [searchText, setSearchText] = useState();
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      navigateWithParams(`/user/${id}/${item}/1/${perPageItem}`, { search: searchText, years: years, status: status });
+    if (event.key === "Enter") {
+      navigateWithParams(`/user/${id}/${item}/1/${perPageItem}`, {
+        search: searchText,
+        years: years,
+        status: status,
+      });
     }
   };
 
   // Handle Per Page Item _______________________________
   const handlePerPageItem = (perPageItem) => {
-    navigateWithParams(`/user/${id}/${item}/${pageNumber}/${perPageItem}`, { search: search, years: years, status: status });
-  }
-
-
+    navigateWithParams(`/user/${id}/${item}/${pageNumber}/${perPageItem}`, {
+      search: search,
+      years: years,
+      status: status,
+    });
+  };
 
   const closeRef = useRef(null);
-  const [suspendReason, setSuspendReason] = useState('');
-  const [suspendReasonErr, setSuspendReasonErr] = useState(); 
+  const [suspendReason, setSuspendReason] = useState("");
+  const [suspendReasonErr, setSuspendReasonErr] = useState();
   const userLocked = (id) => {
-    console.log('yes')
-    console.log('suspendReason', suspendReason)
-    setSuspendReasonErr('')
-    if(!suspendReason){
-      console.log('yes not suspend reason')
-      setSuspendReasonErr('Please describe suspend reason!')
+    console.log("yes");
+    console.log("suspendReason", suspendReason);
+    setSuspendReasonErr("");
+    if (!suspendReason) {
+      console.log("yes not suspend reason");
+      setSuspendReasonErr("Please describe suspend reason!");
       return;
     }
-    const date = new Date().toISOString();     
+    const date = new Date().toISOString();
     const userLocked = true;
     const userLockedDate = date;
     const status = "Suspended";
-    const payload = {userLocked, userLockedDate, suspendReason: textToHTML(suspendReason), status}
-    axios.patch(`http://localhost:5000/admin/api/v1/users/suspend-and-unsuspend/${id}`, payload)
-    .then(res => {
-      if(res.status == 200){
-        setRefetchUser(reFetchUser + 1)
-        toast.success('User Locked')
-        closeRef.current?.click(); // close modal
-      } 
-    })
-  }
+    const payload = {
+      userLocked,
+      userLockedDate,
+      suspendReason: textToHTML(suspendReason),
+      status,
+    };
+    axios
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/users/suspend-and-unsuspend/${id}`,
+        payload
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          setRefetchUser(reFetchUser + 1);
+          toast.success("User Locked");
+          closeRef.current?.click(); // close modal
+        }
+      });
+  };
 
   const userUnlocked = (id) => {
     const userLocked = false;
-    const userLockedDate = '';
-    const suspendReason = ''
-    const status = "Active"
-    const payload = {userLocked, userLockedDate, suspendReason, status}
-    axios.patch(`http://localhost:5000/admin/api/v1/users/suspend-and-unsuspend/${id}`, payload)
-    .then(res => {
-      if(res.status == 200){
-        setRefetchUser(reFetchUser + 1)
-        toast.success('User Unlocked')
-      } 
-    })
-  }
+    const userLockedDate = "";
+    const suspendReason = "";
+    const status = "Active";
+    const payload = { userLocked, userLockedDate, suspendReason, status };
+    axios
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/users/suspend-and-unsuspend/${id}`,
+        payload
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          setRefetchUser(reFetchUser + 1);
+          toast.success("User Unlocked");
+        }
+      });
+  };
 
-
-
-
-  if(loading)return <LoadingScreen/>
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="main-content single-user-content">
-      {
-        userData?.suspendReason &&
+      {userData?.suspendReason && (
         <div className="notice">
           <InfoCircledIcon />
-          <p style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word',}} dangerouslySetInnerHTML={{ __html: userData?.suspendReason }} ></p>
+          <p
+            style={{
+              whiteSpace: "normal",
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
+            }}
+            dangerouslySetInnerHTML={{ __html: userData?.suspendReason }}
+          ></p>
         </div>
-      }
+      )}
       <Flex className="singleUser-img-div">
         <div className="singleLabel-image-div">
-          <img src={userData?.photoURL ? userData?.photoURL : userDemoImg} className="singleLabel-image" />
+          <img
+            src={userData?.photoURL ? userData?.photoURL : userDemoImg}
+            className="singleLabel-image"
+          />
         </div>
         <div className="singleUser-img-txt">
           <br />
@@ -238,7 +284,9 @@ function SingleUser() {
               {user?.status}
             </span>
 
-            <h1>{userData?.first_name} {userData?.last_name}</h1>
+            <h1>
+              {userData?.first_name} {userData?.last_name}
+            </h1>
             <h4>{userData?.userName}</h4>
           </div>
 
@@ -293,9 +341,11 @@ function SingleUser() {
                   </DropdownMenu.Item>
                   <hr />
 
-                  {
-                    userData?.userLocked === true &&
-                    <DropdownMenu.Item onClick={() => userUnlocked(userData?._id)} className="dropdown-item">
+                  {userData?.userLocked === true && (
+                    <DropdownMenu.Item
+                      onClick={() => userUnlocked(userData?._id)}
+                      className="dropdown-item"
+                    >
                       <Link
                         style={{
                           cursor: "pointer",
@@ -307,10 +357,10 @@ function SingleUser() {
                         Unsuspend
                       </Link>
                     </DropdownMenu.Item>
-                  }
+                  )}
 
-                  {
-                    (userData?.userLocked === false || userData?.userLocked === undefined) &&
+                  {(userData?.userLocked === false ||
+                    userData?.userLocked === undefined) && (
                     <DropdownMenu.Item
                       className="dropdown-item"
                       onSelect={(e) => e.preventDefault()}
@@ -344,27 +394,40 @@ function SingleUser() {
                                 id=""
                                 placeholder="Write reason here"
                                 style={{ width: "100%" }}
-                                onChange={e => {console.log(e.target.value); setSuspendReason(e.target.value); setSuspendReasonErr('')}}
+                                onChange={(e) => {
+                                  console.log(e.target.value);
+                                  setSuspendReason(e.target.value);
+                                  setSuspendReasonErr("");
+                                }}
                                 onKeyDown={(e) => e.stopPropagation()}
                               ></textarea>
-                              {
-                                suspendReasonErr && <p style={{color: 'red'}}>{suspendReasonErr}</p>
-                              }
+                              {suspendReasonErr && (
+                                <p style={{ color: "red" }}>
+                                  {suspendReasonErr}
+                                </p>
+                              )}
 
-                              <button style={{ width: "100%", margin: "16px 0 0 0" }} className="theme-btn" onClick={() =>userLocked(userData?._id)}>Suspend</button>
-
-
+                              <button
+                                style={{ width: "100%", margin: "16px 0 0 0" }}
+                                className="theme-btn"
+                                onClick={() => userLocked(userData?._id)}
+                              >
+                                Suspend
+                              </button>
 
                               {/* Hidden Dialog.Close for programmatic close */}
                               <Dialog.Close asChild>
-                                  <button ref={closeRef} style={{ display: 'none' }} />
+                                <button
+                                  ref={closeRef}
+                                  style={{ display: "none" }}
+                                />
                               </Dialog.Close>
                             </Modal>
                           </Dialog.Content>
                         </Dialog.Portal>
                       </Dialog.Root>
                     </DropdownMenu.Item>
-                  }
+                  )}
                 </>
               )}
             </DropdownMenu.Content>
@@ -387,7 +450,7 @@ function SingleUser() {
         {/* Personal Information ________________________________ */}
         <div className="user-info">
           <h5>User Info:</h5>
-          <div style={{marginTop: '14px'}} className="d-flex">
+          <div style={{ marginTop: "14px" }} className="d-flex">
             <p>First Name:</p>
             <p className="user-value-text">{userData?.first_name}</p>
           </div>
@@ -405,69 +468,77 @@ function SingleUser() {
           </div>
           <div className="d-flex">
             <p>Created Date &amp; Time:</p>
-            <p className="user-value-text">{userData?.openingDateISO ? localDate(userData?.openingDateISO) : userData?.openingDate} {userData?.openingDateISO ? localTime(userData?.openingDateISO) : ''}</p>
+            <p className="user-value-text">
+              {userData?.openingDateISO
+                ? localDate(userData?.openingDateISO)
+                : userData?.openingDate}{" "}
+              {userData?.openingDateISO
+                ? localTime(userData?.openingDateISO)
+                : ""}
+            </p>
           </div>
           <div className="d-flex">
             <p>Last Active:</p>
-            <p className="user-value-text">{localDate(userData?.lastLogin)} {localTime(userData?.lastLogin)}</p>
+            <p className="user-value-text">
+              {localDate(userData?.lastLogin)} {localTime(userData?.lastLogin)}
+            </p>
           </div>
         </div>
 
         {/* Address ________________________________ */}
         <div className="user-info">
-            <h5>Address</h5>
-            <div style={{marginTop: '14px'}} className="d-flex">
-              <p>Address Line 1:</p>
-              <p className="user-value-text">{userData?.addressLine1}</p>
-            </div>
-            <div className="d-flex">
-              <p>Address Line 1:</p>
-              <p className="user-value-text">{userData?.addressLine2}</p>
-            </div>
-            <div className="d-flex">
-              <p>Postal Code:</p>
-              <p className="user-value-text">{userData?.postalCode}</p>
-            </div>
-            <div className="d-flex">
-              <p>City:</p>
-              <p className="user-value-text">{userData?.city}</p>
-            </div>
-            <div className="d-flex">
-              <p>State:</p>
-              <p className="user-value-text">{userData?.state?.name}</p>
-            </div>
-            <div className="d-flex">
-              <p>Country:</p>
-              <p className="user-value-text">{userData?.country?.name}</p>
-            </div>
+          <h5>Address</h5>
+          <div style={{ marginTop: "14px" }} className="d-flex">
+            <p>Address Line 1:</p>
+            <p className="user-value-text">{userData?.addressLine1}</p>
           </div>
+          <div className="d-flex">
+            <p>Address Line 1:</p>
+            <p className="user-value-text">{userData?.addressLine2}</p>
+          </div>
+          <div className="d-flex">
+            <p>Postal Code:</p>
+            <p className="user-value-text">{userData?.postalCode}</p>
+          </div>
+          <div className="d-flex">
+            <p>City:</p>
+            <p className="user-value-text">{userData?.city}</p>
+          </div>
+          <div className="d-flex">
+            <p>State:</p>
+            <p className="user-value-text">{userData?.state?.name}</p>
+          </div>
+          <div className="d-flex">
+            <p>Country:</p>
+            <p className="user-value-text">{userData?.country?.name}</p>
+          </div>
+        </div>
 
-          {
-            !userData?.label &&
-            <div className="user-info">
-              <h5>Label Info</h5>
-              {/* {userData?.label &&  */}
-                  <div style={{marginTop: '14px'}}>
-                    <div className="d-flex">
-                      <p>Channel Name:</p>
-                      <p className="user-value-text">demo</p>
-                    </div>
-                    <div className="d-flex">
-                      <p>Channel URL:</p>
-                      <p className="user-value-text">demo</p>
-                    </div>
-                    <div className="d-flex">
-                      <p>Subscriber Count:</p>
-                      <p className="user-value-text">1</p>
-                    </div>
-                    <div className="d-flex">
-                      <p>Videos Count:</p>
-                      <p className="user-value-text">11</p>
-                    </div>
-                  </div>
-              {/* } */}
+        {!userData?.label && (
+          <div className="user-info">
+            <h5>Label Info</h5>
+            {/* {userData?.label &&  */}
+            <div style={{ marginTop: "14px" }}>
+              <div className="d-flex">
+                <p>Channel Name:</p>
+                <p className="user-value-text">demo</p>
+              </div>
+              <div className="d-flex">
+                <p>Channel URL:</p>
+                <p className="user-value-text">demo</p>
+              </div>
+              <div className="d-flex">
+                <p>Subscriber Count:</p>
+                <p className="user-value-text">1</p>
+              </div>
+              <div className="d-flex">
+                <p>Videos Count:</p>
+                <p className="user-value-text">11</p>
+              </div>
             </div>
-          }
+            {/* } */}
+          </div>
+        )}
         {/* Govment ID Card */}
         <div className="user-download-row">
           <div className="user-info">
@@ -519,7 +590,8 @@ function SingleUser() {
         <Tabs.Content className="tabs-content" value="artist">
           <div className="search-setion">
             <input
-              onKeyPress={handleKeyPress} onChange={e => setSearchText(e.target.value)}
+              onKeyPress={handleKeyPress}
+              onChange={(e) => setSearchText(e.target.value)}
               defaultValue={search}
               type="text"
               placeholder="Search..."
@@ -558,20 +630,18 @@ function SingleUser() {
           <br />
           {user && user.status === "PENDING" ? (
             <br />
-          ) : <div>
-            {
-              notFound && <NotFoundPage/>
-            }
-            {
-              itemData && !notFound &&
-              <ArtistCard artistsItems={itemData} />
-            }
-          </div>}
+          ) : (
+            <div>
+              {notFound && <NotFoundPage />}
+              {itemData && !notFound && <ArtistCard artistsItems={itemData} />}
+            </div>
+          )}
         </Tabs.Content>
         <Tabs.Content className="tabs-content" value="labels">
           <div className="search-setion">
             <input
-              onKeyPress={handleKeyPress} onChange={e => setSearchText(e.target.value)}
+              onKeyPress={handleKeyPress}
+              onChange={(e) => setSearchText(e.target.value)}
               defaultValue={search}
               type="text"
               placeholder="Search..."
@@ -609,39 +679,38 @@ function SingleUser() {
           </div>
           <br />
           <div className="lables-container">
-            {
-              notFound && <NotFoundPage/>
-            }
-            { itemData && !notFound &&
-            itemData?.map((item, index) => (
-              <Link
-                // to="/single-lable"
-                state={{ lable: item }}
-                key={index}
-                className="lables-card"
-              >
-                <img
-                  src={item?.imgUrl ? item?.imgUrl : labelPlacheholderImg}
-                  alt='Labels'
-                />
-                <Flex style={{ display: "flex" }}>
-                  <div
-                    className="card-type-txt"
-                    style={
-                      item.status == "Rejected"
-                        ? { background: "#FEEBEC", color: "#E5484D" }
-                        : item.status == "Pending"
-                        ? { background: "#FFEBD8", color: "#FFA552" }
-                        : { background: "#E6F6EB", color: "#2B9A66" }
-                    }
-                  >
-                    {item.status}
-                  </div>
-                  <div className="card-date-txt">{localDate(item.date)}</div>
-                </Flex>
-                <p style={{ fontWeight: "500" }}>{item.labelName}</p>
-              </Link>
-            ))}
+            {notFound && <NotFoundPage />}
+            {itemData &&
+              !notFound &&
+              itemData?.map((item, index) => (
+                <Link
+                  // to="/single-lable"
+                  state={{ lable: item }}
+                  key={index}
+                  className="lables-card"
+                >
+                  <img
+                    src={item?.imgUrl ? item?.imgUrl : labelPlacheholderImg}
+                    alt="Labels"
+                  />
+                  <Flex style={{ display: "flex" }}>
+                    <div
+                      className="card-type-txt"
+                      style={
+                        item.status == "Rejected"
+                          ? { background: "#FEEBEC", color: "#E5484D" }
+                          : item.status == "Pending"
+                          ? { background: "#FFEBD8", color: "#FFA552" }
+                          : { background: "#E6F6EB", color: "#2B9A66" }
+                      }
+                    >
+                      {item.status}
+                    </div>
+                    <div className="card-date-txt">{localDate(item.date)}</div>
+                  </Flex>
+                  <p style={{ fontWeight: "500" }}>{item.labelName}</p>
+                </Link>
+              ))}
           </div>
         </Tabs.Content>
         <Tabs.Content className="tabs-content" value="transactions">
@@ -650,24 +719,18 @@ function SingleUser() {
             <p>Total Balance</p>
             <h3>€ {userData?.balance?.amount}</h3>
           </div>
-          {
-              notFound && <NotFoundPage/>
-          }
-          {
-            itemData && !notFound &&
-            <TransactionTable
-              columns={transactionColumns}
-              data={itemData}
-            />
-          }
+          {notFound && <NotFoundPage />}
+          {itemData && !notFound && (
+            <TransactionTable columns={transactionColumns} data={itemData} />
+          )}
         </Tabs.Content>
       </Tabs.Root>
-      <Pagination 
-        totalDataCount={filteredCount} 
+      <Pagination
+        totalDataCount={filteredCount}
         totalPages={totalPages}
-        currentPage={currentPage} 
-        perPageItem={perPageItem} 
-        setCurrentPage={setCurrentPage} 
+        currentPage={currentPage}
+        perPageItem={perPageItem}
+        setCurrentPage={setCurrentPage}
         handlePageChange={handlePageChange}
         customFunDropDown={handlePerPageItem}
       />

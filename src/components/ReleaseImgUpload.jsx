@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import PropTypes from "prop-types"; // ✅ Import PropTypes
 import { X } from "lucide-react";
 import axios from "axios";
-import demoImg from '../assets/icons/upload-img.png'
+import demoImg from "../assets/icons/upload-img.png";
 
 const ReleaseImgUpload = ({
   link,
@@ -47,9 +46,7 @@ const ReleaseImgUpload = ({
             })
             .catch((er) => console.log(er));
         } else {
-          setError(
-            "Please upload an image with dimensions 3000x3000 pixels."
-          );
+          setError("Please upload an image with dimensions 3000x3000 pixels.");
           if (event.target) {
             event.target.value = ""; // Clear the input field
           }
@@ -64,7 +61,9 @@ const ReleaseImgUpload = ({
   const deleteFile = (key) => {
     if (key) {
       axios
-        .delete(`http://localhost:5000/api/v1/release/delete-file?key=${key}`)
+        .delete(
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/release/delete-file?key=${key}`
+        )
         .then((res) => {
           if (res.status == 200) {
             setUploadedImage();
@@ -106,11 +105,7 @@ const ReleaseImgUpload = ({
                 transform: "translate(-50%, -50%)",
               }}
             >
-              <img
-                src={demoImg}
-                alt="upload-img"
-                className="upload-icon"
-              />
+              <img src={demoImg} alt="upload-img" className="upload-icon" />
               <p>
                 Drop your image here or &nbsp;
                 <span className="browse-file">Browse File</span>
@@ -143,13 +138,13 @@ const ReleaseImgUpload = ({
       </div>
 
       {error && <p className="error-text">{error}</p>}
-      
-          <div className="img-upload-info">
-            <h3 style={{ fontWeight: "500" }}>Album Artwork *</h3>
-            <p style={{ color: "#838383" }}>This will be displayed on Release profile</p>
-          </div>
-      
-      
+
+      <div className="img-upload-info">
+        <h3 style={{ fontWeight: "500" }}>Album Artwork *</h3>
+        <p style={{ color: "#838383" }}>
+          This will be displayed on Release profile
+        </p>
+      </div>
     </div>
   );
 };
@@ -168,6 +163,3 @@ ReleaseImgUpload.propTypes = {
 };
 
 export default ReleaseImgUpload;
-
-
-

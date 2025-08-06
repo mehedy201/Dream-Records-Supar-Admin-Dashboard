@@ -25,6 +25,7 @@
     "@reduxjs/toolkit": "^2.8.2",
     "@stitches/react": "^1.2.8",
     "axios": "^1.10.0",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.476.0",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",

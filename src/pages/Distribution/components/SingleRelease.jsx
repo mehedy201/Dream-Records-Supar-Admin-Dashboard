@@ -13,7 +13,7 @@ import { GoPencil } from "react-icons/go";
 import { LuImageDown } from "react-icons/lu";
 import axios from "axios";
 import LoadingScreen from "../../../components/LoadingScreen";
-import threeDotImg from '../../../assets/icons/vertical-threeDots.png'
+import threeDotImg from "../../../assets/icons/vertical-threeDots.png";
 import localDate from "../../../hooks/localDate";
 import TrackViewCollapsSection from "../../../components/TrackViewCollapsSection";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,9 +23,12 @@ import SingleReleasePageTable from "../../../components/SingleReleasePageTable";
 import isEmptyArray from "../../../hooks/isEmptyArrayCheck";
 import NotFoundPage from "../../../components/NotFoundPage";
 import textToHTML from "../../../hooks/textToHTML";
-import { setData, setReleaseAlbumInfo, setTracksInfo } from "../../../redux/features/releaseDataHandleSlice/releaseDataHandleSlice";
+import {
+  setData,
+  setReleaseAlbumInfo,
+  setTracksInfo,
+} from "../../../redux/features/releaseDataHandleSlice/releaseDataHandleSlice";
 import AlbumInfoEditComponent from "../EditRelease/AlbumInfoEditComponent";
-
 
 const dspColumn = [
   { label: "DSPs", key: "DSPs" },
@@ -44,47 +47,50 @@ const totalRevineuStreamColumn = [
 ];
 
 function SingleRelease() {
-
-  const {id} = useParams();
-  const { yearsList } = useSelector(state => state.yearsAndStatus);
-  const { tracksInfo, data, releaseAlbumInfo } = useSelector(state => state.releaseData);
+  const { id } = useParams();
+  const { yearsList } = useSelector((state) => state.yearsAndStatus);
+  const { tracksInfo, data, releaseAlbumInfo } = useSelector(
+    (state) => state.releaseData
+  );
   const dispatch = useDispatch();
 
   const [analyticsCollapse, setAnalyticsCollapse] = useState(true);
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   // const [data, setData] = useState();
   const [reFetchData, setReFetchData] = useState(1);
   useEffect(() => {
-    setLoading(true)
-    axios.get(`http://localhost:5000/api/v1/release/release/${id}`)
-    .then(res => {
-      console.log(res)
-      // Set Full Release Data_________
-      dispatch(setData(res.data.data))
-      // Set Album Info________________
-      const albumInfo = {...res.data.data};
-      // console.log('albumInfo', albumInfo)
-      delete albumInfo?.tracks
-      dispatch(setReleaseAlbumInfo(albumInfo))
-      // Set Tracks Info______________
-      dispatch(setTracksInfo(res?.data?.data?.tracks))
-      setLoading(false)
-    })
-  },[id, reFetchData])
-
+    setLoading(true);
+    axios
+      .get(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/release/release/${id}`
+      )
+      .then((res) => {
+        console.log(res);
+        // Set Full Release Data_________
+        dispatch(setData(res.data.data));
+        // Set Album Info________________
+        const albumInfo = { ...res.data.data };
+        // console.log('albumInfo', albumInfo)
+        delete albumInfo?.tracks;
+        dispatch(setReleaseAlbumInfo(albumInfo));
+        // Set Tracks Info______________
+        dispatch(setTracksInfo(res?.data?.data?.tracks));
+        setLoading(false);
+      });
+  }, [id, reFetchData]);
 
   // Analytics Table Componet Data Process_________________
   const [tableColumn, setTableColumn] = useState(dspColumn);
   const [tableData, setTableData] = useState();
-  const [dspTableData, setDspTableData] = useState()
-  const [territoryTableData, setTerritoryTableData] = useState()
+  const [dspTableData, setDspTableData] = useState();
+  const [territoryTableData, setTerritoryTableData] = useState();
   const [totalSummary, setTotalSummary] = useState();
   const dspAndTerittoriGet = (data) => {
     // DSP Aggregation
     const dspMap = {};
-    data?.forEach(entry => {
-      entry.byDSP.forEach(dsp => {
+    data?.forEach((entry) => {
+      entry.byDSP.forEach((dsp) => {
         if (!dspMap[dsp.dsp]) {
           dspMap[dsp.dsp] = { revenue: 0, streams: 0 };
         }
@@ -96,13 +102,13 @@ function SingleRelease() {
     const byDsp = Object.entries(dspMap).map(([dsp, { revenue, streams }]) => ({
       dsp,
       revenue: Number(revenue.toFixed(2)),
-      streams
+      streams,
     }));
 
     // =============== Territory Aggregation ==============
     const territoryMap = {};
-    data?.forEach(entry => {
-      entry.byTerritory.forEach(t => {
+    data?.forEach((entry) => {
+      entry.byTerritory.forEach((t) => {
         if (!territoryMap[t.territory]) {
           territoryMap[t.territory] = { revenue: 0, streams: 0 };
         }
@@ -111,11 +117,13 @@ function SingleRelease() {
       });
     });
 
-    const byTerritory = Object.entries(territoryMap).map(([territory, { revenue, streams }]) => ({
-      territory,
-      revenue: Number(revenue.toFixed(2)),
-      streams
-    }));
+    const byTerritory = Object.entries(territoryMap).map(
+      ([territory, { revenue, streams }]) => ({
+        territory,
+        revenue: Number(revenue.toFixed(2)),
+        streams,
+      })
+    );
 
     // ================= Total Summary =================
     const totalSummaryData = data?.reduce(
@@ -124,59 +132,66 @@ function SingleRelease() {
         acc.revenue += entry.summary?.revenue || 0;
         return acc;
       },
-      { total: 'Total', streams: 0, revenue: 0 }
+      { total: "Total", streams: 0, revenue: 0 }
     );
     totalSummaryData.revenue = Number(totalSummaryData.revenue.toFixed(2));
 
-    setTableData(byDsp)
+    setTableData(byDsp);
     setDspTableData(byDsp);
     setTerritoryTableData(byTerritory);
-    setTotalSummary([totalSummaryData])
-  }
+    setTotalSummary([totalSummaryData]);
+  };
 
   // Getting Analytics Chart and Table Data From API ________
   const [chartDataStreams, setChartDataStreams] = useState();
   const [chartDataRevenue, setChartDataRevenue] = useState();
-  const [totalStreams, setTotalStreams] = useState()
+  const [totalStreams, setTotalStreams] = useState();
   const [totalRevenue, setTotalRevenue] = useState();
   const [years, setYears] = useState(Math.max(...yearsList));
-  const [dataNotFound, setDataNotFound] = useState(false)
+  const [dataNotFound, setDataNotFound] = useState(false);
   useEffect(() => {
-    setDataNotFound(false)
-    console.log('not go')
-    if(data?.UPC){
-      console.log('yes go')
-      axios.get(`http://localhost:5000/common/api/v1/analytics-and-balance/upc-analytics?UPC=${data?.UPC}&years=${years}`)
-      .then(res => {
-        console.log('Res', res)
-        if(res.status === 200){
-          if(isEmptyArray(res?.data?.data))setDataNotFound(true)
-          setTotalStreams(res?.data?.totalStreams)
-          setTotalRevenue(res?.data?.totalRevenue)
-          dspAndTerittoriGet(res?.data?.data)
+    setDataNotFound(false);
+    console.log("not go");
+    if (data?.UPC) {
+      console.log("yes go");
+      axios
+        .get(
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/analytics-and-balance/upc-analytics?UPC=${data?.UPC}&years=${years}`
+        )
+        .then((res) => {
+          console.log("Res", res);
+          if (res.status === 200) {
+            if (isEmptyArray(res?.data?.data)) setDataNotFound(true);
+            setTotalStreams(res?.data?.totalStreams);
+            setTotalRevenue(res?.data?.totalRevenue);
+            dspAndTerittoriGet(res?.data?.data);
 
-          const rawData = res?.data?.data
-          const streamsData = rawData?.map(item => ({
-            month: item.date,
-            value: item.summary.streams,
-          })).sort((a, b) => new Date(a.month) - new Date(b.month))
-    
-          const revenewData = rawData?.map(item => ({
-            month: item.date,
-            value: item.summary.revenue,
-          })).sort((a, b) => new Date(a.month) - new Date(b.month))
-  
-          setChartDataStreams(streamsData)
-          setChartDataRevenue(revenewData)
-        }
-      })
+            const rawData = res?.data?.data;
+            const streamsData = rawData
+              ?.map((item) => ({
+                month: item.date,
+                value: item.summary.streams,
+              }))
+              .sort((a, b) => new Date(a.month) - new Date(b.month));
+
+            const revenewData = rawData
+              ?.map((item) => ({
+                month: item.date,
+                value: item.summary.revenue,
+              }))
+              .sort((a, b) => new Date(a.month) - new Date(b.month));
+
+            setChartDataStreams(streamsData);
+            setChartDataRevenue(revenewData);
+          }
+        });
     }
-  },[data?.UPC, years])
+  }, [data?.UPC, years]);
 
   // Change Status and Reject Function____________________________________
   // _____________________________________________________________________
   // Move to Review Releae Function___________________________________
-  const {userData} = useSelector((state) => state.userData);
+  const { userData } = useSelector((state) => state.userData);
   const moveToReview = (id) => {
     const payload = {
       status: "Review",
@@ -184,149 +199,158 @@ function SingleRelease() {
         adminEmail: userData?.email,
         adminUserName: userData?.userName,
         adminId: userData?._id,
-        updatedAt: new Date().toISOString()
-      }
-    }
-    axios.patch(`http://localhost:5000/admin/api/v1/release/update-release-status/${id}`, payload)
-    .then(res => {
-      if(res.status == 200){
-        setReFetchData(reFetchData + 1)
-      }
-    })
-  }
+        updatedAt: new Date().toISOString(),
+      },
+    };
+    axios
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${id}`,
+        payload
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          setReFetchData(reFetchData + 1);
+        }
+      });
+  };
   // Move to Live Releae Function___________________________________
   const moveToLive = (id) => {
     const payload = {
       status: "Live",
       liveAdminInfo: {
-          adminEmail: userData?.email,
-          adminUserName: userData?.userName,
-          adminId: userData?._id,
-          updatedAt: new Date().toISOString()
-      }
-    }
-    axios.patch(`http://localhost:5000/admin/api/v1/release/update-release-status/${id}`, payload)
-    .then(res => {
-      if(res.status == 200){
-        setReFetchData(reFetchData + 1)
-      }
-    })
-  }
+        adminEmail: userData?.email,
+        adminUserName: userData?.userName,
+        adminId: userData?._id,
+        updatedAt: new Date().toISOString(),
+      },
+    };
+    axios
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${id}`,
+        payload
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          setReFetchData(reFetchData + 1);
+        }
+      });
+  };
 
   // Reject Releae Function___________________________________
   const [rejectType, setRejectType] = useState();
-  const [errorRejectType, setErrorRejectType] = useState('');
-  const [rejectInputText, setRejectInputText] = useState('');
+  const [errorRejectType, setErrorRejectType] = useState("");
+  const [rejectInputText, setRejectInputText] = useState("");
   const [errorRejectInputText, setErrorRejectInputText] = useState();
 
   const closeRef = useRef(null);
   const rejectRelease = (data) => {
-    setErrorRejectType('')
-    setErrorRejectInputText('')
-    if(!rejectType){
-      setErrorRejectType('Please Select Type')
+    setErrorRejectType("");
+    setErrorRejectInputText("");
+    if (!rejectType) {
+      setErrorRejectType("Please Select Type");
       return;
     }
-    if(!rejectInputText){
-      setErrorRejectInputText('Reject reason required')
+    if (!rejectInputText) {
+      setErrorRejectInputText("Reject reason required");
       return;
     }
 
     const actionRequired = textToHTML(rejectInputText);
     let actionReqHistory = {};
-    if(data?.actionReqHistory){
-      actionReqHistory = data?.actionReqHistory
+    if (data?.actionReqHistory) {
+      actionReqHistory = data?.actionReqHistory;
     }
-    actionReqHistory.push(actionRequired)
+    actionReqHistory.push(actionRequired);
 
-    let payload = {}
-    if(rejectType === 'Action Required'){
+    let payload = {};
+    if (rejectType === "Action Required") {
       payload = {
         status: rejectType,
         actionRequired,
         actionRequiredAdminInfo: {
-            adminEmail: userData?.email,
-            adminUserName: userData?.userName,
-            adminId: userData?._id,
-            updatedAt: new Date().toISOString()
-        }
-      }
-    }else if(rejectType === 'Takedown'){
+          adminEmail: userData?.email,
+          adminUserName: userData?.userName,
+          adminId: userData?._id,
+          updatedAt: new Date().toISOString(),
+        },
+      };
+    } else if (rejectType === "Takedown") {
       payload = {
         status: rejectType,
         actionRequired,
         takedownAdminInfo: {
-            adminEmail: userData?.email,
-            adminUserName: userData?.userName,
-            adminId: userData?._id,
-            updatedAt: new Date().toISOString()
-        }
-      }
-    }else if(rejectType === 'Blocked'){
+          adminEmail: userData?.email,
+          adminUserName: userData?.userName,
+          adminId: userData?._id,
+          updatedAt: new Date().toISOString(),
+        },
+      };
+    } else if (rejectType === "Blocked") {
       payload = {
         status: rejectType,
         actionRequired,
         blockedAdminInfo: {
-            adminEmail: userData?.email,
-            adminUserName: userData?.userName,
-            adminId: userData?._id,
-            updatedAt: new Date().toISOString()
-        }
-      }
-    }else if(rejectType === 'Suspend'){
+          adminEmail: userData?.email,
+          adminUserName: userData?.userName,
+          adminId: userData?._id,
+          updatedAt: new Date().toISOString(),
+        },
+      };
+    } else if (rejectType === "Suspend") {
       payload = {
         status: rejectType,
         actionRequired,
         suspendAdminInfo: {
-            adminEmail: userData?.email,
-            adminUserName: userData?.userName,
-            adminId: userData?._id,
-            updatedAt: new Date().toISOString()
-        }
-      }
-    }else if(rejectType === 'Error'){
+          adminEmail: userData?.email,
+          adminUserName: userData?.userName,
+          adminId: userData?._id,
+          updatedAt: new Date().toISOString(),
+        },
+      };
+    } else if (rejectType === "Error") {
       payload = {
         status: rejectType,
         actionRequired,
         errorAdminInfo: {
-            adminEmail: userData?.email,
-            adminUserName: userData?.userName,
-            adminId: userData?._id,
-            updatedAt: new Date().toISOString()
-        }
-      }
+          adminEmail: userData?.email,
+          adminUserName: userData?.userName,
+          adminId: userData?._id,
+          updatedAt: new Date().toISOString(),
+        },
+      };
     }
 
-    axios.patch(`http://localhost:5000/admin/api/v1/release/update-release-status/${id}`, payload)
-    .then(res => {
-      if(res.status == 200){
-        setReFetchData(reFetchData + 1)
-      }
-    })
-    closeRef.current?.click(); // close modal  
-  }
-
+    axios
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${id}`,
+        payload
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          setReFetchData(reFetchData + 1);
+        }
+      });
+    closeRef.current?.click(); // close modal
+  };
 
   const modalCss = {
-    background: 'white',
-    padding: '20px',
-    borderRadius: '8px',
-    boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.2)',
-    position: 'fixed',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    maxWidth: '1100px',
-    overflowY: 'auto',
-    maxHeight: '90vh',
-    scrollbarWidth: 'thin',
-    zIndex: '3',
-    width: '80%'
-  }
+    background: "white",
+    padding: "20px",
+    borderRadius: "8px",
+    boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    maxWidth: "1100px",
+    overflowY: "auto",
+    maxHeight: "90vh",
+    scrollbarWidth: "thin",
+    zIndex: "3",
+    width: "80%",
+  };
 
-
-
-  if(loading)return <LoadingScreen/>
+  if (loading) return <LoadingScreen />;
 
   return (
     <div>
@@ -334,32 +358,34 @@ function SingleRelease() {
         className="main-content createRelease-content-div createRelease-overview-div"
         style={{ marginBottom: "20px" }}
       >
-        {
-          data?.actionReqHistory && data?.actionReqHistory?.map((d, index) => 
+        {data?.actionReqHistory &&
+          data?.actionReqHistory?.map((d, index) => (
             <div key={index} className="notice">
               <FiAlertTriangle />
-              <p style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word',}} dangerouslySetInnerHTML={{ __html: d }}></p>
+              <p
+                style={{
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
+                }}
+                dangerouslySetInnerHTML={{ __html: d }}
+              ></p>
             </div>
-          )
-        }
+          ))}
         <div className="d-flex release-overview-img-div">
           <div>
-            <img
-              src={data?.imgUrl}
-              alt=""
-              className="release-overview-img"
-            />
+            <img src={data?.imgUrl} alt="" className="release-overview-img" />
           </div>
           <div className="d-flex" style={{ width: "100%" }}>
             <div>
               <span
                 className={`status card-type-txt ${data?.status?.toLowerCase()}`}
                 style={
-                    data?.status == "Takedown"
+                  data?.status == "Takedown"
                     ? { background: "#FEEBEC", color: "#E5484D" }
                     : data?.status == "Pending" || data?.status == "QC Approval"
                     ? { background: "#FFEBD8", color: "#FFA552" }
-                    : data?.status == "Live" || data?.status == 'Approved' 
+                    : data?.status == "Live" || data?.status == "Approved"
                     ? { background: "#E6F6EB", color: "#2B9A66" }
                     : data?.status == "Review"
                     ? { background: "#D5EFFF", color: "#0090FF" }
@@ -372,7 +398,9 @@ function SingleRelease() {
               </span>
               <br />
               <h1>{data?.releaseTitle}</h1>
-              <h2>{data?.artist?.map(artist => artist.artistName).join(', ')}</h2>
+              <h2>
+                {data?.artist?.map((artist) => artist.artistName).join(", ")}
+              </h2>
             </div>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
@@ -392,29 +420,37 @@ function SingleRelease() {
                 <DropdownMenu.Item className="dropdown-item">
                   <div>
                     <a
-                        href={data?.imgUrl}
-                        download={`${data?.imgUrl}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ textDecoration: 'none', color: 'black' }}
-                      >
-                        <LuImageDown /> Download Artwork
+                      href={data?.imgUrl}
+                      download={`${data?.imgUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ textDecoration: "none", color: "black" }}
+                    >
+                      <LuImageDown /> Download Artwork
                     </a>
                   </div>
                 </DropdownMenu.Item>
                 <hr style={{ margin: 0 }} />
-                {
-                  data?.status === 'QC Approval' || data?.status === 'Pending' &&
-                  <DropdownMenu.Item onClick={() => moveToReview(data?._id)} className="dropdown-item">
-                      <div ><FiArrowRight /> <span>Move to Review</span></div>
+                {data?.status === "QC Approval" && (
+                  <DropdownMenu.Item
+                    onClick={() => moveToReview(data?._id)}
+                    className="dropdown-item"
+                  >
+                    <div>
+                      <FiArrowRight /> <span>Move to Review</span>
+                    </div>
                   </DropdownMenu.Item>
-                }
-                {
-                  data?.status === 'Review' &&
-                  <DropdownMenu.Item  onClick={() => moveToLive(data?._id)} className="dropdown-item">
-                      <div><FiArrowRight /> <span>Move to Live</span></div>
+                )}
+                {data?.status === "Review" && (
+                  <DropdownMenu.Item
+                    onClick={() => moveToLive(data?._id)}
+                    className="dropdown-item"
+                  >
+                    <div>
+                      <FiArrowRight /> <span>Move to Live</span>
+                    </div>
                   </DropdownMenu.Item>
-                }
+                )}
                 <hr style={{ margin: 0 }} />
                 <DropdownMenu.Item
                   className="dropdown-item"
@@ -441,12 +477,16 @@ function SingleRelease() {
                         <label className="singleRelease-modal-label" htmlFor="">
                           Reject Type
                         </label>
-                        <Select.Root onValueChange={value => {
-                          setRejectType(value)
-                          setErrorRejectType('')
-                        }}>
-                          <Select.Trigger className={`dropdown-trigger analytics-modal-dropdown`}>
-                            <Select.Value placeholder={ "Select Reject Type"} />
+                        <Select.Root
+                          onValueChange={(value) => {
+                            setRejectType(value);
+                            setErrorRejectType("");
+                          }}
+                        >
+                          <Select.Trigger
+                            className={`dropdown-trigger analytics-modal-dropdown`}
+                          >
+                            <Select.Value placeholder={"Select Reject Type"} />
                             <Select.Icon className="select-icon">
                               <ChevronDown />
                             </Select.Icon>
@@ -454,22 +494,35 @@ function SingleRelease() {
                           <Select.Portal>
                             <Select.Content
                               className="dropdown-content"
-                              style={{ padding: 0, overflowY: "auto", zIndex: "123" }}
+                              style={{
+                                padding: 0,
+                                overflowY: "auto",
+                                zIndex: "123",
+                              }}
                             >
                               <Select.Viewport>
-                                <Select.Item value='Error' className="select-item">
+                                <Select.Item
+                                  value="Error"
+                                  className="select-item"
+                                >
                                   <Select.ItemText>Error</Select.ItemText>
                                   <Select.ItemIndicator className="select-item-indicator">
                                     <Check size={18} />
                                   </Select.ItemIndicator>
                                 </Select.Item>
-                                <Select.Item value='Takedown' className="select-item">
+                                <Select.Item
+                                  value="Takedown"
+                                  className="select-item"
+                                >
                                   <Select.ItemText>Takedown</Select.ItemText>
                                   <Select.ItemIndicator className="select-item-indicator">
                                     <Check size={18} />
                                   </Select.ItemIndicator>
                                 </Select.Item>
-                                <Select.Item value='Blocked' className="select-item">
+                                <Select.Item
+                                  value="Blocked"
+                                  className="select-item"
+                                >
                                   <Select.ItemText>Blocked</Select.ItemText>
                                   <Select.ItemIndicator className="select-item-indicator">
                                     <Check size={18} />
@@ -479,9 +532,9 @@ function SingleRelease() {
                             </Select.Content>
                           </Select.Portal>
                         </Select.Root>
-                        {
-                          errorRejectType && <p style={{color: 'red'}}>{errorRejectType}</p>
-                        }
+                        {errorRejectType && (
+                          <p style={{ color: "red" }}>{errorRejectType}</p>
+                        )}
 
                         <label className="singleRelease-modal-label" htmlFor="">
                           Describe issue here *
@@ -491,20 +544,25 @@ function SingleRelease() {
                           style={{ width: "100%" }}
                           value={rejectInputText}
                           onChange={(e) => {
-                            setRejectInputText(e.target.value)
-                            setErrorRejectInputText('')
+                            setRejectInputText(e.target.value);
+                            setErrorRejectInputText("");
                           }}
                           onKeyDown={(e) => e.stopPropagation()}
                         ></textarea>
-                        {
-                          errorRejectInputText && <p style={{color: 'red'}}>{errorRejectInputText}</p>
-                        }
+                        {errorRejectInputText && (
+                          <p style={{ color: "red" }}>{errorRejectInputText}</p>
+                        )}
                       </div>
-                      <button onClick={() => rejectRelease(data)} className="close-button">Reject</button>
+                      <button
+                        onClick={() => rejectRelease(data)}
+                        className="close-button"
+                      >
+                        Reject
+                      </button>
 
                       {/* Hidden Dialog.Close for programmatic close */}
                       <Dialog.Close asChild>
-                        <button ref={closeRef} style={{ display: 'none' }} />
+                        <button ref={closeRef} style={{ display: "none" }} />
                       </Dialog.Close>
                     </Modal>
                   </Dialog.Root>
@@ -528,21 +586,23 @@ function SingleRelease() {
               <span className="singleRelease-editAlbum-btn">
                 <GoPencil /> Edit Album
               </span>
-              </Dialog.Trigger>
-                <Dialog.Portal style={{padding: '100px'}}>
-                  <Dialog.Overlay className="modal-overlay" />
-                  <Dialog.Content style={modalCss}>
-                    {
-                      releaseAlbumInfo &&
-                      <AlbumInfoEditComponent closeRef={closeRef} releaseAlbumInfo={releaseAlbumInfo}/>
-                    }
-                    {/* Hidden Dialog.Close for programmatic close */}
-                      <Dialog.Close asChild>
-                        <button ref={closeRef} style={{ display: 'none' }} />
-                      </Dialog.Close>
-                  </Dialog.Content>
-                </Dialog.Portal>
-             </Dialog.Root>
+            </Dialog.Trigger>
+            <Dialog.Portal style={{ padding: "100px" }}>
+              <Dialog.Overlay className="modal-overlay" />
+              <Dialog.Content style={modalCss}>
+                {releaseAlbumInfo && (
+                  <AlbumInfoEditComponent
+                    closeRef={closeRef}
+                    releaseAlbumInfo={releaseAlbumInfo}
+                  />
+                )}
+                {/* Hidden Dialog.Close for programmatic close */}
+                <Dialog.Close asChild>
+                  <button ref={closeRef} style={{ display: "none" }} />
+                </Dialog.Close>
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
         </div>
         <div className="release-album-info-row">
           <div className="d-flex">
@@ -555,7 +615,12 @@ function SingleRelease() {
           </div>
           <div className="d-flex">
             <p>Primary Artist:</p>
-            <p>{data?.artist?.map(artist => artist.artistName).join(', ')} {data?.primaryArtist?.map(artist => artist.artistName).join(', ')}</p>
+            <p>
+              {data?.artist?.map((artist) => artist.artistName).join(", ")}{" "}
+              {data?.primaryArtist
+                ?.map((artist) => artist.artistName)
+                .join(", ")}
+            </p>
           </div>
           <div className="d-flex">
             <p>Format:</p>
@@ -563,7 +628,10 @@ function SingleRelease() {
           </div>
           <div className="d-flex">
             <p>Featuring:</p>
-            <p>{data?.featuring?.map(artist => artist.artistName).join(', ')} {data?.featureing?.map(artist => artist.artistName).join(', ')}</p>
+            <p>
+              {data?.featuring?.map((artist) => artist.artistName).join(", ")}{" "}
+              {data?.featureing?.map((artist) => artist.artistName).join(", ")}
+            </p>
           </div>
           <div className="d-flex">
             <p>℗ line:</p>
@@ -587,7 +655,10 @@ function SingleRelease() {
           </div>
           <div className="d-flex">
             <p>Label Name:</p>
-            <p>{data?.labels?.map(label => label.labelName).join(', ')} {data?.label?.map(label => label.labelName).join(', ')}</p>
+            <p>
+              {data?.labels?.map((label) => label.labelName).join(", ")}{" "}
+              {data?.label?.map((label) => label.labelName).join(", ")}
+            </p>
           </div>
           <div className="d-flex">
             <p>UPC/EAN</p>
@@ -595,7 +666,11 @@ function SingleRelease() {
           </div>
           <div className="d-flex">
             <p>Release Date:</p>
-            <p>{data?.releaseDate ? localDate(data.releaseDate) : data?.releaseOption}</p>
+            <p>
+              {data?.releaseDate
+                ? localDate(data.releaseDate)
+                : data?.releaseOption}
+            </p>
           </div>
           <div className="d-flex">
             <p>Producer Catalog Number:</p>
@@ -605,14 +680,12 @@ function SingleRelease() {
         <hr />
         <h3 className="release-album-title">Tracks</h3>
         <br />
-        {
-          tracksInfo &&
-          tracksInfo?.map((track, index) => 
+        {tracksInfo &&
+          tracksInfo?.map((track, index) => (
             <div key={index}>
-              <TrackViewCollapsSection track={track} index={index}/>
+              <TrackViewCollapsSection track={track} index={index} />
             </div>
-          )
-        }
+          ))}
       </div>
       <div className="release-analytics">
         <Collapsible.Root
@@ -667,10 +740,12 @@ function SingleRelease() {
                     <div style={{ width: "100%" }}>
                       {" "}
                       <label htmlFor="">Period</label>
-
-                      <Select.Root defaultValue={Math.max(...yearsList)} onValueChange={(value) => setYears(value.toString())}>
+                      <Select.Root
+                        defaultValue={Math.max(...yearsList)}
+                        onValueChange={(value) => setYears(value.toString())}
+                      >
                         <Select.Trigger className={`dropdown-trigger`}>
-                          <Select.Value/>
+                          <Select.Value />
                           <Select.Icon className="select-icon">
                             <ChevronDown />
                           </Select.Icon>
@@ -682,7 +757,11 @@ function SingleRelease() {
                           >
                             <Select.Viewport>
                               {yearsList?.map((option, index) => (
-                                <Select.Item key={index} value={option} className="select-item">
+                                <Select.Item
+                                  key={index}
+                                  value={option}
+                                  className="select-item"
+                                >
                                   <Select.ItemText>{option}</Select.ItemText>
                                   <Select.ItemIndicator className="select-item-indicator">
                                     <Check size={18} />
@@ -693,17 +772,28 @@ function SingleRelease() {
                           </Select.Content>
                         </Select.Portal>
                       </Select.Root>
-
                     </div>
                     <div style={{ width: "100%" }}>
                       <label htmlFor="">By</label>
-                      <Select.Root defaultValue="DSP" onValueChange={(value) => {
-                          if(value === 'DSP'){setTableData(dspTableData); setTableColumn(dspColumn)}
-                          if(value === 'Territory'){setTableData(territoryTableData); setTableColumn(territoryColumn)}
-                          if(value === 'Total'){setTableData(totalSummary); setTableColumn(totalRevineuStreamColumn)}
-                      }}>
+                      <Select.Root
+                        defaultValue="DSP"
+                        onValueChange={(value) => {
+                          if (value === "DSP") {
+                            setTableData(dspTableData);
+                            setTableColumn(dspColumn);
+                          }
+                          if (value === "Territory") {
+                            setTableData(territoryTableData);
+                            setTableColumn(territoryColumn);
+                          }
+                          if (value === "Total") {
+                            setTableData(totalSummary);
+                            setTableColumn(totalRevineuStreamColumn);
+                          }
+                        }}
+                      >
                         <Select.Trigger className={`dropdown-trigger`}>
-                          <Select.Value placeholder='Filter by DSP/Territory'/>
+                          <Select.Value placeholder="Filter by DSP/Territory" />
                           <Select.Icon className="select-icon">
                             <ChevronDown />
                           </Select.Icon>
@@ -714,24 +804,30 @@ function SingleRelease() {
                             style={{ padding: 0, overflowY: "auto" }}
                           >
                             <Select.Viewport>
-                                <Select.Item value='DSP' className="select-item">
-                                  <Select.ItemText>DSP</Select.ItemText>
-                                  <Select.ItemIndicator className="select-item-indicator">
-                                    <Check size={18} />
-                                  </Select.ItemIndicator>
-                                </Select.Item>
-                                <Select.Item value='Territory' className="select-item">
-                                  <Select.ItemText>Territory</Select.ItemText>
-                                  <Select.ItemIndicator className="select-item-indicator">
-                                    <Check size={18} />
-                                  </Select.ItemIndicator>
-                                </Select.Item>
-                                <Select.Item value='Total' className="select-item">
-                                  <Select.ItemText>Total</Select.ItemText>
-                                  <Select.ItemIndicator className="select-item-indicator">
-                                    <Check size={18} />
-                                  </Select.ItemIndicator>
-                                </Select.Item>
+                              <Select.Item value="DSP" className="select-item">
+                                <Select.ItemText>DSP</Select.ItemText>
+                                <Select.ItemIndicator className="select-item-indicator">
+                                  <Check size={18} />
+                                </Select.ItemIndicator>
+                              </Select.Item>
+                              <Select.Item
+                                value="Territory"
+                                className="select-item"
+                              >
+                                <Select.ItemText>Territory</Select.ItemText>
+                                <Select.ItemIndicator className="select-item-indicator">
+                                  <Check size={18} />
+                                </Select.ItemIndicator>
+                              </Select.Item>
+                              <Select.Item
+                                value="Total"
+                                className="select-item"
+                              >
+                                <Select.ItemText>Total</Select.ItemText>
+                                <Select.ItemIndicator className="select-item-indicator">
+                                  <Check size={18} />
+                                </Select.ItemIndicator>
+                              </Select.Item>
                             </Select.Viewport>
                           </Select.Content>
                         </Select.Portal>
@@ -742,28 +838,28 @@ function SingleRelease() {
               </Tabs.List>
 
               <Tabs.Content className="tabs-content" value="Streams">
-                {
-                  dataNotFound === false &&
+                {dataNotFound === false && (
                   <>
                     <Chart chartData={chartDataStreams} />
-                    <SingleReleasePageTable columns={tableColumn} data={tableData}/>
+                    <SingleReleasePageTable
+                      columns={tableColumn}
+                      data={tableData}
+                    />
                   </>
-                }
-                {
-                  dataNotFound === true && <NotFoundPage/>
-                }
+                )}
+                {dataNotFound === true && <NotFoundPage />}
               </Tabs.Content>
               <Tabs.Content className="tabs-content" value="Revenue">
-                {
-                  dataNotFound === false && 
+                {dataNotFound === false && (
                   <>
                     <Chart chartData={chartDataRevenue} />
-                    <SingleReleasePageTable columns={tableColumn} data={tableData}/>
+                    <SingleReleasePageTable
+                      columns={tableColumn}
+                      data={tableData}
+                    />
                   </>
-                }
-                {
-                  dataNotFound === true && <NotFoundPage/>
-                }
+                )}
+                {dataNotFound === true && <NotFoundPage />}
               </Tabs.Content>
             </Tabs.Root>
           </Collapsible.Content>

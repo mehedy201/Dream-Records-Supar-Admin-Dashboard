@@ -1,75 +1,71 @@
 import { useState } from "react";
 import "./logIn.css";
 import { useNavigate } from "react-router-dom";
-import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
-import auth from "../../../firebase.config";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import FormSubmitLoading from "../../components/FormSubmitLoading";
+import logo from "../../assets/Logo.png";
 function ResetPassword() {
-  
-  const navigate = useNavigate()
-  
-    const [sendPasswordResetEmail] = useSendPasswordResetEmail(auth);
-    const [isResetPassword, setIsResetPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [emaliErr, setEmailErr] = useState();
-    // User Update Form _________________________________
-    const { register, handleSubmit, formState: { errors }} = useForm();
-    const onSubmit = async (data) => {
-        setLoading(true)
-        const email = data.email
-        sendPasswordResetEmail(email)
-        .then((res) => {
-            console.log(res);
-            setIsResetPassword(true)
-        })
-        .catch(err => {
-            console.log(err);
-            setEmailErr(err)
-        })
-        setLoading(false)   
-    }
+  const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  // User Update Form _________________________________
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        "https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/forgot-password",
+        { email: data.email }
+      );
+
+      console.log(res);
+
+      if (res.data.message) {
+        setMessage("OTP sent to your email. Please check.");
+        navigate(`/set-new-password/${data.email}`);
+      }
+    } catch (err) {
+      setMessage(
+        err.response?.data?.message || "Something went wrong. Try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="logIn-pg">
       <div className="login-sideimg-div"></div>
       <div className="login-form-section">
         <div style={{ textAlign: "center" }}>
-          <img src="src/assets/Logo.png" alt="" />
+          <img src={logo} alt="" />
         </div>
         <h5> We will email you instructions on how to reset your password.</h5>
 
-        <div>
-            {isResetPassword ? (
-            <p className="resetPass-msg">
-              We have sent you an email with instructions on how to reset your
-              password.
-            </p>
-          ) : (
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <label>Email</label>
-              <input {...register("email", { required: true})} type="email" />
-              {errors.email && <span style={{color: 'red'}}>Please enter your email</span>}
-              <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-              {
-                loading && <p>Loading.....</p>
-              }
-              {
-                emaliErr && <p style={{color: 'red'}}>{emaliErr}</p>
-              }
-              </div>
-              <button
-                className="theme-btn"
-                style={{ width: "100%", margin: "0 0 24px 0" }}
-                type="submit"
-              >
-                Reset Password
-              </button>
-            </form>
-          )}
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <label>Email</label>
+          <input type="email" {...register("email", { required: true })} />
+          {errors.email && <span>Email Required</span>}
+          {loading && <FormSubmitLoading />}
+          {message && <p>{message}</p>}
+          <button
+            type="submit"
+            className="theme-btn"
+            style={{ width: "100%", margin: "0 0 24px 0" }}
+          >
+            Reset Password
+          </button>
+        </form>
 
-        <button onClick={() => navigate('/login')} className="theme-btn2">Return to login</button>
+        <button onClick={() => navigate("/login")} className="theme-btn2">
+          Return to login
+        </button>
       </div>
     </div>
   );

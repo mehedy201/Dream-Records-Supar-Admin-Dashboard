@@ -72,6 +72,7 @@ import EditUser from "./pages/Users/components/EditUser";
 import CreateUser from "./pages/Users/components/CreateUser";
 import MobileMenu from "./components/MobileMenu";
 import MobileFooter from "./components/MobileFooter";
+import Authorization from "./Authorization/Authorization";
 function Layout() {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 830);
@@ -124,7 +125,7 @@ function App() {
     <Router>
       <Routes>
         {/* Routes inside Layout (with Sidebar & Navbar) */}
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Authorization><Layout /></Authorization>}>
           <Route
             path="/"
             element={
@@ -244,7 +245,7 @@ function App() {
 
         <Route path="/login" element={<LogIn />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
-        <Route path="/newpassword" element={<NewPassword />} />
+        <Route path="/set-new-password/:email" element={<NewPassword />} />
         <Route
           path="/VerificationEmailSent"
           element={<VerificationEmailSent />}

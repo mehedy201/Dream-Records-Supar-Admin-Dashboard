@@ -41,28 +41,33 @@ function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
   const [adminSummary, setAdminSummary] = useState();
   const [overView, setOverView] = useState();
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    setLoading(true)
-    axios.get(`http://localhost:5000/admin/api/v1/summary`)
-    .then(res => {
-      if(res.status === 200){
-        setAdminSummary(res.data.data)
-        const statusBasedReleaseCount = res.data.data.releaseByStatus
-        const labelsWithdrawalServiceRequestPendingCount = res.data.data.labelsWithdrawalServiceRequestPendingCount
-        const totalOverView = [...statusBasedReleaseCount, ...labelsWithdrawalServiceRequestPendingCount]
-        console.log(totalOverView)
-        setOverView(totalOverView)
-        setLoading(false)
-      }
-    })
-  },[])
+    setLoading(true);
+    axios
+      .get(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/summary`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setAdminSummary(res.data.data);
+          const statusBasedReleaseCount = res.data.data.releaseByStatus;
+          const labelsWithdrawalServiceRequestPendingCount =
+            res.data.data.labelsWithdrawalServiceRequestPendingCount;
+          const totalOverView = [
+            ...statusBasedReleaseCount,
+            ...labelsWithdrawalServiceRequestPendingCount,
+          ];
+          console.log(totalOverView);
+          setOverView(totalOverView);
+          setLoading(false);
+        }
+      });
+  }, []);
 
-  if(loading)return <LoadingScreen/>
-
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="main-content">
@@ -81,73 +86,65 @@ function Home() {
         </div>
       </section> */}
       <div className="home-card-grid">
-        {
-          overView &&
+        {overView &&
           overView?.map((item, index) => (
-          <div key={index} className="home-card">
-            <div className="d-flex" style={{ alignItems: "center" }}>
-              <div>
-                <div
-                  className="card-circle"
+            <div key={index} className="home-card">
+              <div className="d-flex" style={{ alignItems: "center" }}>
+                <div>
+                  <div
+                    className="card-circle"
+                    style={
+                      item.name === "QC Approval"
+                        ? { background: "#FFA552" }
+                        : item.name === "In Review"
+                        ? { color: "#2B9A66" }
+                        : item.name === "To Live"
+                        ? { color: "#EA3958" }
+                        : item.name === "New Users"
+                        ? { background: "#0090FF" }
+                        : item.name === "Labels"
+                        ? { background: "#775DD0" }
+                        : item.name === "Withdrawal Request"
+                        ? { background: "#2B9A66" }
+                        : item.name === "Service Request"
+                        ? { background: "#EA3958" }
+                        : { background: "#838383" }
+                    }
+                  ></div>
+                </div>
+                <p
                   style={
                     item.name === "QC Approval"
-                      ? { background: "#FFA552" }
+                      ? { color: "#FFA552" }
                       : item.name === "In Review"
                       ? { color: "#2B9A66" }
                       : item.name === "To Live"
                       ? { color: "#EA3958" }
                       : item.name === "New Users"
-                      ? { background: "#0090FF" }
+                      ? { color: "#0090FF" }
                       : item.name === "Labels"
-                      ? { background: "#775DD0" }
+                      ? { color: "#775DD0" }
                       : item.name === "Withdrawal Request"
-                      ? { background: "#2B9A66" }
+                      ? { color: "#2B9A66" }
                       : item.name === "Service Request"
-                      ? { background: "#EA3958" }
-                      : { background: "#838383" }
+                      ? { color: "#EA3958" }
+                      : { color: "#838383" }
                   }
-                ></div>
+                >
+                  {item.name}
+                </p>
               </div>
-              <p
-                style={
-                  item.name === "QC Approval"
-                    ? { color: "#FFA552" }
-                    : item.name === "In Review"
-                    ? { color: "#2B9A66" }
-                    : item.name === "To Live"
-                    ? { color: "#EA3958" }
-                    : item.name === "New Users"
-                    ? { color: "#0090FF" }
-                    : item.name === "Labels"
-                    ? { color: "#775DD0" }
-                    : item.name === "Withdrawal Request"
-                    ? { color: "#2B9A66" }
-                    : item.name === "Service Request"
-                    ? { color: "#EA3958" }
-                    : { color: "#838383" }
-                }
-              >
-                {item.name}
-              </p>
+              <h1>{item.count}</h1>
             </div>
-            <h1>{item.count}</h1>
-          </div>
-        ))
-        }
+          ))}
       </div>
 
-      {
-        adminSummary &&
-        <PieChartComponent releaseSummary={adminSummary}/>
-      }
+      {adminSummary && <PieChartComponent releaseSummary={adminSummary} />}
       <Flex as="span" className="artists-flex">
         <p>Latest Releases</p>
         <Link href="#">See All</Link>
       </Flex>
-      {
-        !adminSummary && 
-        <NotFoundPage/> 
-      }
+      {!adminSummary && <NotFoundPage />}
       <ReleaseCard releaseItems={adminSummary?.latestReleases} />
       <br />
       <br />

@@ -13,7 +13,7 @@ import formatNumber from "../hooks/formatNumber";
 const COLORS_TYPE = ["#00e4a5", "#0099ff"];
 const COLORS_STATUS = ["#0099ff", "#00e4a5", "#ffb129", "#ff4f4f", "#8e44ad"];
 
-function PieChartComponent({releaseSummary}) {
+function PieChartComponent({ releaseSummary }) {
   const [pieTextVisibleSide, setPieTextVisibleSide] = useState(
     getInitialCount()
   );
@@ -43,14 +43,13 @@ function PieChartComponent({releaseSummary}) {
 
   // const [releaseSummary, setReleaseSummary] = useState();
   // useEffect(() => {
-  //   axios.get(`http://localhost:5000/admin/api/v1/summary`)
+  //   axios.get(`https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/summary`)
   //   .then(res => {
   //     if(res.status === 200){
   //       setReleaseSummary(res.data.data)
   //     }
   //   })
   // },[])
-
 
   return (
     <div className="charts-container">
@@ -59,7 +58,9 @@ function PieChartComponent({releaseSummary}) {
         <div className="second-pie-div">
           <div>
             <p className="chart-subtitle">Total Releases</p>
-            <h2 className="chart-count">{formatNumber(releaseSummary?.totalRelease)}</h2>
+            <h2 className="chart-count">
+              {formatNumber(releaseSummary?.totalRelease)}
+            </h2>
           </div>
           <ResponsiveContainer
             width="100%"
@@ -100,7 +101,9 @@ function PieChartComponent({releaseSummary}) {
         <div className="second-pie-div">
           <div>
             <p className="chart-subtitle">Total Tracks</p>
-            <h2 className="chart-count">{formatNumber(releaseSummary?.totalTrack)}</h2>
+            <h2 className="chart-count">
+              {formatNumber(releaseSummary?.totalTrack)}
+            </h2>
           </div>
           <ResponsiveContainer
             width="100%"

@@ -20,9 +20,8 @@ import useQueryParams from "../../hooks/useQueryParams";
 import NotFoundPage from "../../components/NotFoundPage";
 import * as Select from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
-import excelLogo from '../../assets/icons/Excel logo.png'
-import uploadFileIcon from '../../assets/icons/upload-img.png'
-
+import excelLogo from "../../assets/icons/Excel logo.png";
+import uploadFileIcon from "../../assets/icons/upload-img.png";
 
 const artistColumns = [
   { label: "Report ID", key: "id" },
@@ -32,24 +31,36 @@ const artistColumns = [
   { label: "Action", key: "action" },
 ];
 
-const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+const monthList = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
 function Analytics() {
-
-  const {pageNumber, perPageItem} = useParams();
-  const { yearsList} = useSelector(state => state.yearsAndStatus);
-
+  const { pageNumber, perPageItem } = useParams();
+  const { yearsList } = useSelector((state) => state.yearsAndStatus);
 
   const { navigateWithParams } = useQueryParams();
   const [filterParams] = useSearchParams();
-  const search = filterParams.get('search') || '';
-  const years = filterParams.get('years') || '';
+  const search = filterParams.get("search") || "";
+  const years = filterParams.get("years") || "";
 
   const filterByYear = (yearValue) => {
-    navigateWithParams(`/analytics/1/${perPageItem}`, { search: search, years: yearValue });
-  }
-
-
+    navigateWithParams(`/analytics/1/${perPageItem}`, {
+      search: search,
+      years: yearValue,
+    });
+  };
 
   const [showReportModal, setShowReportModal] = useState(false);
   const [showReportSuccessModal, setShowReportSuccessModal] = useState(false);
@@ -67,7 +78,7 @@ function Analytics() {
     <>
       <SelectDropdown
         options={yearsList}
-        placeholder={`${years ? years : 'All Time'}`}
+        placeholder={`${years ? years : "All Time"}`}
         filterByYearAndStatus={filterByYear}
       />
     </>
@@ -77,109 +88,129 @@ function Analytics() {
   const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
   const [filteredCount, setFilteredCount] = useState();
   const [totalPages, setTotalPages] = useState();
-  const [notFound, setNotFound] = useState(false)
+  const [notFound, setNotFound] = useState(false);
   const [analyticsData, setAnalyticsData] = useState();
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    setLoading(true)
-    setNotFound(false)
-    axios.get(`http://localhost:5000/common/api/v1/analytics-and-balance/all-analytics?page=${pageNumber}&limit=${perPageItem}&search=${search}&years=${years}`)
-    .then(res => {
-      if(res.status === 200){
-        console.log(res.data.data)
-        setAnalyticsData(res.data.data)
-        if(isEmptyArray(res.data.data))setNotFound(true)
+    setLoading(true);
+    setNotFound(false);
+    axios
+      .get(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/analytics-and-balance/all-analytics?page=${pageNumber}&limit=${perPageItem}&search=${search}&years=${years}`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res.data.data);
+          setAnalyticsData(res.data.data);
+          if (isEmptyArray(res.data.data)) setNotFound(true);
           setFilteredCount(res.data.filteredCount);
-        setTotalPages(res.data.totalPages);
-        setLoading(false)
-      }
-    })
-  },[pageNumber, perPageItem, search, years])
+          setTotalPages(res.data.totalPages);
+          setLoading(false);
+        }
+      });
+  }, [pageNumber, perPageItem, search, years]);
 
   // Handle Page Change ________________________________
   const handlePageChange = (page) => {
-    navigateWithParams(`/analytics/${page}/${perPageItem}`, { search: search, years: years });
-  }
+    navigateWithParams(`/analytics/${page}/${perPageItem}`, {
+      search: search,
+      years: years,
+    });
+  };
   // Search _____________________________________________
   const [searchText, setSearchText] = useState();
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      navigateWithParams(`/analytics/1/${perPageItem}`, { search: searchText, years: years });
+    if (event.key === "Enter") {
+      navigateWithParams(`/analytics/1/${perPageItem}`, {
+        search: searchText,
+        years: years,
+      });
     }
   };
 
   // Handle Per Page Item _______________________________
   const handlePerPageItem = (perPageItem) => {
-    navigateWithParams(`/analytics/${pageNumber}/${perPageItem}`, { search: search, years: years });
-  }
-
-
+    navigateWithParams(`/analytics/${pageNumber}/${perPageItem}`, {
+      search: search,
+      years: years,
+    });
+  };
 
   const [yearValue, setYearValue] = useState();
   const [monthValue, setMonthValue] = useState();
-  const [yearValueError, setYearValueError] = useState('');
-  const [monthValueError, setMonthValueError] = useState('');
+  const [yearValueError, setYearValueError] = useState("");
+  const [monthValueError, setMonthValueError] = useState("");
 
   const [uploadedExcel, setUploadedExcel] = useState();
   const [uploadedExcelError, setUploadedExcelError] = useState();
-  const [uploadLoading, setUploadLoading] = useState(false)
+  const [uploadLoading, setUploadLoading] = useState(false);
 
   const uploadExcel = (e) => {
-    setUploadedExcelError('')
-    setUploadLoading(true)
+    setUploadedExcelError("");
+    setUploadLoading(true);
     const file = e[0];
     const formData = new FormData();
-    formData.append('file', file);
-    axios.post(`http://localhost:5000/common/api/v1/analytics-and-balance/excel-upload`, formData)
-    .then(res => {
-        console.log(res)
-        setUploadLoading(false)
-        setUploadedExcel(res.data.data)
-    })
-  }
-
+    formData.append("file", file);
+    axios
+      .post(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/analytics-and-balance/excel-upload`,
+        formData
+      )
+      .then((res) => {
+        console.log(res);
+        setUploadLoading(false);
+        setUploadedExcel(res.data.data);
+      });
+  };
 
   const [loadingForSubmit, setLoadingForSubmit] = useState(false);
   const uploadAnalyticsReport = () => {
-    setLoadingForSubmit(true)
-    setUploadedExcelError('')
-    setYearValueError('')
-    setMonthValueError('')
-    if(!uploadedExcel){
-      setUploadedExcelError('Please Select Excel File')
+    setLoadingForSubmit(true);
+    setUploadedExcelError("");
+    setYearValueError("");
+    setMonthValueError("");
+    if (!uploadedExcel) {
+      setUploadedExcelError("Please Select Excel File");
       return;
     }
-    if(!yearValue){
-      setYearValueError('Please Select Year')
+    if (!yearValue) {
+      setYearValueError("Please Select Year");
       return;
     }
-    if(!monthValue){
-      setMonthValueError('Please Select Month')
+    if (!monthValue) {
+      setMonthValueError("Please Select Month");
       return;
     }
-    const reportsDate = `${monthValue} ${yearValue}`
-    const payloadData = {...uploadedExcel, reportsDate}
-    axios.post(`http://localhost:5000/common/api/v1/analytics-and-balance`, payloadData)
-    .then(res => {
-        console.log(res.data.data)
+    const reportsDate = `${monthValue} ${yearValue}`;
+    const payloadData = { ...uploadedExcel, reportsDate };
+    axios
+      .post(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/analytics-and-balance`,
+        payloadData
+      )
+      .then((res) => {
+        console.log(res.data.data);
         setShowReportModal(false);
         setShowReportSuccessModal(true);
-        setUploadedExcel()
-        setLoadingForSubmit(false)
-    })
-  }
+        setUploadedExcel();
+        setLoadingForSubmit(false);
+      });
+  };
 
   const deleteExcel = () => {
-    if(!uploadedExcel) return;
-    axios.delete(`http://localhost:5000/common/api/v1/analytics-and-balance/delete/excel-file?key=${uploadedExcel?.excelFileKey}`)
-    .then(res => {
-      if(res.status === 200){
-        setUploadedExcel('')
-      }
-    })
-  }
+    if (!uploadedExcel) return;
+    axios
+      .delete(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/analytics-and-balance/delete/excel-file?key=${uploadedExcel?.excelFileKey}`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setUploadedExcel("");
+        }
+      });
+  };
 
-  if(loading)return <LoadingScreen/>
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="main-content">
@@ -194,34 +225,66 @@ function Analytics() {
           </Dialog.Trigger>
           <Modal title="Upload New Report" className="analytics-report-modal">
             <div className="analytics-modal-report">
-              
-              {
-                !uploadedExcel && 
-                <div style={{width: '100%'}}>
-                <label style={{height: '60px', width: '100%', margin: 'auto', position: 'relative'}} className="upload-label">
-                  <div style={{position: 'absolute', top: '50%', left: '50%', transform:'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+              {!uploadedExcel && (
+                <div style={{ width: "100%" }}>
+                  <label
+                    style={{
+                      height: "60px",
+                      width: "100%",
+                      margin: "auto",
+                      position: "relative",
+                    }}
+                    className="upload-label"
+                  >
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
                       <img
-                          style={{margin: 'auto'}}
-                          src={uploadFileIcon}
-                          alt="upload-img"
-                          className="upload-icon"
+                        style={{ margin: "auto" }}
+                        src={uploadFileIcon}
+                        alt="upload-img"
+                        className="upload-icon"
                       />
-                    <p>
-                      Drop your Excel here or
-                    </p>
-                    <span className="browse-file">Browse File</span>
-                    {/* <p style={{ color: "#BBBBBB" }}>Max. File size: 50MB</p> */}
-                  </div>
-                  {
-                    uploadLoading &&
-                    <div style={{height: '60px', width: '100%', borderRadius: '10px', position: 'absolute', top: '50%', left: '50%', transform:'translate(-50%, -50%)', backgroundColor: 'black', opacity: '0.5'}}></div>
-                  }
-                  <input style={{height: '60px', width: '100%', opacity: '0'}} type="file" accept=".xls, .xlsx" id="fileInput" name='image' onChange={e => uploadExcel(e.target.files)} />
-                </label>
+                      <p>Drop your Excel here or</p>
+                      <span className="browse-file">Browse File</span>
+                      {/* <p style={{ color: "#BBBBBB" }}>Max. File size: 50MB</p> */}
+                    </div>
+                    {uploadLoading && (
+                      <div
+                        style={{
+                          height: "60px",
+                          width: "100%",
+                          borderRadius: "10px",
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          backgroundColor: "black",
+                          opacity: "0.5",
+                        }}
+                      ></div>
+                    )}
+                    <input
+                      style={{ height: "60px", width: "100%", opacity: "0" }}
+                      type="file"
+                      accept=".xls, .xlsx"
+                      id="fileInput"
+                      name="image"
+                      onChange={(e) => uploadExcel(e.target.files)}
+                    />
+                  </label>
                 </div>
-              }
-              {
-                uploadedExcel &&
+              )}
+              {uploadedExcel && (
                 <>
                   <div>
                     <img src={excelLogo} alt="" />
@@ -230,21 +293,23 @@ function Analytics() {
                     <p>{uploadedExcel?.excelFileName}</p>
                     <small>.xlsx</small>
                   </div>
-                  <button onClick={() => deleteExcel()} >Replace File</button>
+                  <button onClick={() => deleteExcel()}>Replace File</button>
                   <RxCross2 onClick={() => deleteExcel()} size={24} />
                 </>
-              }
+              )}
             </div>
-            {
-              uploadedExcelError && <p style={{color: 'red'}}>{uploadedExcelError}</p>
-            }
+            {uploadedExcelError && (
+              <p style={{ color: "red" }}>{uploadedExcelError}</p>
+            )}
             <label htmlFor="" className="analytics-modal-label">
               Choose Year of the Report
             </label>
 
-            <Select.Root onValueChange={value => setYearValue(value)}>
-              <Select.Trigger className={`dropdown-trigger analytics-modal-dropdown`}>
-                <Select.Value placeholder={ "Select an Years"} />
+            <Select.Root onValueChange={(value) => setYearValue(value)}>
+              <Select.Trigger
+                className={`dropdown-trigger analytics-modal-dropdown`}
+              >
+                <Select.Value placeholder={"Select an Years"} />
                 <Select.Icon className="select-icon">
                   <ChevronDown />
                 </Select.Icon>
@@ -255,32 +320,29 @@ function Analytics() {
                   style={{ padding: 0, overflowY: "auto", zIndex: "123" }}
                 >
                   <Select.Viewport>
-                  {
-                    yearsList.map(year => 
+                    {yearsList.map((year) => (
                       <Select.Item value={year} className="select-item">
                         <Select.ItemText>{year}</Select.ItemText>
                         <Select.ItemIndicator className="select-item-indicator">
                           <Check size={18} />
                         </Select.ItemIndicator>
                       </Select.Item>
-                    )
-                  }
+                    ))}
                   </Select.Viewport>
                 </Select.Content>
               </Select.Portal>
             </Select.Root>
-            {
-              yearValueError && <p style={{color: 'red'}}>{yearValueError}</p>
-            }
-
+            {yearValueError && <p style={{ color: "red" }}>{yearValueError}</p>}
 
             <label htmlFor="" className="analytics-modal-label">
               Choose Month of the Report
             </label>
 
-            <Select.Root onValueChange={value => setMonthValue(value)}>
-              <Select.Trigger className={`dropdown-trigger analytics-modal-dropdown`}>
-                <Select.Value placeholder={ "Select Months"} />
+            <Select.Root onValueChange={(value) => setMonthValue(value)}>
+              <Select.Trigger
+                className={`dropdown-trigger analytics-modal-dropdown`}
+              >
+                <Select.Value placeholder={"Select Months"} />
                 <Select.Icon className="select-icon">
                   <ChevronDown />
                 </Select.Icon>
@@ -291,34 +353,26 @@ function Analytics() {
                   style={{ padding: 0, overflowY: "auto", zIndex: "123" }}
                 >
                   <Select.Viewport>
-                  {
-                    monthList.map(month => 
+                    {monthList.map((month) => (
                       <Select.Item value={month} className="select-item">
                         <Select.ItemText>{month}</Select.ItemText>
                         <Select.ItemIndicator className="select-item-indicator">
                           <Check size={18} />
                         </Select.ItemIndicator>
                       </Select.Item>
-                    )
-                  }
+                    ))}
                   </Select.Viewport>
                 </Select.Content>
               </Select.Portal>
             </Select.Root>
-            {
-              monthValueError && <p style={{color: 'red'}}>{monthValueError}</p>
-            }
+            {monthValueError && (
+              <p style={{ color: "red" }}>{monthValueError}</p>
+            )}
             <br />
-            {
-              loadingForSubmit && <p>Loading......</p>
-            }
+            {loadingForSubmit && <p>Loading......</p>}
             <div className="analytics-deleteModal-btns">
               <Dialog.Close>Cancel</Dialog.Close>
-              <button
-                onClick={uploadAnalyticsReport}
-              >
-                Upload Report
-              </button>
+              <button onClick={uploadAnalyticsReport}>Upload Report</button>
             </div>
           </Modal>
         </Dialog.Root>
@@ -341,7 +395,14 @@ function Analytics() {
       </Flex>
 
       <div className="search-setion">
-        <input onKeyPress={handleKeyPress} defaultValue={search} onChange={e => setSearchText(e.target.value)} type="text" placeholder="Search..." style={{ width: "87%" }} />
+        <input
+          onKeyPress={handleKeyPress}
+          defaultValue={search}
+          onChange={(e) => setSearchText(e.target.value)}
+          type="text"
+          placeholder="Search..."
+          style={{ width: "87%" }}
+        />
         {isMobile ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
@@ -371,20 +432,15 @@ function Analytics() {
           dropdownItem
         )}
       </div>
-      
-      <AnalyticsTable
-        data={analyticsData}
-        columns={artistColumns}
-      />
-      {
-        notFound && <NotFoundPage/>
-      }
-      <Pagination 
-        totalDataCount={filteredCount} 
+
+      <AnalyticsTable data={analyticsData} columns={artistColumns} />
+      {notFound && <NotFoundPage />}
+      <Pagination
+        totalDataCount={filteredCount}
         totalPages={totalPages}
-        currentPage={currentPage} 
-        perPageItem={perPageItem} 
-        setCurrentPage={setCurrentPage} 
+        currentPage={currentPage}
+        perPageItem={perPageItem}
+        setCurrentPage={setCurrentPage}
         handlePageChange={handlePageChange}
         customFunDropDown={handlePerPageItem}
       />

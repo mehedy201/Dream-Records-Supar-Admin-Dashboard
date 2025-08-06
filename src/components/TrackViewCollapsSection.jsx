@@ -7,27 +7,25 @@ import { X } from "lucide-react";
 // import { setTracksInfo } from "../../../redux/features/releaseDataHandleSlice/releaseDataHandleSlice";
 import axios from "axios";
 import AudioPlayerForTracViewTab from "./AudioPlayer/AudioPlayerForTracViewTab";
-import artistDemoImg from '../assets/artists/artist4.png'
+import artistDemoImg from "../assets/artists/artist4.png";
 
-const TrackViewCollapsSection = ({track, index}) => {
-    
-    const [albumOverviewSong, setAlbumOverviewSong] = useState(false);
-    const trackTittle = track.tittle;
-    const trackAudioUrl = track.audioUrl;
-    const dataForAudioPlayer = {tittle: trackTittle, audioUrl: trackAudioUrl}
+const TrackViewCollapsSection = ({ track, index }) => {
+  const [albumOverviewSong, setAlbumOverviewSong] = useState(false);
+  const trackTittle = track.tittle;
+  const trackAudioUrl = track.audioUrl;
+  const dataForAudioPlayer = { tittle: trackTittle, audioUrl: trackAudioUrl };
 
-    // const deleteTrack = (indexNumber) => {
-    //   const updatedTracks = tracksInfo.filter((item, index) => index !== indexNumber);
-    //   dispatch(setTracksInfo(updatedTracks))
-    //   axios.delete(`http://localhost:5000/api/v1/release/delete-file?key=${track.audioKey}`)
-    //   .then( res => {
-    //   if(res.status == 200){
-    //       alert('Deleted')
-    //   }
-    //   })
-    //   .catch(er => console.log(er));
-    // }
-    
+  // const deleteTrack = (indexNumber) => {
+  //   const updatedTracks = tracksInfo.filter((item, index) => index !== indexNumber);
+  //   dispatch(setTracksInfo(updatedTracks))
+  //   axios.delete(`https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/release/delete-file?key=${track.audioKey}`)
+  //   .then( res => {
+  //   if(res.status == 200){
+  //       alert('Deleted')
+  //   }
+  //   })
+  //   .catch(er => console.log(er));
+  // }
 
   return (
     <div>
@@ -36,24 +34,40 @@ const TrackViewCollapsSection = ({track, index}) => {
         onOpenChange={setAlbumOverviewSong}
         style={{ background: "#F9F9F9", borderRadius: "4px" }}
       >
-
-        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-            <div style={{flexGrow: 1}}>
-                <AudioPlayerForTracViewTab track={track} index={index} data={dataForAudioPlayer}/>
-            </div>
-            <div style={{flexShrink: 0, display: 'flex', alignItems: 'center', gap: '15px'}}>
-                {/* {
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div style={{ flexGrow: 1 }}>
+            <AudioPlayerForTracViewTab
+              track={track}
+              index={index}
+              data={dataForAudioPlayer}
+            />
+          </div>
+          <div
+            style={{
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: "15px",
+            }}
+          >
+            {/* {
                   index && 
                   <X size={18} onClick={() => deleteTrack(index)} style={{color: 'red', cursor: 'pointer'}}/>
                 } */}
-                <Collapsible.Trigger asChild>
-                        {albumOverviewSong ? (
-                            <MdKeyboardArrowUp className="release-album-arrowIcon" />
-                        ) : (
-                            <MdKeyboardArrowDown className="release-album-arrowIcon" />
-                        )}
-                    </Collapsible.Trigger>
-            </div>
+            <Collapsible.Trigger asChild>
+              {albumOverviewSong ? (
+                <MdKeyboardArrowUp className="release-album-arrowIcon" />
+              ) : (
+                <MdKeyboardArrowDown className="release-album-arrowIcon" />
+              )}
+            </Collapsible.Trigger>
+          </div>
         </div>
 
         <Collapsible.Content>
@@ -127,83 +141,67 @@ const TrackViewCollapsSection = ({track, index}) => {
                   <div className="d-flex">
                     <p>ISRC Code:</p>
                     <p>{track?.ISRC}</p>
-                  </div>                  
+                  </div>
                 </div>
               </Tabs.Content>
               <Tabs.Content className="tabs-content" value="Credits">
                 <div className="form-grid releaseCredit-formGrid">
-                    <div className="d-flex releaseCredit-items">
-                      <p className="releaseCredit-items-title">
-                        Primary Atrist
-                      </p>
-                      <div>
-                        {
-                            track?.artist?.map((data, index) => {
-                                <div key={index} className="d-flex">
-                                    <img
-                                        src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
-                                        alt=""
-                                    />
-                                    <p>{data?.artistName}</p>
-                                </div>
-                            })
-                        }
-                      </div>
+                  <div className="d-flex releaseCredit-items">
+                    <p className="releaseCredit-items-title">Primary Atrist</p>
+                    <div>
+                      {track?.artist?.map((data, index) => {
+                        <div key={index} className="d-flex">
+                          <img
+                            src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
+                            alt=""
+                          />
+                          <p>{data?.artistName}</p>
+                        </div>;
+                      })}
                     </div>
-                    <div className="d-flex releaseCredit-items">
-                      <p className="releaseCredit-items-title">
-                        Lyricist
-                      </p>
-                      <div>
-                        {   
-                            track?.lyricist?.map((data, index) => 
-                                <div key={index} className="d-flex">
-                                    <img
-                                        src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
-                                        alt=""
-                                    />
-                                    <p>{data?.artistName}</p>
-                                </div>
-                            )
-                        }
-                      </div>
+                  </div>
+                  <div className="d-flex releaseCredit-items">
+                    <p className="releaseCredit-items-title">Lyricist</p>
+                    <div>
+                      {track?.lyricist?.map((data, index) => (
+                        <div key={index} className="d-flex">
+                          <img
+                            src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
+                            alt=""
+                          />
+                          <p>{data?.artistName}</p>
+                        </div>
+                      ))}
                     </div>
-                    <div className="d-flex releaseCredit-items">
-                      <p className="releaseCredit-items-title">
-                        Featuring
-                      </p>
-                      <div>
-                        {   
-                            track?.featuring?.map((data, index) => 
-                                <div key={index} className="d-flex">
-                                    <img
-                                        src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
-                                        alt=""
-                                    />
-                                    <p>{data?.artistName}</p>
-                                </div>
-                            )
-                        }
-                      </div>
+                  </div>
+                  <div className="d-flex releaseCredit-items">
+                    <p className="releaseCredit-items-title">Featuring</p>
+                    <div>
+                      {track?.featuring?.map((data, index) => (
+                        <div key={index} className="d-flex">
+                          <img
+                            src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
+                            alt=""
+                          />
+                          <p>{data?.artistName}</p>
+                        </div>
+                      ))}
                     </div>
-                    <div className="d-flex releaseCredit-items">
-                      <p className="releaseCredit-items-title">
-                        Composer
-                      </p>
-                      <div>
-                        {   
-                            track?.composer?.map((data, index) => 
-                                <div key={index} className="d-flex">
-                                    <img
-                                        src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
-                                        alt=""
-                                    />
-                                    <p>{data?.artistName}</p>
-                                </div>
-                            )
-                        }
-                      </div>
+                  </div>
+                  <div className="d-flex releaseCredit-items">
+                    <p className="releaseCredit-items-title">Composer</p>
+                    <div>
+                      {track?.composer?.map((data, index) => (
+                        <div key={index} className="d-flex">
+                          <img
+                            src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
+                            alt=""
+                          />
+                          <p>{data?.artistName}</p>
+                        </div>
+                      ))}
                     </div>
+                  </div>
                 </div>
               </Tabs.Content>
             </Tabs.Root>
