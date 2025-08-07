@@ -159,8 +159,8 @@ const ReleaseTable = ({ columns = [], data }) => {
                     <DropdownMenu.Item className="dropdown-item">
                       <div>
                         <a
-                          href={data?.imgUrl}
-                          download={`${data?.imgUrl}`}
+                          href={d?.imgUrl}
+                          download={`${d?.imgUrl}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{ textDecoration: "none", color: "black" }}
