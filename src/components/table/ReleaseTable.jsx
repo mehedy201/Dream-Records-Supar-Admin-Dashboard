@@ -4,7 +4,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Select from "@radix-ui/react-select";
 import { Dialog } from "radix-ui";
 import { LuImageDown } from "react-icons/lu";
-import { FiArrowRight } from "react-icons/fi";
+import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import localDate from "../../hooks/localDate";
 import { Link } from "react-router-dom";
@@ -16,26 +16,38 @@ import { Check, ChevronDown } from "lucide-react";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { FaCheck } from "react-icons/fa";
 import textToHTML from "../../hooks/textToHTML";
+import ReleaseStatusSuspendForm from "../FormForUpdateStatus/ReleaseStatusSuspendForm";
+import { useForm } from "react-hook-form";
+import threeDotImg from "../../assets/icons/vertical-threeDots.png";
 
 const ReleaseTable = ({ columns = [], data }) => {
   /// Change Status and Reject Function____________________________________
   // _____________________________________________________________________
-  // Move to Review Releae Function___________________________________
   const { userData } = useSelector((state) => state.userData);
-
-  const [releaseRejectionsList, setReleaseRejectionsList] = useState([]);
-  useEffect(() => {
+  // Move to QC Approval Function____________________________________
+  const moveToQC = (id) => {
+    const payload = {
+      status: "QC Approval",
+      qcApprovalAdminInfo: {
+        adminEmail: userData?.email,
+        adminUserName: userData?.userName,
+        adminId: userData?._id,
+        updatedAt: new Date().toISOString(),
+      },
+    };
     axios
-      .get(
-        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/settings/release-rejections-list`
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${id}`,
+        payload
       )
       .then((res) => {
         if (res.status == 200) {
-          setReleaseRejectionsList(res.data.data);
+          window.location.reload();
         }
       });
-  }, []);
+  };
 
+  // Move to Review Releae Function_______________________________________
   const moveToReview = (id) => {
     const payload = {
       status: "Review",
@@ -57,9 +69,14 @@ const ReleaseTable = ({ columns = [], data }) => {
         }
       });
   };
-  // Move to Live Releae Function___________________________________
-  const moveToLive = (id) => {
-    const payload = {
+
+
+  // React Hook Form setup
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+  // Move to Live form submit handler
+  const onMoveToLiveSubmit = (formData, id) => {
+  const payload = {
       status: "Live",
       liveAdminInfo: {
         adminEmail: userData?.email,
@@ -67,136 +84,26 @@ const ReleaseTable = ({ columns = [], data }) => {
         adminId: userData?._id,
         updatedAt: new Date().toISOString(),
       },
-    };
-    axios
-      .patch(
-        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${id}`,
-        payload
-      )
-      .then((res) => {
-        if (res.status == 200) {
-          window.location.reload();
-        }
-      });
+      UPC: formData.upc,
+      ISRC: formData.isrc,
   };
 
-  // Reject Releae Function___________________________________
-  const [rejectType, setRejectType] = useState();
-  const [errorRejectType, setErrorRejectType] = useState("");
-  const [rejectInputText, setRejectInputText] = useState("");
-  const [errorRejectInputText, setErrorRejectInputText] = useState();
-  const [selectedReasons, setSelectedReasons] = useState([]);
-  const [rejectedReasonErr, setRejectedReasonErr] = useState("");
+  // Send to backend
+  axios.patch(
+    `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${id}`,
+    payload
+  ).then(res => {
+    if (res.status === 200) {
+      window.location.reload();
+    }
+  });
+
+  reset();
+  closeRef.current?.click();
+  };
+  
   const closeRef = useRef(null);
-  const rejectRelease = (id) => {
-    setErrorRejectType("");
-    setErrorRejectInputText("");
-    setRejectedReasonErr("");
-    if (!rejectType) {
-      setErrorRejectType("Please Select Type");
-      return;
-    }
-    if (!rejectInputText) {
-      setErrorRejectInputText("Reject reason required");
-      return;
-    }
-    if (selectedReasons.length === 0) {
-      setRejectedReasonErr("At least one reason is required");
-      return;
-    }
-
-    const actionRequired = textToHTML(rejectInputText);
-    let actionReqHistory = Array.isArray(data?.actionReqHistory)
-      ? [...data.actionReqHistory]
-      : [];
-    actionReqHistory.push(actionRequired);
-
-    let payload = {};
-    if (rejectType === "Action Required") {
-      payload = {
-        status: rejectType,
-        actionRequired,
-        rejectionReasons: selectedReasons,
-        actionRequiredAdminInfo: {
-          adminEmail: userData?.email,
-          adminUserName: userData?.userName,
-          adminId: userData?._id,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    } else if (rejectType === "Takedown") {
-      payload = {
-        status: rejectType,
-        actionRequired,
-        rejectionReasons: selectedReasons,
-        takedownAdminInfo: {
-          adminEmail: userData?.email,
-          adminUserName: userData?.userName,
-          adminId: userData?._id,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    } else if (rejectType === "Blocked") {
-      payload = {
-        status: rejectType,
-        actionRequired,
-        rejectionReasons: selectedReasons,
-        blockedAdminInfo: {
-          adminEmail: userData?.email,
-          adminUserName: userData?.userName,
-          adminId: userData?._id,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    } else if (rejectType === "Suspend") {
-      payload = {
-        status: rejectType,
-        actionRequired,
-        rejectionReasons: selectedReasons,
-        suspendAdminInfo: {
-          adminEmail: userData?.email,
-          adminUserName: userData?.userName,
-          adminId: userData?._id,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    } else if (rejectType === "Error") {
-      payload = {
-        status: rejectType,
-        actionRequired,
-        rejectionReasons: selectedReasons,
-        errorAdminInfo: {
-          adminEmail: userData?.email,
-          adminUserName: userData?.userName,
-          adminId: userData?._id,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    }
-
-    console.log(data);
-
-    axios
-      .patch(
-        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${id}`,
-        payload
-      )
-      .then((res) => {
-        if (res.status == 200) {
-          console.log(res);
-          window.location.reload();
-          closeRef.current?.click(); // close modal
-        }
-      });
-  };
-
-  const toggleReason = (reason) => {
-    setSelectedReasons((prev) =>
-      prev.includes(reason)
-        ? prev.filter((r) => r !== reason)
-        : [...prev, reason]
-    );
-  };
+  
 
   return (
     <div className="table-wrapper">
@@ -236,10 +143,14 @@ const ReleaseTable = ({ columns = [], data }) => {
               <td>
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
-                    <button className="dropdown-trigger artist-dropdown-btn">
-                      <img src={threeDots} />
+                    <button
+                      className="dropdown-trigger singleArtist-dropdown-btn"
+                      style={{ marginRight: 0 }}
+                    >
+                      <img src={threeDotImg} />
                     </button>
                   </DropdownMenu.Trigger>
+
                   <DropdownMenu.Content
                     align="left"
                     side="bottom"
@@ -248,8 +159,8 @@ const ReleaseTable = ({ columns = [], data }) => {
                     <DropdownMenu.Item className="dropdown-item">
                       <div>
                         <a
-                          href={d?.imgUrl}
-                          download={`${d?.imgUrl}`}
+                          href={data?.imgUrl}
+                          download={`${data?.imgUrl}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{ textDecoration: "none", color: "black" }}
@@ -258,28 +169,109 @@ const ReleaseTable = ({ columns = [], data }) => {
                         </a>
                       </div>
                     </DropdownMenu.Item>
-                    <hr />
-                    <DropdownMenu.Item className="dropdown-item">
-                      <div>
-                        {d?.status === "QC Approval" && (
-                          <>
-                            <FiArrowRight />{" "}
-                            <span onClick={() => moveToReview(d._id)}>
-                              Move to Review
-                            </span>
-                          </>
-                        )}
-                        {d?.status === "Review" && (
-                          <>
-                            <FiArrowRight />{" "}
-                            <span onClick={() => moveToLive(d._id)}>
-                              Move to Live
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </DropdownMenu.Item>
-                    <hr />
+                    <hr style={{ margin: 0 }} />
+                    {d?.status === "Review" && (
+                      <DropdownMenu.Item
+                        onClick={() => moveToQC(d?._id)}
+                        className="dropdown-item"
+                      >
+                        <div>
+                          <FiArrowLeft style={{color: 'black'}}/> 
+                          <span>Move to QC Approval</span>
+                        </div>
+                      </DropdownMenu.Item>
+                    )}
+                    {(d?.status === "QC Approval" || d?.status === "Live") && (
+                      <DropdownMenu.Item
+                        onClick={() => moveToReview(d?._id)}
+                        className="dropdown-item"
+                      >
+                        <div>
+                          {
+                            d?.status === "QC Approval" ? <FiArrowRight style={{color: 'black'}}/> : <FiArrowLeft style={{color: 'black'}}/> 
+                          }
+                          <span>Move to Review</span>
+                        </div>
+                      </DropdownMenu.Item>
+                    )}
+                    {(d?.status === "Review" || d?.status === "Blocked" || d?.status === "Error" || d?.status === "Takedown" ) && (
+                      <DropdownMenu.Item
+                        className="dropdown-item"
+                        onSelect={(e) => e.preventDefault()}
+                      >
+                        <Dialog.Root>
+                          <Dialog.Trigger
+                            style={{
+                              width: "100%",
+                              background: "none",
+                              border: "none",
+                              padding: 0,
+                            }}
+                            className="dropdown-item"
+                          >
+                            {
+                              d?.status === "Review" ? <FiArrowRight style={{color: 'black'}}/> : <FiArrowLeft style={{color: 'black'}}/>
+                            }
+                            <span style={{color: 'black'}}>Move to Live</span>
+                          </Dialog.Trigger>
+                          <Modal title="Move to Live">
+                            <div className="singleRelease-reject-modal">
+                              <form onSubmit={handleSubmit((formData) => onMoveToLiveSubmit(formData, d._id))}>
+                                <div className="singleRelease-reject-modal">
+                                  <label>
+                                    UPC:
+                                    <input
+                                      {...register("upc", { required: "UPC is required" })}
+                                      defaultValue={d?.UPC}
+                                      style={{ width: "100%", marginBottom: 8 }}
+                                    />
+                                    {errors.upc && (
+                                      <span style={{ color: "red" }}>{errors.upc.message}</span>
+                                    )}
+                                  </label>
+                                  {d?.tracks?.map((track, idx) => (
+                                    <label key={track._id || idx} style={{ display: "block", marginTop: 12 }}>
+                                      ISRC for Track {idx + 1} ({track.tittle || "Untitled"}):
+                                      <input
+                                        {...register(`isrc.${idx}`, { required: "ISRC is required" })}
+                                        defaultValue={track.ISRC}
+                                        style={{ width: "100%", marginBottom: 4 }}
+                                      />
+                                      {errors.isrc && errors.isrc[idx] && (
+                                        <span style={{ color: "red" }}>{errors.isrc[idx].message}</span>
+                                      )}
+                                    </label>
+                                  ))}
+                                </div>
+                                <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                                  
+                                  <Dialog.Close asChild>
+                                    <button
+                                      type="button"
+                                      style={{padding: '10px 20px', borderRadius: '6px', border: '1px solid red'}}
+                                      onClick={() => reset()}
+                                    >
+                                      Cancel
+                                    </button>
+                                  </Dialog.Close>
+                                  <button type="submit" className="theme-btn">
+                                    Move to Live
+                                  </button>
+                                  
+                                </div>
+                              </form>
+                            </div> 
+
+                            {/* Hidden Dialog.Close for programmatic close */}
+                            <Dialog.Close asChild>
+                              <button ref={closeRef} style={{ display: "none" }} />
+                            </Dialog.Close>
+                          </Modal>
+                        </Dialog.Root>
+                      </DropdownMenu.Item>
+                    )}
+                    <hr style={{ margin: 0 }} />
+
                     <DropdownMenu.Item
                       className="dropdown-item"
                       onSelect={(e) => e.preventDefault()}
@@ -297,166 +289,23 @@ const ReleaseTable = ({ columns = [], data }) => {
                           <RiDeleteBin6Line /> <span>Reject Release</span>
                         </Dialog.Trigger>
                         <Modal title="Reject Release">
-                          <div className="singleRelease-reject-modal">
-                            <p className="modal-description">
-                              Please fix the issue indicated below and then
-                              don’t forget to re-submit your release for
-                              distribution.
-                            </p>
-                            <label
-                              className="singleRelease-modal-label"
-                              htmlFor=""
-                            >
-                              Reject Type
-                            </label>
-                            <Select.Root
-                              onValueChange={(value) => {
-                                setRejectType(value);
-                                setErrorRejectType("");
-                              }}
-                            >
-                              <Select.Trigger
-                                className={`dropdown-trigger analytics-modal-dropdown`}
-                              >
-                                <Select.Value
-                                  placeholder={"Select Reject Type"}
-                                />
-                                <Select.Icon className="select-icon">
-                                  <ChevronDown />
-                                </Select.Icon>
-                              </Select.Trigger>
-                              <Select.Portal>
-                                <Select.Content
-                                  className="dropdown-content"
-                                  style={{
-                                    padding: 0,
-                                    overflowY: "auto",
-                                    zIndex: "123",
-                                  }}
-                                >
-                                  <Select.Viewport>
-                                    <Select.Item
-                                      value="Action Required"
-                                      className="select-item"
-                                    >
-                                      <Select.ItemText>
-                                        Action Required
-                                      </Select.ItemText>
-                                      <Select.ItemIndicator className="select-item-indicator">
-                                        <Check size={18} />
-                                      </Select.ItemIndicator>
-                                    </Select.Item>
-                                    <Select.Item
-                                      value="Takedown"
-                                      className="select-item"
-                                    >
-                                      <Select.ItemText>
-                                        Takedown
-                                      </Select.ItemText>
-                                      <Select.ItemIndicator className="select-item-indicator">
-                                        <Check size={18} />
-                                      </Select.ItemIndicator>
-                                    </Select.Item>
-                                    <Select.Item
-                                      value="Blocked"
-                                      className="select-item"
-                                    >
-                                      <Select.ItemText>Blocked</Select.ItemText>
-                                      <Select.ItemIndicator className="select-item-indicator">
-                                        <Check size={18} />
-                                      </Select.ItemIndicator>
-                                    </Select.Item>
-                                  </Select.Viewport>
-                                </Select.Content>
-                              </Select.Portal>
-                            </Select.Root>
-                            {errorRejectType && (
-                              <p style={{ color: "red" }}>{errorRejectType}</p>
-                            )}
 
-                            <p>Rejected Reasons</p>
-                            {releaseRejectionsList?.map((option) => {
-                              const isChecked = selectedReasons.includes(
-                                option.option
-                              );
-                              return (
-                                <div
-                                  key={option._id}
-                                  style={{
-                                    display: "flex",
-                                    gap: "5px",
-                                    alignItems: "center",
-                                  }}
-                                  className="checkbox-container"
-                                >
-                                  <Checkbox.Root
-                                    id={option._id}
-                                    className="CheckboxRoot"
-                                    checked={isChecked}
-                                    onCheckedChange={() => {
-                                      toggleReason(option.option);
-                                      setRejectedReasonErr("");
-                                    }}
-                                  >
-                                    <Checkbox.Indicator className="CheckboxIndicator">
-                                      <FaCheck />
-                                    </Checkbox.Indicator>
-                                  </Checkbox.Root>
-                                  <label
-                                    htmlFor={option._id}
-                                    className="checkbox-label"
-                                  >
-                                    {option.option}
-                                  </label>
-                                </div>
-                              );
-                            })}
+                          {/* Reject Release Componets start_______________________ */}
+                          {/* _____________________________________________________ */}
 
-                            {rejectedReasonErr && (
-                              <p style={{ color: "red" }}>
-                                {rejectedReasonErr}
-                              </p>
-                            )}
-
-                            <label
-                              className="singleRelease-modal-label"
-                              htmlFor=""
-                            >
-                              Describe issue here *
-                            </label>
-                            <textarea
-                              placeholder="Write your issue here"
-                              style={{ width: "100%" }}
-                              value={rejectInputText}
-                              onChange={(e) => {
-                                setRejectInputText(e.target.value);
-                                setErrorRejectInputText("");
-                              }}
-                              onKeyDown={(e) => e.stopPropagation()}
-                            ></textarea>
-                            {errorRejectInputText && (
-                              <p style={{ color: "red" }}>
-                                {errorRejectInputText}
-                              </p>
-                            )}
-                          </div>
-                          <button
-                            onClick={() => rejectRelease(d._id)}
-                            className="close-button"
-                          >
-                            Reject
-                          </button>
+                          <ReleaseStatusSuspendForm id={d?._id} closeRef={closeRef} releaseData={d}/>
+                          
+                          {/* Reject Release Componets End_______________________ */}
+                          {/* _____________________________________________________ */}
 
                           {/* Hidden Dialog.Close for programmatic close */}
                           <Dialog.Close asChild>
-                            <button
-                              ref={closeRef}
-                              style={{ display: "none" }}
-                            />
+                            <button ref={closeRef} style={{ display: "none" }} />
                           </Dialog.Close>
                         </Modal>
                       </Dialog.Root>
                     </DropdownMenu.Item>
+
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>
               </td>

@@ -22,7 +22,6 @@ import { Check, ChevronDown } from "lucide-react";
 import SingleReleasePageTable from "../../../components/SingleReleasePageTable";
 import isEmptyArray from "../../../hooks/isEmptyArrayCheck";
 import NotFoundPage from "../../../components/NotFoundPage";
-import textToHTML from "../../../hooks/textToHTML";
 import {
   setData,
   setReleaseAlbumInfo,
@@ -30,6 +29,7 @@ import {
 } from "../../../redux/features/releaseDataHandleSlice/releaseDataHandleSlice";
 import AlbumInfoEditComponent from "../EditRelease/AlbumInfoEditComponent";
 import { useForm } from "react-hook-form";
+import ReleaseStatusSuspendForm from "../../../components/FormForUpdateStatus/ReleaseStatusSuspendForm";
 
 const dspColumn = [
   { label: "DSPs", key: "DSPs" },
@@ -53,6 +53,7 @@ function SingleRelease() {
   const { tracksInfo, data, releaseAlbumInfo } = useSelector(
     (state) => state.releaseData
   );
+
   const dispatch = useDispatch();
 
   const [analyticsCollapse, setAnalyticsCollapse] = useState(true);
@@ -237,84 +238,8 @@ function SingleRelease() {
       });
   };
 
-  // Reject Releae Function___________________________________
-  const [rejectType, setRejectType] = useState();
-  const [errorRejectType, setErrorRejectType] = useState("");
-  const [rejectInputText, setRejectInputText] = useState("");
-  const [errorRejectInputText, setErrorRejectInputText] = useState();
 
   const closeRef = useRef(null);
-  const rejectRelease = (formData) => {
-    setErrorRejectType("");
-    setErrorRejectInputText("");
-    if (!rejectType) {
-      setErrorRejectType("Please Select Type");
-      return;
-    }
-    if (!rejectInputText) {
-      setErrorRejectInputText("Reject reason required");
-      return;
-    }
-
-    const actionRequired = textToHTML(rejectInputText);
-    let actionReqHistory = [];
-    if (data?.actionReqHistory) {
-      actionReqHistory = [...data?.actionReqHistory, formData?.actionRequired];
-    }else{
-      actionReqHistory.push(formData.actionRequired);
-    }
-
-    let payload = {};
-    if (rejectType === "Takedown") {
-      payload = {
-        status: rejectType,
-        actionRequired,
-        actionReqHistory,
-        takedownAdminInfo: {
-          adminEmail: userData?.email,
-          adminUserName: userData?.userName,
-          adminId: userData?._id,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    } else if (rejectType === "Blocked") {
-      payload = {
-        status: rejectType,
-        actionRequired,
-        actionReqHistory,
-        blockedAdminInfo: {
-          adminEmail: userData?.email,
-          adminUserName: userData?.userName,
-          adminId: userData?._id,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    } else if (rejectType === "Error") {
-      payload = {
-        status: rejectType,
-        actionRequired,
-        actionReqHistory,
-        errorAdminInfo: {
-          adminEmail: userData?.email,
-          adminUserName: userData?.userName,
-          adminId: userData?._id,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    }
-
-    axios
-      .patch(
-        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${id}`,
-        payload
-      )
-      .then((res) => {
-        if (res.status == 200) {
-          setReFetchData(reFetchData + 1);
-        }
-      });
-    closeRef.current?.click(); // close modal
-  };
 
   const modalCss = {
     background: "white",
@@ -380,7 +305,21 @@ function SingleRelease() {
         className="main-content createRelease-content-div createRelease-overview-div"
         style={{ marginBottom: "20px" }}
       >
-        {data?.actionReqHistory &&
+        {(data?.rejectionReasons && data.status !== 'Live') &&
+          data?.rejectionReasons?.map((d, index) => (
+            <div key={index} className="notice">
+              <FiAlertTriangle />
+              <p
+                style={{
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
+                }}
+                dangerouslySetInnerHTML={{ __html: d }}
+              ></p>
+            </div>
+          ))}
+        {(data?.actionReqHistory  && data.status !== 'Live') &&
           data?.actionReqHistory?.map((d, index) => (
             <div key={index} className="notice">
               <FiAlertTriangle />
@@ -576,96 +515,14 @@ function SingleRelease() {
                       <RiDeleteBin6Line /> <span>Reject Release</span>
                     </Dialog.Trigger>
                     <Modal title="Reject Release">
-                      <div className="singleRelease-reject-modal">
-                        <p className="modal-description">
-                          Please fix the issue indicated below and then don’t
-                          forget to re-submit your release for distribution.
-                        </p>
-                        <label className="singleRelease-modal-label" htmlFor="">
-                          Reject Type
-                        </label>
-                        <Select.Root
-                          onValueChange={(value) => {
-                            setRejectType(value);
-                            setErrorRejectType("");
-                          }}
-                        >
-                          <Select.Trigger
-                            className={`dropdown-trigger analytics-modal-dropdown`}
-                          >
-                            <Select.Value placeholder={"Select Reject Type"} />
-                            <Select.Icon className="select-icon">
-                              <ChevronDown />
-                            </Select.Icon>
-                          </Select.Trigger>
-                          <Select.Portal>
-                            <Select.Content
-                              className="dropdown-content"
-                              style={{
-                                padding: 0,
-                                overflowY: "auto",
-                                zIndex: "123",
-                              }}
-                            >
-                              <Select.Viewport>
-                                <Select.Item
-                                  value="Error"
-                                  className="select-item"
-                                >
-                                  <Select.ItemText>Error</Select.ItemText>
-                                  <Select.ItemIndicator className="select-item-indicator">
-                                    <Check size={18} />
-                                  </Select.ItemIndicator>
-                                </Select.Item>
-                                <Select.Item
-                                  value="Takedown"
-                                  className="select-item"
-                                >
-                                  <Select.ItemText>Takedown</Select.ItemText>
-                                  <Select.ItemIndicator className="select-item-indicator">
-                                    <Check size={18} />
-                                  </Select.ItemIndicator>
-                                </Select.Item>
-                                <Select.Item
-                                  value="Blocked"
-                                  className="select-item"
-                                >
-                                  <Select.ItemText>Blocked</Select.ItemText>
-                                  <Select.ItemIndicator className="select-item-indicator">
-                                    <Check size={18} />
-                                  </Select.ItemIndicator>
-                                </Select.Item>
-                              </Select.Viewport>
-                            </Select.Content>
-                          </Select.Portal>
-                        </Select.Root>
-                        {errorRejectType && (
-                          <p style={{ color: "red" }}>{errorRejectType}</p>
-                        )}
 
-                        <label className="singleRelease-modal-label" htmlFor="">
-                          Describe issue here *
-                        </label>
-                        <textarea
-                          placeholder="Write your issue here"
-                          style={{ width: "100%" }}
-                          value={rejectInputText}
-                          onChange={(e) => {
-                            setRejectInputText(e.target.value);
-                            setErrorRejectInputText("");
-                          }}
-                          onKeyDown={(e) => e.stopPropagation()}
-                        ></textarea>
-                        {errorRejectInputText && (
-                          <p style={{ color: "red" }}>{errorRejectInputText}</p>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => rejectRelease(data)}
-                        className="close-button"
-                      >
-                        Reject
-                      </button>
+                      {/* Reject Release Componets start_______________________ */}
+                      {/* _____________________________________________________ */}
+
+                      <ReleaseStatusSuspendForm id={data?._id} closeRef={closeRef} releaseData={data}/>
+                      
+                      {/* Reject Release Componets End_______________________ */}
+                      {/* _____________________________________________________ */}
 
                       {/* Hidden Dialog.Close for programmatic close */}
                       <Dialog.Close asChild>
@@ -986,3 +843,95 @@ SingleRelease.propTypes = {
   releaseCredits: PropTypes.array.isRequired,
 };
 export default SingleRelease;
+
+
+{/* <div className="singleRelease-reject-modal">
+                        <p className="modal-description">
+                          Please fix the issue indicated below and then don’t
+                          forget to re-submit your release for distribution.
+                        </p>
+                        <label className="singleRelease-modal-label" htmlFor="">
+                          Reject Type
+                        </label>
+                        <Select.Root
+                          onValueChange={(value) => {
+                            setRejectType(value);
+                            setErrorRejectType("");
+                          }}
+                        >
+                          <Select.Trigger
+                            className={`dropdown-trigger analytics-modal-dropdown`}
+                          >
+                            <Select.Value placeholder={"Select Reject Type"} />
+                            <Select.Icon className="select-icon">
+                              <ChevronDown />
+                            </Select.Icon>
+                          </Select.Trigger>
+                          <Select.Portal>
+                            <Select.Content
+                              className="dropdown-content"
+                              style={{
+                                padding: 0,
+                                overflowY: "auto",
+                                zIndex: "123",
+                              }}
+                            >
+                              <Select.Viewport>
+                                <Select.Item
+                                  value="Error"
+                                  className="select-item"
+                                >
+                                  <Select.ItemText>Error</Select.ItemText>
+                                  <Select.ItemIndicator className="select-item-indicator">
+                                    <Check size={18} />
+                                  </Select.ItemIndicator>
+                                </Select.Item>
+                                <Select.Item
+                                  value="Takedown"
+                                  className="select-item"
+                                >
+                                  <Select.ItemText>Takedown</Select.ItemText>
+                                  <Select.ItemIndicator className="select-item-indicator">
+                                    <Check size={18} />
+                                  </Select.ItemIndicator>
+                                </Select.Item>
+                                <Select.Item
+                                  value="Blocked"
+                                  className="select-item"
+                                >
+                                  <Select.ItemText>Blocked</Select.ItemText>
+                                  <Select.ItemIndicator className="select-item-indicator">
+                                    <Check size={18} />
+                                  </Select.ItemIndicator>
+                                </Select.Item>
+                              </Select.Viewport>
+                            </Select.Content>
+                          </Select.Portal>
+                        </Select.Root>
+                        {errorRejectType && (
+                          <p style={{ color: "red" }}>{errorRejectType}</p>
+                        )}
+
+                        <label className="singleRelease-modal-label" htmlFor="">
+                          Describe issue here *
+                        </label>
+                        <textarea
+                          placeholder="Write your issue here"
+                          style={{ width: "100%" }}
+                          value={rejectInputText}
+                          onChange={(e) => {
+                            setRejectInputText(e.target.value);
+                            setErrorRejectInputText("");
+                          }}
+                          onKeyDown={(e) => e.stopPropagation()}
+                        ></textarea>
+                        {errorRejectInputText && (
+                          <p style={{ color: "red" }}>{errorRejectInputText}</p>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => rejectRelease(data)}
+                        className="close-button"
+                      >
+                        Reject
+                      </button> */}
