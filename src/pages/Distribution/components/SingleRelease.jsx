@@ -721,7 +721,7 @@ function SingleRelease() {
             <p>Version/Subtittle:</p>
             <p>{data?.subTitle}</p>
           </div>
-          <div className="d-flex">
+          {/* <div className="d-flex">
             <p>Primary Artist:</p>
             <p>
               {data?.artist?.map((artist) => artist.artistName).join(", ")}{" "}
@@ -729,18 +729,18 @@ function SingleRelease() {
                 ?.map((artist) => artist.artistName)
                 .join(", ")}
             </p>
-          </div>
+          </div> */}
           <div className="d-flex">
             <p>Format:</p>
             <p>{data?.format}</p>
           </div>
-          <div className="d-flex">
+          {/* <div className="d-flex">
             <p>Featuring:</p>
             <p>
               {data?.featuring?.map((artist) => artist.artistName).join(", ")}{" "}
               {data?.featureing?.map((artist) => artist.artistName).join(", ")}
             </p>
-          </div>
+          </div> */}
           <div className="d-flex">
             <p>℗ line:</p>
             <p>{data?.pLine}</p>
