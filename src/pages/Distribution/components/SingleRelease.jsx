@@ -244,7 +244,7 @@ function SingleRelease() {
   const [errorRejectInputText, setErrorRejectInputText] = useState();
 
   const closeRef = useRef(null);
-  const rejectRelease = (data) => {
+  const rejectRelease = (formData) => {
     setErrorRejectType("");
     setErrorRejectInputText("");
     if (!rejectType) {
@@ -257,28 +257,19 @@ function SingleRelease() {
     }
 
     const actionRequired = textToHTML(rejectInputText);
-    let actionReqHistory = {};
+    let actionReqHistory = [];
     if (data?.actionReqHistory) {
-      actionReqHistory = data?.actionReqHistory;
+      actionReqHistory = [...data?.actionReqHistory, formData?.actionRequired];
+    }else{
+      actionReqHistory.push(formData.actionRequired);
     }
-    actionReqHistory.push(actionRequired);
 
     let payload = {};
-    if (rejectType === "Action Required") {
+    if (rejectType === "Takedown") {
       payload = {
         status: rejectType,
         actionRequired,
-        actionRequiredAdminInfo: {
-          adminEmail: userData?.email,
-          adminUserName: userData?.userName,
-          adminId: userData?._id,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    } else if (rejectType === "Takedown") {
-      payload = {
-        status: rejectType,
-        actionRequired,
+        actionReqHistory,
         takedownAdminInfo: {
           adminEmail: userData?.email,
           adminUserName: userData?.userName,
@@ -290,18 +281,8 @@ function SingleRelease() {
       payload = {
         status: rejectType,
         actionRequired,
+        actionReqHistory,
         blockedAdminInfo: {
-          adminEmail: userData?.email,
-          adminUserName: userData?.userName,
-          adminId: userData?._id,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    } else if (rejectType === "Suspend") {
-      payload = {
-        status: rejectType,
-        actionRequired,
-        suspendAdminInfo: {
           adminEmail: userData?.email,
           adminUserName: userData?.userName,
           adminId: userData?._id,
@@ -312,6 +293,7 @@ function SingleRelease() {
       payload = {
         status: rejectType,
         actionRequired,
+        actionReqHistory,
         errorAdminInfo: {
           adminEmail: userData?.email,
           adminUserName: userData?.userName,
@@ -381,7 +363,6 @@ function SingleRelease() {
     payload
   ).then(res => {
     if (res.status === 200) {
-      console.log(res)
       setReFetchData(reFetchData + 1);
     }
   });
@@ -424,9 +405,13 @@ function SingleRelease() {
                 style={
                   data?.status == "Takedown"
                     ? { background: "#FEEBEC", color: "#E5484D" }
-                    : data?.status == "Pending" || data?.status == "QC Approval"
+                    : data?.status == "Error"
+                    ? { background: "#FFEBD8", color: "#E5484D" }
+                    : data?.status == "Blocked"
+                    ? { background: "#FFEBD8", color: "#E5484D" }
+                    : data?.status == "QC Approval"
                     ? { background: "#FFEBD8", color: "#FFA552" }
-                    : data?.status == "Live" || data?.status == "Approved"
+                    : data?.status == "Live"
                     ? { background: "#E6F6EB", color: "#2B9A66" }
                     : data?.status == "Review"
                     ? { background: "#D5EFFF", color: "#0090FF" }
@@ -546,18 +531,20 @@ function SingleRelease() {
                               ))}
                             </div>
                             <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-                              <button type="submit" className="confirm-button">
-                                Confirm & Move to Live
-                              </button>
+                              
                               <Dialog.Close asChild>
                                 <button
                                   type="button"
-                                  className="cancel-button"
+                                  style={{padding: '10px 20px', borderRadius: '6px', border: '1px solid red'}}
                                   onClick={() => reset()}
                                 >
                                   Cancel
                                 </button>
                               </Dialog.Close>
+                              <button type="submit" className="theme-btn">
+                                Move to Live
+                              </button>
+                              
                             </div>
                           </form>
                         </div> 
