@@ -1,6 +1,6 @@
 import * as RadioGroup from "@radix-ui/react-radio-group";
-import { X } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
+import { PlusIcon, X, XIcon } from "lucide-react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 const TrackInfoEditComponent = ({ track, index, closeRef }) => {
   const { id } = useParams();
 
+  console.log('track', track);
   const { trackFormat, tracksInfo } = useSelector((state) => state.releaseData);
   const { reFetchArtist } = useSelector((state) => state.reFetchSlice);
 
@@ -57,19 +58,26 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
       });
   }, [userNameIdRoll, reFetchArtist]);
 
-  const preAudioKey = trackFormat === "Singles" ? tracksInfo[0]?.audioKey : "";
-  const preAudioUrl = trackFormat === "Singles" ? tracksInfo[0]?.audioUrl : "";
-  const preAudioName =
-    trackFormat === "Singles" ? tracksInfo[0]?.audioName : "";
+  const preAudioKey = track?.audioKey || '';
+  const preAudioUrl = track?.audioUrl || '';
+  const preAudioName = track?.audioName || '';
   const fullPreAudioData = {
     audioKey: preAudioKey,
     audioName: preAudioName,
     audioUrl: preAudioUrl,
   };
-  const [audioData, setAudioData] = useState(
-    trackFormat === "Singles" && tracksInfo[0]?.audioUrl ? fullPreAudioData : ""
-  );
+  const [audioData, setAudioData] = useState(fullPreAudioData);
   const [audioErr, setAudioErr] = useState();
+
+  // Composer ____________________________________
+  const defaultComposers =
+  (track?.composer ? track?.composer?.map((c) => ({ value: c }))
+    : [{ value: "" }]);
+
+  // Lyricist ____________________________________
+  const defaultLyricist =
+  (track?.lyricist ? track?.lyricist.map((l) => ({ value: l }))
+    : [{ value: "" }]);
 
   const [isISRC, setIsISRC] = useState(track.isISRC);
   const {
@@ -80,13 +88,37 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
     control,
     formState: { errors },
   } = useForm({
-    defaultValues: track,
+    defaultValues: {...track,
+    composer: defaultComposers,
+    lyricist: defaultLyricist,
+    }
   });
+
+  const {
+    fields: lyricistFields,
+    append: appendLyricist,
+    remove: removeLyricist,
+  } = useFieldArray({
+    control,
+    name: "lyricist",
+  });
+
+  const {
+      fields: composerFields,
+      append: appendComposer,
+      remove: removeComposer,
+    } = useFieldArray({
+      control,
+      name: "composer",
+    });
 
   const onSubmit = async (data) => {
     setAudioErr("");
     const updatedTracks = [...tracksInfo]; // This is tracks array of object
     updatedTracks[index] = data;
+
+    data.composer = data.composer.map((c) => c.value.trim()).filter(Boolean);
+    data.lyricist = data.lyricist.map((l) => l.value.trim()).filter(Boolean);
 
     axios
       .patch(
@@ -140,11 +172,11 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
                 items={artist}
                 searchTxt="Search and select primary artist"
                 itemName="Artist"
-                register={{ ...register("primaryArtist", { required: true }) }}
+                register={{ ...register("artist", { required: true }) }}
                 onSelect={(items) =>
-                  setValue("primaryArtist", items, { shouldValidate: true })
+                  setValue("artist", items, { shouldValidate: true })
                 }
-                value={watch("primaryArtist")}
+                value={watch("artist")}
               />
               {errors.primaryArtist && (
                 <span style={{ color: "#ea3958" }}>Please Select Artist</span>
@@ -166,7 +198,7 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
             <div>
               <label htmlFor="">Lyricist *</label>
 
-              <SearchDropdown
+              {/* <SearchDropdown
                 items={artist}
                 searchTxt="Search and select lyricist"
                 itemName="Artist"
@@ -178,12 +210,73 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
               />
               {errors.lyricist && (
                 <span style={{ color: "#ea3958" }}>Please Select Lyricist</span>
-              )}
+              )} */}
+
+              {lyricistFields.map((field, index) => (
+                <div
+                  key={field.id}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                    marginBottom: 8,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <input
+                      type="text"
+                      {...register(`lyricist.${index}.value`, {
+                        required: "Lyricist required",
+                        validate: (v) => v.trim() !== "" || "Lyricist required",
+                      })}
+                      placeholder="Lyricist name"
+                      style={{ flex: 1 }}
+                      autoComplete="off"
+                    />
+                    {lyricistFields.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeLyricist(index)}
+                        style={{
+                          border: "none",
+                          background: "transparent",
+                          cursor: "pointer",
+                        }}
+                        aria-label="Remove lyricist"
+                      >
+                        <XIcon />
+                      </button>
+                    )}
+                  </div>
+                  {errors.lyricist?.[index]?.value && (
+                    <span style={{ color: "red" }}>
+                      {errors.lyricist[index].value.message}
+                    </span>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => appendLyricist({ value: "" })}
+                style={{
+                  border: "1px solid #ea3958",
+                  display: "flex",
+                  gap: "5px",
+                  padding: "6px 10px",
+                  borderRadius: "6px",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  background: "none",
+                  marginBottom: 8,
+                }}
+              >
+                <PlusIcon /> Add New Lyricist
+              </button>
             </div>
             <div>
               <label htmlFor="">Composer *</label>
 
-              <SearchDropdown
+              {/* <SearchDropdown
                 items={artist}
                 searchTxt="Search and select composer"
                 itemName="Artist"
@@ -195,7 +288,68 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
               />
               {errors.composer && (
                 <span style={{ color: "#ea3958" }}>Please Select Composer</span>
-              )}
+              )} */}
+
+              {composerFields.map((field, index) => (
+                <div
+                  key={field.id}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                    marginBottom: 8,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <input
+                      type="text"
+                      {...register(`composer.${index}.value`, {
+                        required: "Composer required",
+                        validate: (v) => v.trim() !== "" || "Composer required",
+                      })}
+                      placeholder="Composer name"
+                      style={{ flex: 1 }}
+                      autoComplete="off"
+                    />
+                    {composerFields.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeComposer(index)}
+                        style={{
+                          border: "none",
+                          background: "transparent",
+                          cursor: "pointer",
+                        }}
+                        aria-label="Remove composer"
+                      >
+                        <XIcon />
+                      </button>
+                    )}
+                  </div>
+                  {errors.composer?.[index]?.value && (
+                    <span style={{ color: "red" }}>
+                      {errors.composer[index].value.message}
+                    </span>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => appendComposer({ value: "" })}
+                style={{
+                  border: "1px solid #ea3958",
+                  display: "flex",
+                  gap: "5px",
+                  padding: "6px 10px",
+                  borderRadius: "6px",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  background: "none",
+                  marginBottom: 8,
+                }}
+              >
+                <PlusIcon /> Add New Composer
+              </button>
             </div>
             <div>
               <label>Arranger</label>
@@ -209,55 +363,6 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
           <label>Publisher</label>
           <input type="text" {...register("publisher")} />
           <div className="form-grid release-form-grid">
-            <div>
-              <label htmlFor="">Genre *</label>
-              <SelectDropdownForCreateRelease
-                options={allGenre}
-                placeholder="Select genre..."
-                className="createRelease-dropdown"
-                register={{ ...register("genre", { required: true }) }}
-                dataName="genre"
-                setValue={setValue}
-                defaultValue={watch("genre")}
-              />
-              {errors.genre && (
-                <span style={{ color: "#ea3958" }}>Genre Required</span>
-              )}
-            </div>
-            <div>
-              <label htmlFor="">Sub-Genre *</label>
-              <input
-                type="text"
-                {...register("subGenre", { required: true })}
-              />
-              {errors.subGenre && (
-                <span style={{ color: "#ea3958" }}>Sub Genre Required</span>
-              )}
-            </div>
-            <div>
-              <label>℗ line *</label>
-              <input type="text" {...register("pLine", { required: true })} />
-              {errors.pLine && (
-                <span style={{ color: "#ea3958" }}>P line field Required</span>
-              )}
-            </div>
-            <div>
-              <label htmlFor="">Production Year *</label>
-              <SelectDropdownForCreateRelease
-                options={yearsList.map(String)}
-                placeholder="Select a year..."
-                className="createRelease-dropdown"
-                register={{ ...register("productionYear", { required: true }) }}
-                dataName="productionYear"
-                setValue={setValue}
-                defaultValue={watch("productionYear")}
-              />
-              {errors.productionYear && (
-                <span style={{ color: "#ea3958" }}>
-                  Production Year Required
-                </span>
-              )}
-            </div>
             <div>
               <label htmlFor="">Do you already have a ISRC? *</label>
               <Controller
@@ -342,10 +447,6 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
                   Parental advisory Required
                 </span>
               )}
-            </div>
-            <div>
-              <label htmlFor="">Preview start </label>
-              <input type="number" {...register("previewStart")} />
             </div>
           </div>
           <label htmlFor="">Lyrics Language *</label>
