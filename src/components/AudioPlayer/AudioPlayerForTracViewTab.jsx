@@ -1,18 +1,21 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { useRef, useState, useEffect } from 'react';
-import { IoPauseCircleOutline, IoPlayCircleOutline } from 'react-icons/io5';
-import { RiDownloadLine } from 'react-icons/ri';
+import { useRef, useState, useEffect } from "react";
+import { IoPauseCircleOutline, IoPlayCircleOutline } from "react-icons/io5";
+import { RiDownloadLine } from "react-icons/ri";
 import TrackInfoEditComponent from "../../pages/Distribution/EditRelease/TrackInfoEditComponent";
+import axios from "axios";
 
 const formatTime = (time) => {
-  if (isNaN(time)) return '00:00';
+  if (isNaN(time)) return "00:00";
   const minutes = Math.floor(time / 60);
   const seconds = Math.floor(time % 60);
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+    2,
+    "0"
+  )}`;
 };
 
-const AudioPlayerForTracViewTab = ({track, index}) => {
-
+const AudioPlayerForTracViewTab = ({ track, index }) => {
   const audioRef = useRef(null);
   const progressBarRef = useRef(null);
   const animationRef = useRef(null);
@@ -35,12 +38,12 @@ const AudioPlayerForTracViewTab = ({track, index}) => {
       setProgress(100);
     };
 
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("ended", handleEnded);
 
     return () => {
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("ended", handleEnded);
     };
   }, []);
 
@@ -68,173 +71,188 @@ const AudioPlayerForTracViewTab = ({track, index}) => {
   };
 
   const handleProgressClick = (e) => {
-  const bar = progressBarRef.current;
-  const rect = bar.getBoundingClientRect();
-  const clickX = e.clientX - rect.left;
-  const width = rect.width;
+    const bar = progressBarRef.current;
+    const rect = bar.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const width = rect.width;
 
-  const newTime = (clickX / width) * audioRef.current.duration;
-  audioRef.current.currentTime = newTime;
-  setCurrentTime(newTime);
+    const newTime = (clickX / width) * audioRef.current.duration;
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
 
-  // 👉 manually update progress if paused
-  if (!isPlaying) {
-    const percent = (newTime / audioRef.current.duration) * 100;
-    setProgress(percent || 0);
-  }
-};
+    // 👉 manually update progress if paused
+    if (!isPlaying) {
+      const percent = (newTime / audioRef.current.duration) * 100;
+      setProgress(percent || 0);
+    }
+  };
 
-
-const handleDownload = (url) => {
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.setAttribute('target', '_blank'); 
-    anchor.setAttribute('download', '');
+  const handleDownload = async (url) => {
+    const apiDownloadUrl = `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/release/download/release-audio?url=${encodeURIComponent(
+      url
+    )}`;
+    const anchor = document.createElement("a");
+    anchor.href = apiDownloadUrl;
+    anchor.setAttribute("download", ""); // let backend provide filename
     document.body.appendChild(anchor);
     anchor.click();
     document.body.removeChild(anchor);
   };
 
-
   const closeRef = useRef(null);
 
   const modalCss = {
-    background: 'white',
-    padding: '20px',
-    borderRadius: '8px',
-    boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.2)',
-    position: 'fixed',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    maxWidth: '1100px',
-    overflowY: 'auto',
-    maxHeight: '90vh',
-    scrollbarWidth: 'thin',
-    zIndex: '3',
-    width: '80%'
-  }
+    background: "white",
+    padding: "20px",
+    borderRadius: "8px",
+    boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    maxWidth: "1100px",
+    overflowY: "auto",
+    maxHeight: "90vh",
+    scrollbarWidth: "thin",
+    zIndex: "3",
+    width: "80%",
+  };
 
   return (
     <>
+      <div className="release-album-list">
+        <div>
+          <audio ref={audioRef} src={track?.audioUrl} preload="metadata" />
+          <button
+            onClick={togglePlay}
+            style={{
+              fontSize: "24px",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              padding: "0px",
+              margin: "0px",
+            }}
+          >
+            {isPlaying ? (
+              <IoPauseCircleOutline className="release-album-playIcon" />
+            ) : (
+              <IoPlayCircleOutline className="release-album-playIcon" />
+            )}
+          </button>
+        </div>
+        <div>
+          <p style={{ margin: "2px" }}>{track?.tittle}</p>
+          <small>
+            {track?.artist?.map((artist) => artist.artistName).join(", ")}
+            {track?.primaryArtist
+              ?.map((artist) => artist.artistName)
+              .join(", ")}
+          </small>
+        </div>
+        <div className="d-flex release-album-RangeDiv onlyForDesktop">
+          {/* Duration _______________________________________ */}
+          <div
+            className="audioDuration"
+            style={{ fontSize: "14px", minWidth: "60px", marginRight: "24px" }}
+          >
+            {formatTime(currentTime)} / {formatTime(duration)}
+          </div>
 
-        <div className="release-album-list">
-            <div>
-                <audio ref={audioRef} src={track?.audioUrl} preload="metadata" />
-                <button
-                    onClick={togglePlay}
-                    style={{
-                    fontSize: '24px',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '0px',
-                    margin: '0px'
-                    }}
-                >
-                    {isPlaying ? <IoPauseCircleOutline className="release-album-playIcon" /> : <IoPlayCircleOutline className="release-album-playIcon" />}
-                </button>
-            </div>
-            <div>
-                <p>{track?.tittle}</p>
-                <small>{track?.artist?.map((artist) => artist.artistName).join(", ")}{" "}
-              {track?.primaryArtist
-                ?.map((artist) => artist.artistName)
-                .join(", ")}</small>
-            </div>
-            <div className="d-flex release-album-RangeDiv onlyForDesktop">
-                {/* Duration _______________________________________ */}
-                <div className='audioDuration' style={{ fontSize: '14px', minWidth: '60px', marginRight: '24px' }}>
-                    {formatTime(currentTime)} / {formatTime(duration)}
-                </div>
+          {/* Progress Bar */}
+          <div
+            ref={progressBarRef}
+            onClick={handleProgressClick}
+            style={{
+              flex: 1,
+              height: "3px",
+              backgroundColor: "#ddd",
+              borderRadius: "5px",
+              position: "relative",
+              cursor: "pointer",
+              width: "200px",
+              marginRight: "47px",
+            }}
+            className="progressBarResponsive"
+          >
+            {/* Filled Bar */}
+            <div
+              style={{
+                width: `${progress}%`,
+                height: "100%",
+                backgroundColor: "#EA3958",
+                borderRadius: "5px",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                transition: "none", // no transition to ensure frame-based update
+              }}
+            ></div>
 
-                {/* Progress Bar */}
-                <div
-                    ref={progressBarRef}
-                    onClick={handleProgressClick}
-                    style={{
-                    flex: 1,
-                    height: '3px',
-                    backgroundColor: '#ddd',
-                    borderRadius: '5px',
-                    position: 'relative',
-                    cursor: 'pointer',
-                    width: '200px',
-                    marginRight: '47px'
-                    }}
-                    className='progressBarResponsive'
-                >
-                    {/* Filled Bar */}
-                    <div
-                    style={{
-                        width: `${progress}%`,
-                        height: '100%',
-                        backgroundColor: '#EA3958',
-                        borderRadius: '5px',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        transition: 'none', // no transition to ensure frame-based update
-                    }}
-                    ></div>
+            {/* Dot */}
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: `calc(${progress}% - 7.5px)`,
+                transform: "translateY(-50%)",
+                width: "12px",
+                height: "12px",
+                backgroundColor: "#EA3958",
+                borderRadius: "50%",
+                pointerEvents: "none",
+                border: "1px solid white",
+              }}
+            ></div>
+          </div>
 
-                    {/* Dot */}
-                    <div
-                    style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: `calc(${progress}% - 7.5px)`,
-                        transform: 'translateY(-50%)',
-                        width: '12px',
-                        height: '12px',
-                        backgroundColor: '#EA3958',
-                        borderRadius: '50%',
-                        pointerEvents: 'none',
-                        border: '1px solid white',
-                    }}
-                    ></div>
-                </div>
-
-                <button onClick={() => handleDownload(data?.audioUrl)} className="release-track-download-btn">
-                    <RiDownloadLine /> Download
-                </button>
-                <div>
-                {/* <button onClick={() => editTrack(data)} className="release-track-download-btn">
+          <button
+            onClick={() => handleDownload(track.audioUrl)}
+            className="release-track-download-btn"
+          >
+            <RiDownloadLine /> Download
+          </button>
+          <div>
+            {/* <button onClick={() => editTrack(data)} className="release-track-download-btn">
                     Edit Track
                 </button> */}
-                <Dialog.Root>
-                    <Dialog.Trigger
-                      style={{
-                        width: "100%",
-                        background: "none",
-                        border: "none",
-                        padding: 0,
-                      }}
-                      className="dropdown-item"
-                    >
-                      <p className="release-track-download-btn">
-                        Edit Track
-                    </p>
-                    </Dialog.Trigger>
-                    <Dialog.Portal style={{padding: '100px'}}>
-                      <Dialog.Overlay className="modal-overlay" />
-                      <Dialog.Content style={modalCss}>
-                        <h3 style={{ fontWeight: "500", marginTop: 0 }}>Edit Track</h3>
+            <Dialog.Root>
+              <Dialog.Trigger
+                style={{
+                  width: "100%",
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                }}
+                className="dropdown-item"
+              >
+                <p className="release-track-download-btn">Edit Track</p>
+              </Dialog.Trigger>
+              <Dialog.Portal style={{ padding: "100px" }}>
+                <Dialog.Overlay className="modal-overlay" />
+                <Dialog.Content style={modalCss}>
+                  <h3 style={{ fontWeight: "500", marginTop: 0 }}>
+                    Edit Track
+                  </h3>
 
-                          <TrackInfoEditComponent closeRef={closeRef} track={track} index={index}/>
+                  <TrackInfoEditComponent
+                    closeRef={closeRef}
+                    track={track}
+                    index={index}
+                  />
 
-                        {/* Hidden Dialog.Close for programmatic close */}
-                          <Dialog.Close asChild>
-                            <button ref={closeRef} style={{ display: 'none' }} />
-                          </Dialog.Close>
-                      </Dialog.Content>
-                    </Dialog.Portal>
-                  </Dialog.Root>
-                </div>
-            </div>
+                  {/* Hidden Dialog.Close for programmatic close */}
+                  <Dialog.Close asChild>
+                    <button ref={closeRef} style={{ display: "none" }} />
+                  </Dialog.Close>
+                </Dialog.Content>
+              </Dialog.Portal>
+            </Dialog.Root>
+          </div>
         </div>
+      </div>
     </>
   );
 };

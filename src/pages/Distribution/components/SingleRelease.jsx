@@ -672,10 +672,10 @@ function SingleRelease() {
                 : data?.releaseOption}
             </p>
           </div>
-          <div className="d-flex">
+          {/* <div className="d-flex">
             <p>Producer Catalog Number:</p>
             <p>1111111111</p>
-          </div>
+          </div> */}
         </div>
         <hr />
         <h3 className="release-album-title">Tracks</h3>
