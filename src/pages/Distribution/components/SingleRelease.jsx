@@ -363,7 +363,7 @@ function SingleRelease() {
               <br />
               <h1>{data?.releaseTitle}</h1>
               <h2>
-                {data?.artist?.map((artist) => artist.artistName).join(", ")}
+                {data?.labels[0]?.labelName || "No Label Name"}
               </h2>
             </div>
             <DropdownMenu.Root>

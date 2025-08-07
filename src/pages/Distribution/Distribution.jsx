@@ -100,7 +100,7 @@ function Distribution() {
         `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release?status=${status}&page=${pageNumber}&limit=${perPageItem}&search=${search}&years=${years}`
       )
       .then((res) => {
-        console.log(res.data.data)
+        // console.log(res.data.data)
         setReleaseData(res.data.data);
         if (isEmptyArray(res.data.data)) setNotFound(true);
         setFilteredCount(res.data.filteredCount);
