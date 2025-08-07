@@ -11,9 +11,7 @@ import artistDemoImg from "../assets/artists/artist4.png";
 import { object } from "prop-types";
 
 const TrackViewCollapsSection = ({ track, index }) => {
-  // console.log(track)
-  console.log('track.artist', track.artist)
-  console.log('track.composera', track.composer)
+
   const [albumOverviewSong, setAlbumOverviewSong] = useState(false);
   // const trackTittle = track.tittle;
   // const trackAudioUrl = track.audioUrl;

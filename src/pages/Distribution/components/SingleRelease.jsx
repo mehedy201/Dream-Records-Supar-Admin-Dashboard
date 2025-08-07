@@ -8,7 +8,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import Chart from "./Chart";
 import Modal from "../../../components/Modal";
-import { FiAlertTriangle, FiArrowRight } from "react-icons/fi";
+import { FiAlertTriangle, FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import { GoPencil } from "react-icons/go";
 import { LuImageDown } from "react-icons/lu";
 import axios from "axios";
@@ -29,6 +29,7 @@ import {
   setTracksInfo,
 } from "../../../redux/features/releaseDataHandleSlice/releaseDataHandleSlice";
 import AlbumInfoEditComponent from "../EditRelease/AlbumInfoEditComponent";
+import { useForm } from "react-hook-form";
 
 const dspColumn = [
   { label: "DSPs", key: "DSPs" },
@@ -151,7 +152,6 @@ function SingleRelease() {
   const [dataNotFound, setDataNotFound] = useState(false);
   useEffect(() => {
     setDataNotFound(false);
-    console.log("not go");
     if (data?.UPC) {
       console.log("yes go");
       axios
@@ -190,12 +190,12 @@ function SingleRelease() {
 
   // Change Status and Reject Function____________________________________
   // _____________________________________________________________________
-  // Move to Review Releae Function___________________________________
+  // Move to QC Approval Releae Function_______________________________________
   const { userData } = useSelector((state) => state.userData);
-  const moveToReview = (id) => {
+  const moveToQC = (id) => {
     const payload = {
-      status: "Review",
-      reviewAdminInfo: {
+      status: "QC Approval",
+      qcApprovalAdminInfo: {
         adminEmail: userData?.email,
         adminUserName: userData?.userName,
         adminId: userData?._id,
@@ -213,11 +213,12 @@ function SingleRelease() {
         }
       });
   };
-  // Move to Live Releae Function___________________________________
-  const moveToLive = (id) => {
+
+  // Move to Review Releae Function_______________________________________
+  const moveToReview = (id) => {
     const payload = {
-      status: "Live",
-      liveAdminInfo: {
+      status: "Review",
+      reviewAdminInfo: {
         adminEmail: userData?.email,
         adminUserName: userData?.userName,
         adminId: userData?._id,
@@ -350,6 +351,46 @@ function SingleRelease() {
     width: "80%",
   };
 
+
+
+  // React Hook Form setup
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+    defaultValues: {
+      upc: data?.UPC || "",
+      isrc: data?.tracks?.map(track => track.ISRC) || [],
+    }
+  });
+
+  // Move to Live form submit handler
+  const onMoveToLiveSubmit = (formData) => {
+  const payload = {
+      status: "Live",
+      liveAdminInfo: {
+        adminEmail: userData?.email,
+        adminUserName: userData?.userName,
+        adminId: userData?._id,
+        updatedAt: new Date().toISOString(),
+      },
+      UPC: formData.upc,
+      ISRC: formData.isrc,
+  };
+
+  // Send to backend
+  axios.patch(
+    `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${data._id}`,
+    payload
+  ).then(res => {
+    if (res.status === 200) {
+      console.log(res)
+      setReFetchData(reFetchData + 1);
+    }
+  });
+
+  reset();
+  closeRef.current?.click();
+  };
+
+
   if (loading) return <LoadingScreen />;
 
   return (
@@ -431,27 +472,106 @@ function SingleRelease() {
                   </div>
                 </DropdownMenu.Item>
                 <hr style={{ margin: 0 }} />
-                {data?.status === "QC Approval" && (
+                {data?.status === "Review" && (
+                  <DropdownMenu.Item
+                    onClick={() => moveToQC(data?._id)}
+                    className="dropdown-item"
+                  >
+                    <div>
+                      <FiArrowLeft style={{color: 'black'}}/> 
+                      <span>Move to QC Approval</span>
+                    </div>
+                  </DropdownMenu.Item>
+                )}
+                {(data?.status === "QC Approval" || data?.status === "Live") && (
                   <DropdownMenu.Item
                     onClick={() => moveToReview(data?._id)}
                     className="dropdown-item"
                   >
                     <div>
-                      <FiArrowRight /> <span>Move to Review</span>
+                      {
+                        data?.status === "QC Approval" ? <FiArrowRight style={{color: 'black'}}/> : <FiArrowLeft style={{color: 'black'}}/> 
+                      }
+                      <span>Move to Review</span>
                     </div>
                   </DropdownMenu.Item>
                 )}
-                {data?.status === "Review" && (
+                {(data?.status === "Review" || data?.status === "Blocked" || data?.status === "Error" || data?.status === "Takedown" ) && (
                   <DropdownMenu.Item
-                    onClick={() => moveToLive(data?._id)}
                     className="dropdown-item"
+                    onSelect={(e) => e.preventDefault()}
                   >
-                    <div>
-                      <FiArrowRight /> <span>Move to Live</span>
-                    </div>
+                    <Dialog.Root>
+                      <Dialog.Trigger
+                        style={{
+                          width: "100%",
+                          background: "none",
+                          border: "none",
+                          padding: 0,
+                        }}
+                        className="dropdown-item"
+                      >
+                        {
+                          data?.status === "Review" ? <FiArrowRight style={{color: 'black'}}/> : <FiArrowLeft style={{color: 'black'}}/>
+                        }
+                        <span style={{color: 'black'}}>Move to Live</span>
+                      </Dialog.Trigger>
+                      <Modal title="Move to Live">
+                        <div className="singleRelease-reject-modal">
+                          <form onSubmit={handleSubmit(onMoveToLiveSubmit)}>
+                            <div className="singleRelease-reject-modal">
+                              <label>
+                                UPC:
+                                <input
+                                  {...register("upc", { required: "UPC is required" })}
+                                  defaultValue={data?.UPC}
+                                  style={{ width: "100%", marginBottom: 8 }}
+                                />
+                                {errors.upc && (
+                                  <span style={{ color: "red" }}>{errors.upc.message}</span>
+                                )}
+                              </label>
+                              {data?.tracks?.map((track, idx) => (
+                                <label key={track._id || idx} style={{ display: "block", marginTop: 12 }}>
+                                  ISRC for Track {idx + 1} ({track.tittle || "Untitled"}):
+                                  <input
+                                    {...register(`isrc.${idx}`, { required: "ISRC is required" })}
+                                    defaultValue={track.ISRC}
+                                    style={{ width: "100%", marginBottom: 4 }}
+                                  />
+                                  {errors.isrc && errors.isrc[idx] && (
+                                    <span style={{ color: "red" }}>{errors.isrc[idx].message}</span>
+                                  )}
+                                </label>
+                              ))}
+                            </div>
+                            <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                              <button type="submit" className="confirm-button">
+                                Confirm & Move to Live
+                              </button>
+                              <Dialog.Close asChild>
+                                <button
+                                  type="button"
+                                  className="cancel-button"
+                                  onClick={() => reset()}
+                                >
+                                  Cancel
+                                </button>
+                              </Dialog.Close>
+                            </div>
+                          </form>
+                        </div> 
+
+                        {/* Hidden Dialog.Close for programmatic close */}
+                        <Dialog.Close asChild>
+                          <button ref={closeRef} style={{ display: "none" }} />
+                        </Dialog.Close>
+                      </Modal>
+                    </Dialog.Root>
                   </DropdownMenu.Item>
                 )}
                 <hr style={{ margin: 0 }} />
+
                 <DropdownMenu.Item
                   className="dropdown-item"
                   onSelect={(e) => e.preventDefault()}
@@ -567,6 +687,7 @@ function SingleRelease() {
                     </Modal>
                   </Dialog.Root>
                 </DropdownMenu.Item>
+
               </DropdownMenu.Content>
             </DropdownMenu.Root>
           </div>

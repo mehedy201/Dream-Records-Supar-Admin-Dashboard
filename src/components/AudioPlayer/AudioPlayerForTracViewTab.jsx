@@ -209,6 +209,7 @@ const AudioPlayerForTracViewTab = ({ track, index }) => {
           </div>
 
           <button
+            style={{cursor: "pointer"}}
             onClick={() => handleDownload(track.audioUrl)}
             className="release-track-download-btn"
           >
