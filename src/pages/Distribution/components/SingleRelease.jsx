@@ -68,6 +68,7 @@ function SingleRelease() {
         `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/release/release/${id}`
       )
       .then((res) => {
+        console.log(res.data.data)
         // Set Full Release Data_________
         dispatch(setData(res.data.data));
         // Set Album Info________________
@@ -363,7 +364,10 @@ function SingleRelease() {
               <br />
               <h1>{data?.releaseTitle}</h1>
               <h2>
-                {data?.labels[0]?.labelName || "No Label Name"}
+                {
+                  data?.labels && 
+                  data?.labels?.map((label) => label.labelName).join(", ")
+                }
               </h2>
             </div>
             <DropdownMenu.Root>
