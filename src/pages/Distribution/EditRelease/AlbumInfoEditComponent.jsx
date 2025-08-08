@@ -219,14 +219,11 @@ const AlbumInfoEditComponent = ({ releaseAlbumInfo, closeRef }) => {
               )}
             </div>
             <div>
-              <label htmlFor="">Sub-Genre *</label>
+              <label htmlFor="">Sub-Genre</label>
               <input
                 type="text"
-                {...register("subGenre", { required: true })}
+                {...register("subGenre")}
               />
-              {errors.subGenre && (
-                <span style={{ color: "#ea3958" }}>Sub Genre Required</span>
-              )}
             </div>
           </div>
           <label htmlFor="">Label Name *</label>
