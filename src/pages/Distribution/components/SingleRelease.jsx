@@ -68,7 +68,7 @@ function SingleRelease() {
         `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/release/release/${id}`
       )
       .then((res) => {
-        console.log(res.data.data)
+        // console.log(res.data.data)
         // Set Full Release Data_________
         dispatch(setData(res.data.data));
         // Set Album Info________________
@@ -305,7 +305,7 @@ function SingleRelease() {
         className="main-content createRelease-content-div createRelease-overview-div"
         style={{ marginBottom: "20px" }}
       >
-        {(data?.rejectionReasons && data.status !== 'Live') &&
+        {(data?.rejectionReasons && data.status !== 'Live' && data.status !== 'Review')&&
           data?.rejectionReasons?.map((d, index) => (
             <div key={index} className="notice">
               <FiAlertTriangle />
@@ -319,7 +319,7 @@ function SingleRelease() {
               ></p>
             </div>
           ))}
-        {(data?.actionReqHistory  && data.status !== 'Live') &&
+        {(data?.actionReqHistory  && data.status !== 'Live' && data.status !== 'Review') &&
           data?.actionReqHistory?.map((d, index) => (
             <div key={index} className="notice">
               <FiAlertTriangle />

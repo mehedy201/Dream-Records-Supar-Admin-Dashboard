@@ -46,13 +46,22 @@ const ReleaseStatusSuspendForm = ({ id, closeRef, releaseData}) => {
     });
 
     const onSubmit = (data) => {
-        console.log('form data', data);
-        const actionRequired = textToHTML(data?.actionRequired);
-        let actionReqHistory = [];
-        if (releaseData?.actionReqHistory) {
-            actionReqHistory = [...releaseData?.actionReqHistory, actionRequired];
-        }else{
-            actionReqHistory.push(data.actionRequired);
+
+        let actionRequired;
+        if(data.actionRequired){
+            actionRequired = textToHTML(data.actionRequired);
+        }
+        if (!data.actionRequired && (!data.rejectionReasons || data.rejectionReasons.length === 0)) {
+            return toast.error("Please provide at least one reason");
+        }
+
+        let actionReqHistory = releaseData?.actionReqHistory || [];
+        if (data.actionRequired){
+            if (releaseData?.actionReqHistory) {
+                actionReqHistory = [...releaseData?.actionReqHistory, actionRequired];
+            }else{
+                actionReqHistory.push(data.actionRequired);
+            }
         }
 
         let payload;
@@ -104,8 +113,6 @@ const ReleaseStatusSuspendForm = ({ id, closeRef, releaseData}) => {
                 closeRef.current?.click(); // close modal
             }
         });
-
-        console.log(payload);
     };
 
     const selectedStatus = watch("status");
@@ -186,10 +193,10 @@ const ReleaseStatusSuspendForm = ({ id, closeRef, releaseData}) => {
                     <Controller
                     name="rejectionReasons"
                     control={control}
-                    rules={{
-                        required: "At least one reason is required",
-                        validate: (val) => val.length > 0 || "At least one reason is required",
-                    }}
+                    // rules={{
+                    //     required: "At least one reason is required",
+                    //     validate: (val) => val.length > 0 || "At least one reason is required",
+                    // }}
                     render={({ field }) => (
                         <div>
                         {releaseRejectionsList.map((option) => {
@@ -225,22 +232,24 @@ const ReleaseStatusSuspendForm = ({ id, closeRef, releaseData}) => {
                     )}
                     />
 
-                    {errors.rejectionReasons && (
+                    {/* {errors.rejectionReasons && (
                     <p style={{ color: "red" }}>{errors.rejectionReasons.message}</p>
-                    )}
+                    )} */}
 
                     {/* Custom reason */}
                     <textarea
-                    {...register("actionRequired", {
-                        required: "This field is required",
-                    })}
+                    {...register("actionRequired", 
+                        // {
+                        // required: "This field is required",
+                        // }
+                    )}
                     placeholder="Write additional reason..."
                     style={{ width: "100%", marginTop: "10px", padding: "10px" }}
                     onKeyDown={(e) => e.stopPropagation()}
                     />
-                    {errors.actionRequired && (
+                    {/* {errors.actionRequired && (
                     <p style={{ color: "red" }}>{errors.actionRequired.message}</p>
-                    )}
+                    )} */}
                 </>
 
                 <br />

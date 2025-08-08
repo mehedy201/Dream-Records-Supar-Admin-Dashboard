@@ -41,19 +41,32 @@ const ServiceRequestStatusUpdateForm = ({ id, closeRef }) => {
   });
 
   const onSubmit = (data) => {
+
+    
     const ansDate = new Date().toISOString();
     let payload;
     if (data.status === "Solved") {
       payload = { status: data.status, ansDate };
     }
+
+    // If status is Rejected, we need to handle rejection reasons and custom reason
     if (data.status === "Rejected") {
-      const actionRequired = textToHTML(data.actionRequired);
-      payload = {
-        actionRequired,
-        ansDate,
-        status: data?.status,
-        rejectionReasons: data.rejectionReasons,
-      };
+      let actionRequired;
+      if(data.actionRequired){
+        actionRequired = textToHTML(data.actionRequired);
+      }
+      if(data.actionRequired || (data.rejectionReasons && data.rejectionReasons.length > 0)){
+          payload = {
+          actionRequired,
+          ansDate,
+          status: data?.status,
+          rejectionReasons: data.rejectionReasons,
+        };
+      }else{
+        toast.error("Please Provide at least one reason.");
+        return;
+      }
+      
     }
     axios
       .patch(
@@ -143,12 +156,12 @@ const ServiceRequestStatusUpdateForm = ({ id, closeRef }) => {
             <Controller
               name="rejectionReasons"
               control={control}
-              rules={{
-                validate: (val) =>
-                  selectedStatus === "Rejected" && val.length === 0
-                    ? "At least one reason is required"
-                    : true,
-              }}
+              // rules={{
+              //   validate: (val) =>
+              //     selectedStatus === "Rejected" && val.length === 0
+              //       ? "At least one reason is required"
+              //       : true,
+              // }}
               render={({ field }) => (
                 <div>
                   {serviceRejectionsList.map((option) => {
@@ -184,22 +197,24 @@ const ServiceRequestStatusUpdateForm = ({ id, closeRef }) => {
               )}
             />
 
-            {errors.rejectionReasons && (
+            {/* {errors.rejectionReasons && (
               <p style={{ color: "red" }}>{errors.rejectionReasons.message}</p>
-            )}
+            )} */}
 
             {/* Custom reason */}
             <textarea
-              {...register("actionRequired", {
-                required:
-                  selectedStatus === "Rejected" ? "This field required" : false,
-              })}
+              {...register("actionRequired", 
+              //   {
+              //   required:
+              //     selectedStatus === "Rejected" ? "This field required" : false,
+              // }
+            )}
               placeholder="Write additional reason..."
               style={{ width: "100%", marginTop: "10px", padding: "10px" }}
             />
-            {errors.actionRequired && (
+            {/* {errors.actionRequired && (
               <p style={{ color: "red" }}>{errors.actionRequired.message}</p>
-            )}
+            )} */}
           </>
         )}
 
