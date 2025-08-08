@@ -96,6 +96,7 @@ function Users() {
       )
       .then((res) => {
         if (res.status == 200) {
+          console.log(res.data.data)
           setData(res.data.data);
           if (isEmptyArray(res.data.data)) setNotFound(true);
           setFilteredCount(res.data.filteredCount);
@@ -118,7 +119,6 @@ function Users() {
   const handleKeyPress = (event) => {
     console.log(event);
     if (event.key === "Enter") {
-      console.log("yes", searchText);
       navigateWithParams(`/users/${status}/1/${perPageItem}`, {
         search: searchText,
         years: years,

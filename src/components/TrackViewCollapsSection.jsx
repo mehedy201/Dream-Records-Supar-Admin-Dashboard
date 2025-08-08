@@ -235,6 +235,14 @@ const TrackViewCollapsSection = ({ track, index }) => {
                         }
                     </div>
                   </div>
+                  <div style={{alignItems: 'center'}} className="d-flex releaseCredit-items">
+                    <p className="releaseCredit-items-title">Producer</p>
+                    <p>{track?.producer}</p>
+                  </div>
+                  <div style={{alignItems: 'center'}} className="d-flex releaseCredit-items">
+                    <p className="releaseCredit-items-title">Arranger</p>
+                    <p>{track?.arranger}</p>
+                  </div>
                 </div>
               </Tabs.Content>
             </Tabs.Root>

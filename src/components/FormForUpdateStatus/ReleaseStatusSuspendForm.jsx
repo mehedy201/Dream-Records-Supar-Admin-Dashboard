@@ -236,6 +236,7 @@ const ReleaseStatusSuspendForm = ({ id, closeRef, releaseData}) => {
                     })}
                     placeholder="Write additional reason..."
                     style={{ width: "100%", marginTop: "10px", padding: "10px" }}
+                    onKeyDown={(e) => e.stopPropagation()}
                     />
                     {errors.actionRequired && (
                     <p style={{ color: "red" }}>{errors.actionRequired.message}</p>
