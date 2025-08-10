@@ -373,8 +373,20 @@ function SingleRelease() {
               <br />
               <h1>{data?.releaseTitle}</h1>
               <h2>
-                {data?.labels &&
-                  data?.labels?.map((label) => label.labelName).join(", ")}
+                {
+                [...new Set(
+                  data?.tracks?.flatMap(track =>
+                    track?.artist?.map(a => a.artistName.toLowerCase())
+                  )
+                )].join(', ')
+              }
+              {
+                [...new Set(
+                  data?.tracks?.flatMap(track =>
+                    track?.primaryArtist?.map(a => a.artistName.toLowerCase())
+                  )
+                )].join(', ')
+              }
               </h2>
             </div>
             <DropdownMenu.Root>
