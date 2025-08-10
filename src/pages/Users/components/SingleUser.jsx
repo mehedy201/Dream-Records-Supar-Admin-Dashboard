@@ -514,10 +514,9 @@ function SingleUser() {
           </div>
         </div>
 
-        {!userData?.label && (
-          <div className="user-info">
+        
+          {/* <div className="user-info">
             <h5>Label Info</h5>
-            {/* {userData?.label &&  */}
             <div style={{ marginTop: "14px" }}>
               <div className="d-flex">
                 <p>Channel Name:</p>
@@ -536,11 +535,10 @@ function SingleUser() {
                 <p className="user-value-text">11</p>
               </div>
             </div>
-            {/* } */}
-          </div>
-        )}
-        {/* Govment ID Card */}
-        <div className="user-download-row">
+          </div> */}
+
+
+        {/* <div className="user-download-row">
           <div className="user-info">
             <h5 style={{ marginBottom: "10px" }}>Documents</h5>
             <span
@@ -560,7 +558,7 @@ function SingleUser() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <Tabs.Root className="tabs-root" defaultValue={item}>
