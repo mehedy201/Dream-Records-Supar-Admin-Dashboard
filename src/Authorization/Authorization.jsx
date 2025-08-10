@@ -46,8 +46,8 @@ const Authorization = ({ children }) => {
           navigate("/login");
           return;
         }
-        if(roll !== 'Admin'){
-          navigate('/login')
+        if (roll !== "Admin") {
+          navigate("/login");
           return;
         }
 
@@ -70,7 +70,10 @@ const Authorization = ({ children }) => {
         //     navigate('/sign-up-address-info')
         //     return
         // }
-        await axios.patch(`https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/users/last-log-in/${userId}`, {});
+        await axios.patch(
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/users/last-log-in/${userId}`,
+          {}
+        );
       } catch (err) {
         console.error("Auth check failed:", err.message);
         // localStorage.removeItem("token");

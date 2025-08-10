@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 const TrackInfoEditComponent = ({ track, index, closeRef }) => {
   const { id } = useParams();
 
-  console.log('track', track);
+  console.log("track", track);
   const { trackFormat, tracksInfo } = useSelector((state) => state.releaseData);
   const { reFetchArtist } = useSelector((state) => state.reFetchSlice);
 
@@ -58,9 +58,9 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
       });
   }, [userNameIdRoll, reFetchArtist]);
 
-  const preAudioKey = track?.audioKey || '';
-  const preAudioUrl = track?.audioUrl || '';
-  const preAudioName = track?.audioName || '';
+  const preAudioKey = track?.audioKey || "";
+  const preAudioUrl = track?.audioUrl || "";
+  const preAudioName = track?.audioName || "";
   const fullPreAudioData = {
     audioKey: preAudioKey,
     audioName: preAudioName,
@@ -70,14 +70,14 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
   const [audioErr, setAudioErr] = useState();
 
   // Composer ____________________________________
-  const defaultComposers =
-  (track?.composer ? track?.composer?.map((c) => ({ value: c }))
-    : [{ value: "" }]);
+  const defaultComposers = track?.composer
+    ? track?.composer?.map((c) => ({ value: c }))
+    : [{ value: "" }];
 
   // Lyricist ____________________________________
-  const defaultLyricist =
-  (track?.lyricist ? track?.lyricist.map((l) => ({ value: l }))
-    : [{ value: "" }]);
+  const defaultLyricist = track?.lyricist
+    ? track?.lyricist.map((l) => ({ value: l }))
+    : [{ value: "" }];
 
   const [isISRC, setIsISRC] = useState(track.isISRC);
   const {
@@ -88,10 +88,11 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
     control,
     formState: { errors },
   } = useForm({
-    defaultValues: {...track,
-    composer: defaultComposers,
-    lyricist: defaultLyricist,
-    }
+    defaultValues: {
+      ...track,
+      composer: defaultComposers,
+      lyricist: defaultLyricist,
+    },
   });
 
   const {
@@ -104,13 +105,13 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
   });
 
   const {
-      fields: composerFields,
-      append: appendComposer,
-      remove: removeComposer,
-    } = useFieldArray({
-      control,
-      name: "composer",
-    });
+    fields: composerFields,
+    append: appendComposer,
+    remove: removeComposer,
+  } = useFieldArray({
+    control,
+    name: "composer",
+  });
 
   const onSubmit = async (data) => {
     setAudioErr("");
@@ -222,7 +223,9 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
                     marginBottom: 8,
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
                     <input
                       type="text"
                       {...register(`lyricist.${index}.value`, {
@@ -300,7 +303,9 @@ const TrackInfoEditComponent = ({ track, index, closeRef }) => {
                     marginBottom: 8,
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
                     <input
                       type="text"
                       {...register(`composer.${index}.value`, {

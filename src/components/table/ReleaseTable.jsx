@@ -70,13 +70,17 @@ const ReleaseTable = ({ columns = [], data }) => {
       });
   };
 
-
   // React Hook Form setup
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   // Move to Live form submit handler
   const onMoveToLiveSubmit = (formData, id) => {
-  const payload = {
+    const payload = {
       status: "Live",
       liveAdminInfo: {
         adminEmail: userData?.email,
@@ -86,24 +90,25 @@ const ReleaseTable = ({ columns = [], data }) => {
       },
       UPC: formData.upc,
       ISRC: formData.isrc,
+    };
+
+    // Send to backend
+    axios
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${id}`,
+        payload
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          window.location.reload();
+        }
+      });
+
+    reset();
+    closeRef.current?.click();
   };
 
-  // Send to backend
-  axios.patch(
-    `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${id}`,
-    payload
-  ).then(res => {
-    if (res.status === 200) {
-      window.location.reload();
-    }
-  });
-
-  reset();
-  closeRef.current?.click();
-  };
-  
   const closeRef = useRef(null);
-  
 
   return (
     <div className="table-wrapper">
@@ -176,7 +181,7 @@ const ReleaseTable = ({ columns = [], data }) => {
                         className="dropdown-item"
                       >
                         <div>
-                          <FiArrowLeft style={{color: 'black'}}/> 
+                          <FiArrowLeft style={{ color: "black" }} />
                           <span>Move to QC Approval</span>
                         </div>
                       </DropdownMenu.Item>
@@ -187,14 +192,19 @@ const ReleaseTable = ({ columns = [], data }) => {
                         className="dropdown-item"
                       >
                         <div>
-                          {
-                            d?.status === "QC Approval" ? <FiArrowRight style={{color: 'black'}}/> : <FiArrowLeft style={{color: 'black'}}/> 
-                          }
+                          {d?.status === "QC Approval" ? (
+                            <FiArrowRight style={{ color: "black" }} />
+                          ) : (
+                            <FiArrowLeft style={{ color: "black" }} />
+                          )}
                           <span>Move to Review</span>
                         </div>
                       </DropdownMenu.Item>
                     )}
-                    {(d?.status === "Review" || d?.status === "Blocked" || d?.status === "Error" || d?.status === "Takedown" ) && (
+                    {(d?.status === "Review" ||
+                      d?.status === "Blocked" ||
+                      d?.status === "Error" ||
+                      d?.status === "Takedown") && (
                       <DropdownMenu.Item
                         className="dropdown-item"
                         onSelect={(e) => e.preventDefault()}
@@ -209,46 +219,79 @@ const ReleaseTable = ({ columns = [], data }) => {
                             }}
                             className="dropdown-item"
                           >
-                            {
-                              d?.status === "Review" ? <FiArrowRight style={{color: 'black'}}/> : <FiArrowLeft style={{color: 'black'}}/>
-                            }
-                            <span style={{color: 'black'}}>Move to Live</span>
+                            {d?.status === "Review" ? (
+                              <FiArrowRight style={{ color: "black" }} />
+                            ) : (
+                              <FiArrowLeft style={{ color: "black" }} />
+                            )}
+                            <span style={{ color: "black" }}>Move to Live</span>
                           </Dialog.Trigger>
                           <Modal title="Move to Live">
                             <div className="singleRelease-reject-modal">
-                              <form onSubmit={handleSubmit((formData) => onMoveToLiveSubmit(formData, d._id))}>
+                              <form
+                                onSubmit={handleSubmit((formData) =>
+                                  onMoveToLiveSubmit(formData, d._id)
+                                )}
+                              >
                                 <div className="singleRelease-reject-modal">
                                   <label>
                                     UPC:
                                     <input
-                                      {...register("upc", { required: "UPC is required" })}
+                                      {...register("upc", {
+                                        required: "UPC is required",
+                                      })}
                                       defaultValue={d?.UPC}
                                       style={{ width: "100%", marginBottom: 8 }}
                                     />
                                     {errors.upc && (
-                                      <span style={{ color: "red" }}>{errors.upc.message}</span>
+                                      <span style={{ color: "red" }}>
+                                        {errors.upc.message}
+                                      </span>
                                     )}
                                   </label>
                                   {d?.tracks?.map((track, idx) => (
-                                    <label key={track._id || idx} style={{ display: "block", marginTop: 12 }}>
-                                      ISRC for Track {idx + 1} ({track.tittle || "Untitled"}):
+                                    <label
+                                      key={track._id || idx}
+                                      style={{
+                                        display: "block",
+                                        marginTop: 12,
+                                      }}
+                                    >
+                                      ISRC for Track {idx + 1} (
+                                      {track.tittle || "Untitled"}):
                                       <input
-                                        {...register(`isrc.${idx}`, { required: "ISRC is required" })}
+                                        {...register(`isrc.${idx}`, {
+                                          required: "ISRC is required",
+                                        })}
                                         defaultValue={track.ISRC}
-                                        style={{ width: "100%", marginBottom: 4 }}
+                                        style={{
+                                          width: "100%",
+                                          marginBottom: 4,
+                                        }}
                                       />
                                       {errors.isrc && errors.isrc[idx] && (
-                                        <span style={{ color: "red" }}>{errors.isrc[idx].message}</span>
+                                        <span style={{ color: "red" }}>
+                                          {errors.isrc[idx].message}
+                                        </span>
                                       )}
                                     </label>
                                   ))}
                                 </div>
-                                <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-                                  
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    gap: "10px",
+                                    marginTop: "20px",
+                                  }}
+                                >
                                   <Dialog.Close asChild>
                                     <button
                                       type="button"
-                                      style={{padding: '10px 20px', borderRadius: '6px', border: '1px solid red'}}
+                                      style={{
+                                        padding: "10px 20px",
+                                        borderRadius: "6px",
+                                        border: "1px solid red",
+                                      }}
                                       onClick={() => reset()}
                                     >
                                       Cancel
@@ -257,14 +300,16 @@ const ReleaseTable = ({ columns = [], data }) => {
                                   <button type="submit" className="theme-btn">
                                     Move to Live
                                   </button>
-                                  
                                 </div>
                               </form>
-                            </div> 
+                            </div>
 
                             {/* Hidden Dialog.Close for programmatic close */}
                             <Dialog.Close asChild>
-                              <button ref={closeRef} style={{ display: "none" }} />
+                              <button
+                                ref={closeRef}
+                                style={{ display: "none" }}
+                              />
                             </Dialog.Close>
                           </Modal>
                         </Dialog.Root>
@@ -289,23 +334,28 @@ const ReleaseTable = ({ columns = [], data }) => {
                           <RiDeleteBin6Line /> <span>Reject Release</span>
                         </Dialog.Trigger>
                         <Modal title="Reject Release">
-
                           {/* Reject Release Componets start_______________________ */}
                           {/* _____________________________________________________ */}
 
-                          <ReleaseStatusSuspendForm id={d?._id} closeRef={closeRef} releaseData={d}/>
-                          
+                          <ReleaseStatusSuspendForm
+                            id={d?._id}
+                            closeRef={closeRef}
+                            releaseData={d}
+                          />
+
                           {/* Reject Release Componets End_______________________ */}
                           {/* _____________________________________________________ */}
 
                           {/* Hidden Dialog.Close for programmatic close */}
                           <Dialog.Close asChild>
-                            <button ref={closeRef} style={{ display: "none" }} />
+                            <button
+                              ref={closeRef}
+                              style={{ display: "none" }}
+                            />
                           </Dialog.Close>
                         </Modal>
                       </Dialog.Root>
                     </DropdownMenu.Item>
-
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>
               </td>

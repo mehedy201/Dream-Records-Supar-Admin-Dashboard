@@ -189,11 +189,17 @@ function Analytics() {
         payloadData
       )
       .then((res) => {
-        console.log(res.data.data);
-        setShowReportModal(false);
-        setShowReportSuccessModal(true);
-        setUploadedExcel();
-        setLoadingForSubmit(false);
+        if (res.status === 200) {
+          setLoadingForSubmit(false);
+          setShowReportModal(false);
+          setShowReportSuccessModal(true);
+          setUploadedExcel("");
+          setYearValue("");
+          setMonthValue("");
+        } else {
+          setLoadingForSubmit(false);
+          setUploadedExcelError(res.data.message || "Something went wrong");
+        }
       });
   };
 

@@ -11,7 +11,6 @@ import artistDemoImg from "../assets/artists/artist4.png";
 import { object } from "prop-types";
 
 const TrackViewCollapsSection = ({ track, index }) => {
-
   const [albumOverviewSong, setAlbumOverviewSong] = useState(false);
   // const trackTittle = track.tittle;
   // const trackAudioUrl = track.audioUrl;
@@ -44,10 +43,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
           }}
         >
           <div style={{ flexGrow: 1 }}>
-            <AudioPlayerForTracViewTab
-              track={track}
-              index={index}
-            />
+            <AudioPlayerForTracViewTab track={track} index={index} />
           </div>
           <div
             style={{
@@ -126,7 +122,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                   <div className="d-flex releaseCredit-items">
                     <p className="releaseCredit-items-title">Primary Artist</p>
                     <div>
-                      {track?.artist?.map((data, index) => 
+                      {track?.artist?.map((data, index) => (
                         <div key={index} className="d-flex">
                           <img
                             src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
@@ -134,8 +130,8 @@ const TrackViewCollapsSection = ({ track, index }) => {
                           />
                           <p>{data?.artistName}</p>
                         </div>
-                      )}
-                      {track?.primaryArtist?.map((data, index) => 
+                      ))}
+                      {track?.primaryArtist?.map((data, index) => (
                         <div key={index} className="d-flex">
                           <img
                             src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
@@ -143,10 +139,13 @@ const TrackViewCollapsSection = ({ track, index }) => {
                           />
                           <p>{data?.artistName}</p>
                         </div>
-                      )}
+                      ))}
                     </div>
                   </div>
-                  <div style={{alignItems: 'center'}} className="d-flex releaseCredit-items">
+                  <div
+                    style={{ alignItems: "center" }}
+                    className="d-flex releaseCredit-items"
+                  >
                     <p className="releaseCredit-items-title">Lyricist</p>
                     <div>
                       {/* {track?.lyricist?.map((data, index) => (
@@ -158,33 +157,31 @@ const TrackViewCollapsSection = ({ track, index }) => {
                           <p>{data?.artistName}</p>
                         </div>
                       ))} */}
-                        {
-                          Array.isArray(track?.lyricist) && track.lyricist.length > 0 && (
-                            typeof track.lyricist[0] === 'object' ? (
-                              track.lyricist.map((data, index) => 
-                                <div key={index} className="d-flex">
-                                  <img
-                                    src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
-                                    alt=""
-                                  />
-                                  <p>{data?.artistName}</p>
-                                </div>
-                              )
-                            ) : (
-                              track.lyricist.map((l, index) => 
-                                <span style={{paddingRight: '5px'}} key={index}>{l}, </span>
-                              )
-                            )
-                          )
-                        }
-                        {
-                          track?.authors &&
-                          track.authors.map((author, index) => (
-                            <span key={index} style={{paddingRight: '5px'}}>
-                              {author}
-                            </span>
-                          ))
-                        }
+                      {Array.isArray(track?.lyricist) &&
+                        track.lyricist.length > 0 &&
+                        (typeof track.lyricist[0] === "object"
+                          ? track.lyricist.map((data, index) => (
+                              <div key={index} className="d-flex">
+                                <img
+                                  src={
+                                    data?.imgUrl ? data?.imgUrl : artistDemoImg
+                                  }
+                                  alt=""
+                                />
+                                <p>{data?.artistName}</p>
+                              </div>
+                            ))
+                          : track.lyricist.map((l, index) => (
+                              <span style={{ paddingRight: "5px" }} key={index}>
+                                {l},{" "}
+                              </span>
+                            )))}
+                      {track?.authors &&
+                        track.authors.map((author, index) => (
+                          <span key={index} style={{ paddingRight: "5px" }}>
+                            {author}
+                          </span>
+                        ))}
                     </div>
                   </div>
                   <div className="d-flex releaseCredit-items">
@@ -201,7 +198,10 @@ const TrackViewCollapsSection = ({ track, index }) => {
                       ))}
                     </div>
                   </div>
-                  <div style={{alignItems: 'center'}} className="d-flex releaseCredit-items">
+                  <div
+                    style={{ alignItems: "center" }}
+                    className="d-flex releaseCredit-items"
+                  >
                     <p className="releaseCredit-items-title">Composer</p>
                     <div>
                       {/* {track?.composer?.map((data, index) => (
@@ -214,32 +214,38 @@ const TrackViewCollapsSection = ({ track, index }) => {
                         </div>
                       ))} */}
 
-                        {
-                          Array.isArray(track?.composer) && track.composer.length > 0 && (
-                            typeof track.composer[0] === 'object' ? (
-                              track.composer.map((data, index) => 
-                                <div key={index} className="d-flex">
-                                  <img
-                                    src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
-                                    alt=""
-                                  />
-                                  <p>{data?.artistName}</p>
-                                </div>
-                              )
-                            ) : (
-                              track.composer.map((c, index) => 
-                                <span style={{paddingRight: '5px'}} key={index}>{c},</span>
-                              )
-                            )
-                          )
-                        }
+                      {Array.isArray(track?.composer) &&
+                        track.composer.length > 0 &&
+                        (typeof track.composer[0] === "object"
+                          ? track.composer.map((data, index) => (
+                              <div key={index} className="d-flex">
+                                <img
+                                  src={
+                                    data?.imgUrl ? data?.imgUrl : artistDemoImg
+                                  }
+                                  alt=""
+                                />
+                                <p>{data?.artistName}</p>
+                              </div>
+                            ))
+                          : track.composer.map((c, index) => (
+                              <span style={{ paddingRight: "5px" }} key={index}>
+                                {c},
+                              </span>
+                            )))}
                     </div>
                   </div>
-                  <div style={{alignItems: 'center'}} className="d-flex releaseCredit-items">
+                  <div
+                    style={{ alignItems: "center" }}
+                    className="d-flex releaseCredit-items"
+                  >
                     <p className="releaseCredit-items-title">Producer</p>
                     <p>{track?.producer}</p>
                   </div>
-                  <div style={{alignItems: 'center'}} className="d-flex releaseCredit-items">
+                  <div
+                    style={{ alignItems: "center" }}
+                    className="d-flex releaseCredit-items"
+                  >
                     <p className="releaseCredit-items-title">Arranger</p>
                     <p>{track?.arranger}</p>
                   </div>
@@ -252,6 +258,5 @@ const TrackViewCollapsSection = ({ track, index }) => {
     </div>
   );
 };
-
 
 export default TrackViewCollapsSection;

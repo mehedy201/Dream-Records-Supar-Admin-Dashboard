@@ -141,11 +141,11 @@ const AlbumInfoEditComponent = ({ releaseAlbumInfo, closeRef }) => {
           <input type="text" {...register("subTitle")} />
 
           {/* <div className="form-grid release-form-grid"> */}
-            {/* <div>
+          {/* <div>
               <label htmlFor="">
                 Is this a compilation of various artists? *
               </label> */}
-              {/* <Controller
+          {/* <Controller
                 name="isVariousArtists"
                 control={control}
                 rules={{ required: "This selection is required" }}
@@ -171,7 +171,7 @@ const AlbumInfoEditComponent = ({ releaseAlbumInfo, closeRef }) => {
                 <span style={{ color: "#ea3958" }}>This field Required</span>
               )}
             </div> */}
-            {/* {isVariousArtists === "yes" && (
+          {/* {isVariousArtists === "yes" && (
               <div>
                 <label htmlFor="">Select Artist *</label>
                 <SearchDropdown
@@ -220,10 +220,7 @@ const AlbumInfoEditComponent = ({ releaseAlbumInfo, closeRef }) => {
             </div>
             <div>
               <label htmlFor="">Sub-Genre</label>
-              <input
-                type="text"
-                {...register("subGenre")}
-              />
+              <input type="text" {...register("subGenre")} />
             </div>
           </div>
           <label htmlFor="">Label Name *</label>

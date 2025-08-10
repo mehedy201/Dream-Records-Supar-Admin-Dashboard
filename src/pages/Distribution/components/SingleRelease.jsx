@@ -68,7 +68,7 @@ function SingleRelease() {
         `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/release/release/${id}`
       )
       .then((res) => {
-        // console.log(res.data.data)
+        // console.log(res)
         // Set Full Release Data_________
         dispatch(setData(res.data.data));
         // Set Album Info________________
@@ -152,6 +152,7 @@ function SingleRelease() {
   const [years, setYears] = useState(Math.max(...yearsList));
   const [dataNotFound, setDataNotFound] = useState(false);
   useEffect(() => {
+    console.log(years);
     setDataNotFound(false);
     if (data?.UPC) {
       console.log("yes go");
@@ -162,6 +163,7 @@ function SingleRelease() {
         .then((res) => {
           console.log("Res", res);
           if (res.status === 200) {
+            console.log(res.data.data);
             if (isEmptyArray(res?.data?.data)) setDataNotFound(true);
             setTotalStreams(res?.data?.totalStreams);
             setTotalRevenue(res?.data?.totalRevenue);
@@ -170,15 +172,15 @@ function SingleRelease() {
             const rawData = res?.data?.data;
             const streamsData = rawData
               ?.map((item) => ({
-                month: item.date,
-                value: item.summary.streams,
+                month: item.reportsDate,
+                value: item.totalStreams,
               }))
               .sort((a, b) => new Date(a.month) - new Date(b.month));
 
             const revenewData = rawData
               ?.map((item) => ({
-                month: item.date,
-                value: item.summary.revenue,
+                month: item.reportsDate,
+                value: item.totalRevenue,
               }))
               .sort((a, b) => new Date(a.month) - new Date(b.month));
 
@@ -238,7 +240,6 @@ function SingleRelease() {
       });
   };
 
-
   const closeRef = useRef(null);
 
   const modalCss = {
@@ -258,19 +259,22 @@ function SingleRelease() {
     width: "80%",
   };
 
-
-
   // React Hook Form setup
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       upc: data?.UPC || "",
-      isrc: data?.tracks?.map(track => track.ISRC) || [],
-    }
+      isrc: data?.tracks?.map((track) => track.ISRC) || [],
+    },
   });
 
   // Move to Live form submit handler
   const onMoveToLiveSubmit = (formData) => {
-  const payload = {
+    const payload = {
       status: "Live",
       liveAdminInfo: {
         adminEmail: userData?.email,
@@ -280,22 +284,23 @@ function SingleRelease() {
       },
       UPC: formData.upc,
       ISRC: formData.isrc,
+    };
+
+    // Send to backend
+    axios
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${data._id}`,
+        payload
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setReFetchData(reFetchData + 1);
+        }
+      });
+
+    reset();
+    closeRef.current?.click();
   };
-
-  // Send to backend
-  axios.patch(
-    `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${data._id}`,
-    payload
-  ).then(res => {
-    if (res.status === 200) {
-      setReFetchData(reFetchData + 1);
-    }
-  });
-
-  reset();
-  closeRef.current?.click();
-  };
-
 
   if (loading) return <LoadingScreen />;
 
@@ -305,7 +310,9 @@ function SingleRelease() {
         className="main-content createRelease-content-div createRelease-overview-div"
         style={{ marginBottom: "20px" }}
       >
-        {(data?.rejectionReasons && data.status !== 'Live' && data.status !== 'Review')&&
+        {data?.rejectionReasons &&
+          data.status !== "Live" &&
+          data.status !== "Review" &&
           data?.rejectionReasons?.map((d, index) => (
             <div key={index} className="notice">
               <FiAlertTriangle />
@@ -319,7 +326,9 @@ function SingleRelease() {
               ></p>
             </div>
           ))}
-        {(data?.actionReqHistory  && data.status !== 'Live' && data.status !== 'Review') &&
+        {data?.actionReqHistory &&
+          data.status !== "Live" &&
+          data.status !== "Review" &&
           data?.actionReqHistory?.map((d, index) => (
             <div key={index} className="notice">
               <FiAlertTriangle />
@@ -364,10 +373,8 @@ function SingleRelease() {
               <br />
               <h1>{data?.releaseTitle}</h1>
               <h2>
-                {
-                  data?.labels && 
-                  data?.labels?.map((label) => label.labelName).join(", ")
-                }
+                {data?.labels &&
+                  data?.labels?.map((label) => label.labelName).join(", ")}
               </h2>
             </div>
             <DropdownMenu.Root>
@@ -405,25 +412,31 @@ function SingleRelease() {
                     className="dropdown-item"
                   >
                     <div>
-                      <FiArrowLeft style={{color: 'black'}}/> 
+                      <FiArrowLeft style={{ color: "black" }} />
                       <span>Move to QC Approval</span>
                     </div>
                   </DropdownMenu.Item>
                 )}
-                {(data?.status === "QC Approval" || data?.status === "Live") && (
+                {(data?.status === "QC Approval" ||
+                  data?.status === "Live") && (
                   <DropdownMenu.Item
                     onClick={() => moveToReview(data?._id)}
                     className="dropdown-item"
                   >
                     <div>
-                      {
-                        data?.status === "QC Approval" ? <FiArrowRight style={{color: 'black'}}/> : <FiArrowLeft style={{color: 'black'}}/> 
-                      }
+                      {data?.status === "QC Approval" ? (
+                        <FiArrowRight style={{ color: "black" }} />
+                      ) : (
+                        <FiArrowLeft style={{ color: "black" }} />
+                      )}
                       <span>Move to Review</span>
                     </div>
                   </DropdownMenu.Item>
                 )}
-                {(data?.status === "Review" || data?.status === "Blocked" || data?.status === "Error" || data?.status === "Takedown" ) && (
+                {(data?.status === "Review" ||
+                  data?.status === "Blocked" ||
+                  data?.status === "Error" ||
+                  data?.status === "Takedown") && (
                   <DropdownMenu.Item
                     className="dropdown-item"
                     onSelect={(e) => e.preventDefault()}
@@ -438,10 +451,12 @@ function SingleRelease() {
                         }}
                         className="dropdown-item"
                       >
-                        {
-                          data?.status === "Review" ? <FiArrowRight style={{color: 'black'}}/> : <FiArrowLeft style={{color: 'black'}}/>
-                        }
-                        <span style={{color: 'black'}}>Move to Live</span>
+                        {data?.status === "Review" ? (
+                          <FiArrowRight style={{ color: "black" }} />
+                        ) : (
+                          <FiArrowLeft style={{ color: "black" }} />
+                        )}
+                        <span style={{ color: "black" }}>Move to Live</span>
                       </Dialog.Trigger>
                       <Modal title="Move to Live">
                         <div className="singleRelease-reject-modal">
@@ -450,34 +465,55 @@ function SingleRelease() {
                               <label>
                                 UPC:
                                 <input
-                                  {...register("upc", { required: "UPC is required" })}
+                                  {...register("upc", {
+                                    required: "UPC is required",
+                                  })}
                                   defaultValue={data?.UPC}
                                   style={{ width: "100%", marginBottom: 8 }}
                                 />
                                 {errors.upc && (
-                                  <span style={{ color: "red" }}>{errors.upc.message}</span>
+                                  <span style={{ color: "red" }}>
+                                    {errors.upc.message}
+                                  </span>
                                 )}
                               </label>
                               {data?.tracks?.map((track, idx) => (
-                                <label key={track._id || idx} style={{ display: "block", marginTop: 12 }}>
-                                  ISRC for Track {idx + 1} ({track.tittle || "Untitled"}):
+                                <label
+                                  key={track._id || idx}
+                                  style={{ display: "block", marginTop: 12 }}
+                                >
+                                  ISRC for Track {idx + 1} (
+                                  {track.tittle || "Untitled"}):
                                   <input
-                                    {...register(`isrc.${idx}`, { required: "ISRC is required" })}
+                                    {...register(`isrc.${idx}`, {
+                                      required: "ISRC is required",
+                                    })}
                                     defaultValue={track.ISRC}
                                     style={{ width: "100%", marginBottom: 4 }}
                                   />
                                   {errors.isrc && errors.isrc[idx] && (
-                                    <span style={{ color: "red" }}>{errors.isrc[idx].message}</span>
+                                    <span style={{ color: "red" }}>
+                                      {errors.isrc[idx].message}
+                                    </span>
                                   )}
                                 </label>
                               ))}
                             </div>
-                            <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-                              
+                            <div
+                              style={{
+                                display: "flex",
+                                gap: "10px",
+                                marginTop: "20px",
+                              }}
+                            >
                               <Dialog.Close asChild>
                                 <button
                                   type="button"
-                                  style={{padding: '10px 20px', borderRadius: '6px', border: '1px solid red'}}
+                                  style={{
+                                    padding: "10px 20px",
+                                    borderRadius: "6px",
+                                    border: "1px solid red",
+                                  }}
                                   onClick={() => reset()}
                                 >
                                   Cancel
@@ -486,10 +522,9 @@ function SingleRelease() {
                               <button type="submit" className="theme-btn">
                                 Move to Live
                               </button>
-                              
                             </div>
                           </form>
-                        </div> 
+                        </div>
 
                         {/* Hidden Dialog.Close for programmatic close */}
                         <Dialog.Close asChild>
@@ -518,12 +553,15 @@ function SingleRelease() {
                       <RiDeleteBin6Line /> <span>Reject Release</span>
                     </Dialog.Trigger>
                     <Modal title="Reject Release">
-
                       {/* Reject Release Componets start_______________________ */}
                       {/* _____________________________________________________ */}
 
-                      <ReleaseStatusSuspendForm id={data?._id} closeRef={closeRef} releaseData={data}/>
-                      
+                      <ReleaseStatusSuspendForm
+                        id={data?._id}
+                        closeRef={closeRef}
+                        releaseData={data}
+                      />
+
                       {/* Reject Release Componets End_______________________ */}
                       {/* _____________________________________________________ */}
 
@@ -534,7 +572,6 @@ function SingleRelease() {
                     </Modal>
                   </Dialog.Root>
                 </DropdownMenu.Item>
-
               </DropdownMenu.Content>
             </DropdownMenu.Root>
           </div>
@@ -685,11 +722,11 @@ function SingleRelease() {
             <div className="analytics-card-row">
               <div className="analytics-card">
                 <h6>Total Streams</h6>
-                <h2>{totalStreams ? totalStreams : 0}</h2>
+                <h2>{data?.totalStreams ? data?.totalStreams : 0}</h2>
               </div>
               <div className="analytics-card">
                 <h6>Total Revenue</h6>
-                <h2>&#8377; {totalRevenue ? totalRevenue : 0}</h2>
+                <h2>&#8377; {data?.totalRevenue ? data?.totalRevenue?.toFixed(2) : 0}</h2>
               </div>
             </div>
             <Tabs.Root
@@ -847,8 +884,8 @@ SingleRelease.propTypes = {
 };
 export default SingleRelease;
 
-
-{/* <div className="singleRelease-reject-modal">
+{
+  /* <div className="singleRelease-reject-modal">
                         <p className="modal-description">
                           Please fix the issue indicated below and then don’t
                           forget to re-submit your release for distribution.
@@ -937,4 +974,5 @@ export default SingleRelease;
                         className="close-button"
                       >
                         Reject
-                      </button> */}
+                      </button> */
+}

@@ -41,8 +41,6 @@ const ServiceRequestStatusUpdateForm = ({ id, closeRef }) => {
   });
 
   const onSubmit = (data) => {
-
-    
     const ansDate = new Date().toISOString();
     let payload;
     if (data.status === "Solved") {
@@ -52,21 +50,23 @@ const ServiceRequestStatusUpdateForm = ({ id, closeRef }) => {
     // If status is Rejected, we need to handle rejection reasons and custom reason
     if (data.status === "Rejected") {
       let actionRequired;
-      if(data.actionRequired){
+      if (data.actionRequired) {
         actionRequired = textToHTML(data.actionRequired);
       }
-      if(data.actionRequired || (data.rejectionReasons && data.rejectionReasons.length > 0)){
-          payload = {
+      if (
+        data.actionRequired ||
+        (data.rejectionReasons && data.rejectionReasons.length > 0)
+      ) {
+        payload = {
           actionRequired,
           ansDate,
           status: data?.status,
           rejectionReasons: data.rejectionReasons,
         };
-      }else{
+      } else {
         toast.error("Please Provide at least one reason.");
         return;
       }
-      
     }
     axios
       .patch(
@@ -203,12 +203,13 @@ const ServiceRequestStatusUpdateForm = ({ id, closeRef }) => {
 
             {/* Custom reason */}
             <textarea
-              {...register("actionRequired", 
-              //   {
-              //   required:
-              //     selectedStatus === "Rejected" ? "This field required" : false,
-              // }
-            )}
+              {...register(
+                "actionRequired"
+                //   {
+                //   required:
+                //     selectedStatus === "Rejected" ? "This field required" : false,
+                // }
+              )}
               placeholder="Write additional reason..."
               style={{ width: "100%", marginTop: "10px", padding: "10px" }}
             />
