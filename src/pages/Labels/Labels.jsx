@@ -8,130 +8,50 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@radix-ui/themes";
 import { RiDeleteBin6Line, RiEyeLine } from "react-icons/ri";
 import "./labels.css";
-import { Link } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import SelectDropdown from "../../components/SelectDropdown";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
-const labelColumns = [
-  { label: "Label Name", key: "name" },
-  { label: "User Name", key: "userName" },
-  { label: "User Email", key: "email" },
-  { label: "Created At", key: "date" },
-  { label: "Release Count", key: "count" },
-  { label: "Status", key: "status" },
-  { label: "Action", key: "action" },
-];
-const renderLabelCell = (key, row) => {
-  if (key === "name") {
-    return (
-      <Link
-        to="/single-lable"
-        style={{ color: "#1C2024", textDecoration: "none" }}
-        state={{ lable: row }}
-        className=" artistTable-img-row"
-      >
-        <img src={`src/assets/${row.img}`} alt="" />
-        <p>{row.name}</p>
-      </Link>
-    );
-  }
+import useQueryParams from "../../hooks/useQueryParams";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import Pagination from "../../components/Pagination";
+import LabelsTable from "../../components/table/LabelsTable";
 
-  if (key === "status") {
-    return (
-      <span className={`status ${row.status.toLowerCase()}`}>{row.status}</span>
-    );
-  }
-  if (key === "action") {
-    return (
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild>
-          <button className="dropdown-trigger artist-dropdown-btn">
-            <img src="src/assets/icons/vertical-threeDots.png" />
-          </button>
-        </DropdownMenu.Trigger>
 
-        <DropdownMenu.Content
-          align="left"
-          side="bottom"
-          className="dropdown-content artist-dropdown-content"
-        >
-          <DropdownMenu.Item className="dropdown-item">
-            <div>
-              <RiEyeLine /> View Details
-            </div>
-          </DropdownMenu.Item>
-          <hr />
-          <DropdownMenu.Item className="dropdown-item">
-            <div>
-              <GoPencil /> <span>Edit Label</span>
-            </div>
-          </DropdownMenu.Item>
-          <hr />
-          <DropdownMenu.Item
-            className="dropdown-item"
-            onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
-          >
-            <Dialog.Root>
-              <Dialog.Trigger asChild>
-                <div>
-                  <RiDeleteBin6Line /> <span>Delete Label</span>
-                </div>
-              </Dialog.Trigger>
-              <Dialog.Portal>
-                <Dialog.Overlay className="dialog-overlay" />
-                <Dialog.Content className="dialog-content">
-                  <Modal title="Delete label?">
-                    <p className="modal-description">
-                      Are you sure you want to delete this label? This action is
-                      irreversible, and all associated data, including artist
-                      accounts, music releases, and analytics, will be
-                      permanently removed.
-                    </p>
-                    <br />
-                    <div className="label-deleteModal-btns">
-                      <Button>No</Button>
-                      <Button>Yes, Delete</Button>
-                    </div>
-                  </Modal>
-                </Dialog.Content>
-              </Dialog.Portal>
-            </Dialog.Root>
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-    );
-  }
-  if (
-    key === "name" ||
-    key === "img" ||
-    key === "userName" ||
-    key === "email" ||
-    key === "count" ||
-    key === "action" ||
-    key === "date"
-  ) {
-    return (
-      <Link
-        to="/single-lable"
-        style={{ color: "#1C2024", textDecoration: "none" }}
-        state={{ lable: row }}
-      >
-        {key === "name"
-          ? row.name
-          : key === "userName"
-          ? row.userName
-          : key === "email"
-          ? row.email
-          : key === "date"
-          ? row.date
-          : key === "count"
-          ? row.count
-          : row.action}
-      </Link>
-    );
-  }
-  return row[key];
-};
-function Labels({ labelsTable }) {
+
+function Labels() {
+
+
+  const { yearsList, labelStatusList } = useSelector((state) => state.yearsAndStatus);
+
+  // Main Params ________________________________
+  const { pageNumber, perPageItem, status } = useParams();
+  // Filter Query Paramitars_____________________
+  const { navigateWithParams } = useQueryParams();
+  const [filterParams] = useSearchParams();
+  const search = filterParams.get("search") || "";
+  const years = filterParams.get("years") || "";
+
+  const filterByYear = (yearValue) => {
+    navigateWithParams(`/labels/1/10/${status}`, {
+      search: search,
+      years: yearValue,
+    });
+  };
+  const filterByStatus = (statusValue) => {
+    navigateWithParams(`/labels/1/10/${statusValue}`, {
+      search: search,
+      years: years,
+    });
+  };
+
+
+
+
+
+
+
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
   useEffect(() => {
     const handleResize = () => {
@@ -141,20 +61,74 @@ function Labels({ labelsTable }) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+
   const dropdownItem = (
     <>
       <SelectDropdown
-        options={["Option 1", "Option 2", "Option 3"]}
-        placeholder="All time"
+        options={yearsList}
+        placeholder={`${years ? years : "All Time"}`}
+        filterByYearAndStatus={filterByYear}
       />
 
       {isMobile && <br />}
       <SelectDropdown
-        options={["Option 1", "Option 2", "Option 3"]}
-        placeholder="All Releases"
+        options={labelStatusList}
+        placeholder={status}
+        filterByYearAndStatus={filterByStatus}
       />
     </>
   );
+
+  // Fatch Label Data _______________________________________________
+  const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
+  const [labelData, setLabelData] = useState();
+  const [totalCount, setTotalCount] = useState();
+  const [filteredCount, setFilteredCount] = useState();
+  const [totalPages, setTotalPages] = useState();
+  useEffect(() => {
+      axios
+        .get(
+          `http://localhost:5000/admin/api/v1/labels?page=${pageNumber}&limit=${perPageItem}&status=${status}&search=${search}&years=${years}`
+        )
+        .then((res) => {
+          if (res.status == 200) {
+            console.log(res.data.data)
+            setLabelData(res.data.data);
+            setTotalCount(res.data.totalCount);
+            setFilteredCount(res.data.filteredCount);
+            console.log(res.data.filteredCount)
+            setTotalPages(res.data.totalPages);
+          }
+        })
+        .catch((er) => console.log(er));
+  }, [ pageNumber, perPageItem, search, years]);
+
+  // Handle Page Change ________________________________
+  const handlePageChange = (page) => {
+    navigateWithParams(`/labels/${page}/${perPageItem}/${status}`, {
+      search: search,
+      years: years,
+    });
+  };
+  // Search _____________________________________________
+  const [searchText, setSearchText] = useState();
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      navigateWithParams(`/labels/1/${perPageItem}/${status}`, {
+        search: searchText,
+        years: years,
+      });
+    }
+  };
+
+  // Handle Per Page Item _______________________________
+  const handlePerPageItem = (perPageItem) => {
+    navigateWithParams(`/labels/${pageNumber}/${perPageItem}/${status}`, {
+      search: search,
+      years: years,
+    });
+  };
 
   return (
     <div className="main-content">
@@ -191,10 +165,19 @@ function Labels({ labelsTable }) {
           dropdownItem
         )}
       </div>
-      <Table
-        data={labelsTable}
-        columns={labelColumns}
-        renderCell={renderLabelCell}
+      <LabelsTable
+        data={labelData}
+      />
+
+
+      <Pagination
+        totalDataCount={filteredCount}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        perPageItem={perPageItem}
+        setCurrentPage={setCurrentPage}
+        handlePageChange={handlePageChange}
+        customFunDropDown={handlePerPageItem}
       />
     </div>
   );

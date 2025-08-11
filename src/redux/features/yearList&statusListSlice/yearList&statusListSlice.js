@@ -9,7 +9,7 @@ for (let year = currentYear; year >= 2020; year--) {
 
 const initialState = {
     yearsList: years,
-    releaseStatusList: ["All", "Pending", "Review", "Approved", "Action Required", "Takedown", "ReSubmitted"],
+    releaseStatusList: ["All", "QC Approval", "Review", "Live", "Takedown", 'Error', 'Blocked'],
     labelStatusList: ["All", "Pending", "Review", "Approved", "Rejected"],
     isLoading: false,
     error: null,

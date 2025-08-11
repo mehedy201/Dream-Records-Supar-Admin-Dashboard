@@ -145,15 +145,15 @@ function App() {
             element={<EditSingleArtist artistSocialItems={artistSocialItems} />}
           />
           <Route
-            path="/labels"
-            element={<Labels labelsTable={labelsTable} />}
+            path="/labels/:pageNumber/:perPageItem/:status"
+            element={<Labels/>}
           />
           <Route
-            path="/single-lable"
+            path="/labels/:id/:pageNumber/:perPageItem/:status"
             element={<SingleLable releaseItems={releaseItems} />}
           />
           <Route
-            path="/edit-lable"
+            path="/edit-label/:id"
             element={<EditLable labelSocialItems={labelSocialItems} />}
           />
           {/* Distribution Route End_________________________________________ */}

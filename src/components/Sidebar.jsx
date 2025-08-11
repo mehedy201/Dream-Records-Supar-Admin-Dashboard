@@ -21,7 +21,7 @@ const menuItems = [
   { name: "Users", path: "/users/Pending/1/10", icon: userIcon },
   { name: "Distribution", path: "/distribution", icon: distributionIcon },
   { name: "Artists", path: "/artists", icon: groupIcon },
-  { name: "Labels", path: "/Labels", icon: labelsIcon },
+  { name: "Labels", path: "/labels/1/10/All", icon: labelsIcon },
   { name: "Analytics", path: "/analytics/1/10", icon: analyticsIcon },
   { name: "Service Request", path: "/service-request/Release-Claim/1/10/All",icon: serviceRequestIcon,},
   { name: "Transactions", path: "/transaction/All/1/10", icon: transactionsIcon },
