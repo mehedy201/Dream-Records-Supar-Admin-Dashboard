@@ -12,34 +12,32 @@ import axios from "axios";
 import { useRef, useState } from "react";
 import FormSubmitLoading from "../FormSubmitLoading";
 
-const LabelsTable = ({data}) => {
+const LabelsTable = ({ data }) => {
+  const closeRef = useRef(null);
 
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  // Delete Label________________________
+  const deleteLabel = (id, imgKey) => {
+    setDeleteLoading(true);
+    axios
+      .delete(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/labels/delete-labels/${id}?imgKey=${imgKey}`
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          setDeleteLoading(false);
+          closeRef.current?.click();
+          window.location.reload();
+        } else {
+          setDeleteLoading(false);
+        }
+      })
+      .catch((er) => console.log(er));
+  };
 
-    const closeRef = useRef(null);
-
-    const [deleteLoading, setDeleteLoading] = useState(false);
-    // Delete Label________________________
-    const deleteLabel = (id, imgKey) => {
-        setDeleteLoading(true);
-        axios
-        .delete(
-            `http://localhost:5000/api/v1/labels/delete-labels/${id}?imgKey=${imgKey}`
-        )
-        .then((res) => {
-            if (res.status == 200) {
-                setDeleteLoading(false);
-                closeRef.current?.click();
-                window.location.reload();
-            } else {
-            setDeleteLoading(false);
-            }
-        })
-        .catch((er) => console.log(er));
-    };
-
-    const navigate = useNavigate();
-    return (
-        <div className="table-wrapper">
+  const navigate = useNavigate();
+  return (
+    <div className="table-wrapper">
       <table className="theme-table">
         <thead>
           <tr>
@@ -66,16 +64,18 @@ const LabelsTable = ({data}) => {
                     alt=""
                     style={{ borderRadius: "50%" }}
                   />
-                  <p>
-                    {d?.labelName}
-                  </p>
+                  <p>{d?.labelName}</p>
                 </Link>
               </td>
               <td>{d?.userName}</td>
               <td>{d?.email ? d?.email : "--"}</td>
               <td>{d?.date ? localDate(d?.date) : "--"}</td>
               <td>Release Count</td>
-              <td><span className={`status ${d.status.toLowerCase()}`}>{d.status}</span></td>
+              <td>
+                <span className={`status ${d.status.toLowerCase()}`}>
+                  {d.status}
+                </span>
+              </td>
               <td>
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
@@ -92,51 +92,72 @@ const LabelsTable = ({data}) => {
                     side="bottom"
                     className="dropdown-content qcApproval-dropdown-content"
                   >
-                    <DropdownMenu.Item onClick={() => navigate(`/labels/${d._id}/1/10/All`)} className="dropdown-item">
-                      <div><RiEyeLine /> View Details</div>
+                    <DropdownMenu.Item
+                      onClick={() => navigate(`/labels/${d._id}/1/10/All`)}
+                      className="dropdown-item"
+                    >
+                      <div>
+                        <RiEyeLine /> View Details
+                      </div>
                     </DropdownMenu.Item>
                     <hr style={{ margin: 0 }} />
 
-                    <DropdownMenu.Item onClick={() => navigate(`/edit-label/${d._id}`)} className="dropdown-item">
-                      <div><GoPencil /> Edit Details</div>
-                    </DropdownMenu.Item>
-                    <hr style={{ margin: 0 }} />                    
                     <DropdownMenu.Item
-                        className="dropdown-item"
-                        onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
+                      onClick={() => navigate(`/edit-label/${d._id}`)}
+                      className="dropdown-item"
                     >
-                        <Dialog.Root>
+                      <div>
+                        <GoPencil /> Edit Details
+                      </div>
+                    </DropdownMenu.Item>
+                    <hr style={{ margin: 0 }} />
+                    <DropdownMenu.Item
+                      className="dropdown-item"
+                      onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
+                    >
+                      <Dialog.Root>
                         <Dialog.Trigger asChild>
-                            <div>
+                          <div>
                             <RiDeleteBin6Line /> <span>Delete Label</span>
-                            </div>
+                          </div>
                         </Dialog.Trigger>
                         <Dialog.Portal>
-                            <Dialog.Overlay className="dialog-overlay" />
-                            <Dialog.Content className="dialog-content">
+                          <Dialog.Overlay className="dialog-overlay" />
+                          <Dialog.Content className="dialog-content">
                             <Modal title="Delete label?">
-                                <p className="modal-description">
-                                Are you sure you want to delete this label? This action is
-                                irreversible, and all associated data, including artist
-                                accounts, music releases, and analytics, will be
-                                permanently removed.
-                                </p>
-                                <br />
-                                {
-                                    deleteLoading && <FormSubmitLoading/> // Show loading while deleting
-                                }
-                                <div className="label-deleteModal-btns">
-                                    <Button onClick={() => closeRef.current?.click()}>No</Button>
-                                    <Button onClick={() => deleteLabel(d._id, d.key)}>Yes, Delete</Button>
-                                </div>
-                                {/* Hidden Dialog.Close for programmatic close */}
-                                <Dialog.Close asChild>
-                                  <button ref={closeRef} style={{ display: "none" }} />
-                                </Dialog.Close>
+                              <p className="modal-description">
+                                Are you sure you want to delete this label? This
+                                action is irreversible, and all associated data,
+                                including artist accounts, music releases, and
+                                analytics, will be permanently removed.
+                              </p>
+                              <br />
+                              {
+                                deleteLoading && <FormSubmitLoading /> // Show loading while deleting
+                              }
+                              <div className="label-deleteModal-btns">
+                                <Button
+                                  onClick={() => closeRef.current?.click()}
+                                >
+                                  No
+                                </Button>
+                                <Button
+                                  onClick={() => deleteLabel(d._id, d.key)}
+                                >
+                                  Yes, Delete
+                                </Button>
+                              </div>
+                              {/* Hidden Dialog.Close for programmatic close */}
+                              <Dialog.Close asChild>
+                                <button
+                                  ref={closeRef}
+                                  style={{ display: "none" }}
+                                />
+                              </Dialog.Close>
                             </Modal>
-                            </Dialog.Content>
+                          </Dialog.Content>
                         </Dialog.Portal>
-                        </Dialog.Root>
+                      </Dialog.Root>
                     </DropdownMenu.Item>
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>
@@ -146,7 +167,7 @@ const LabelsTable = ({data}) => {
         </tbody>
       </table>
     </div>
-    );
+  );
 };
 
 export default LabelsTable;

@@ -1,6 +1,12 @@
 import { Button, Flex } from "@radix-ui/themes";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import ReleaseCard from "../../../components/ReleaseCard";
 import PropTypes from "prop-types";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
@@ -27,8 +33,6 @@ import FormSubmitLoading from "../../../components/FormSubmitLoading";
 import { FiAlertTriangle } from "react-icons/fi";
 
 function SingleLable() {
-
-
   const navigate = useNavigate();
   const { id, pageNumber, perPageItem, status } = useParams();
   const { yearsList, releaseStatusList } = useSelector(
@@ -45,12 +49,11 @@ function SingleLable() {
   useEffect(() => {
     axios
       .get(
-        `http://localhost:5000/api/v1/labels/single-labels/${id}`
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/labels/single-labels/${id}`
       )
       .then((res) => {
         if (res.status == 200) {
           setLabel(res.data.data[0]);
-          console.log(res.data.data[0]);
         }
       });
   }, [id]);
@@ -61,7 +64,7 @@ function SingleLable() {
     setDeleteLoading(true);
     axios
       .delete(
-        `http://localhost:5000/api/v1/labels/delete-labels/${id}?imgKey=${imgKey}`
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/labels/delete-labels/${id}?imgKey=${imgKey}`
       )
       .then((res) => {
         if (res.status == 200) {
@@ -84,7 +87,7 @@ function SingleLable() {
   useEffect(() => {
     axios
       .get(
-        `http://localhost:5000/api/v1/release/labels/${id}?page=${pageNumber}&limit=${perPageItem}&status=${status}&search=${
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/release/labels/${id}?page=${pageNumber}&limit=${perPageItem}&status=${status}&search=${
           search ? search : ""
         }&years=${years ? years : ""}`
       )
@@ -98,14 +101,6 @@ function SingleLable() {
       })
       .catch((er) => console.log(er));
   }, [pageNumber, status, id, perPageItem, search, years]);
-
-
-
-
-
-
-
-
 
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
@@ -134,10 +129,6 @@ function SingleLable() {
       setSocialItems(filtered);
     }
   }, []);
-
-
-
-
 
   // Years and status Dropdown__________________________
   const handleYearDropDown = (yearValue) => {
@@ -194,44 +185,40 @@ function SingleLable() {
     );
   };
 
-
   const lebelCloseRef = useRef(null);
-  
-
-
-
-
-
 
   return (
     <div className="main-content">
       <div className="lable-details">
-        {(label?.rejectionReasons && (label.status === 'Rejected')) && (
-              <>
-                {
-                  label?.rejectionReasons.map((reason, index) => 
-                    <div className="home-notice">
-                      <FiAlertTriangle />
-                      <span style={{marginLeft: '5px'}}>{reason}</span>
-                    </div>
-                  )
-                }
-              </>
-            )}
-            {(label?.rejectionReasons && (label.status === 'Rejected')) &&(
-              <>
-                <div className="home-notice">
-                  <FiAlertTriangle /> 
-                  <span
-                    style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word', marginLeft: '5px'}}
-                    dangerouslySetInnerHTML={{
-                      __html: label?.actionRequired,
-                    }}
-                  ></span>
-                </div>
-                <br />
-              </>
-            )}
+        {label?.rejectionReasons && label.status === "Rejected" && (
+          <>
+            {label?.rejectionReasons.map((reason, index) => (
+              <div className="home-notice">
+                <FiAlertTriangle />
+                <span style={{ marginLeft: "5px" }}>{reason}</span>
+              </div>
+            ))}
+          </>
+        )}
+        {label?.rejectionReasons && label.status === "Rejected" && (
+          <>
+            <div className="home-notice">
+              <FiAlertTriangle />
+              <span
+                style={{
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
+                  marginLeft: "5px",
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: label?.actionRequired,
+                }}
+              ></span>
+            </div>
+            <br />
+          </>
+        )}
         {lable?.type === "Reject" && (
           <>
             <div className="home-notice" style={{ fontSize: "12px" }}>
@@ -249,7 +236,7 @@ function SingleLable() {
           <div>
             {" "}
             <img
-              src={label.imgUrl? label.imgUrl : labelPlaceHolderImg}
+              src={label.imgUrl ? label.imgUrl : labelPlaceHolderImg}
               className="singleLabel-image"
               alt=""
             />
@@ -308,17 +295,20 @@ function SingleLable() {
                     <Dialog.Overlay className="dialog-overlay" />
                     <Dialog.Content className="dialog-content">
                       <Modal title="Update Label Status">
-
                         {/* Label Status Update Form ____________ */}
-                        <LabelStatusUpdateComponent label={label} closeRef={lebelCloseRef}/>
+                        <LabelStatusUpdateComponent
+                          label={label}
+                          closeRef={lebelCloseRef}
+                        />
                         {/* Label Status Update Form ____________ */}
 
                         {/* Hidden Dialog.Close for programmatic close */}
                         <Dialog.Close asChild>
-                          <button ref={lebelCloseRef} style={{ display: 'none' }} />
+                          <button
+                            ref={lebelCloseRef}
+                            style={{ display: "none" }}
+                          />
                         </Dialog.Close>
-
-
                       </Modal>
                     </Dialog.Content>
                   </Dialog.Portal>
@@ -345,14 +335,16 @@ function SingleLable() {
                           permanently removed.
                         </p>
                         <br />
-                        {
-                          deleteLoading && <FormSubmitLoading/>
-                        }
+                        {deleteLoading && <FormSubmitLoading />}
                         <div className="singleArtist-deleteModal-btns">
                           <Dialog.Close asChild>
                             <Button>No</Button>
                           </Dialog.Close>
-                          <Button onClick={() => deleteLabel(label._id, label?.key)}>Yes, Delete</Button>
+                          <Button
+                            onClick={() => deleteLabel(label._id, label?.key)}
+                          >
+                            Yes, Delete
+                          </Button>
                         </div>
                       </Modal>
                     </Dialog.Content>
@@ -366,41 +358,36 @@ function SingleLable() {
           <div className="singleArtist-info" style={{ marginBottom: 0 }}>
             <h4>Total Releases</h4>
             <h1>{totalCount}</h1>
-            <Button onClick={() => navigate("/release/1/10/All")} className="singleArtist-pg-allRelease-btn">
+            <Button
+              onClick={() => navigate("/release/1/10/All")}
+              className="singleArtist-pg-allRelease-btn"
+            >
               All Releases &nbsp;&nbsp; <ChevronRight />
             </Button>
           </div>
           <div className="singleArtist-social-div" style={{ marginBottom: 0 }}>
             <h4>label Profiles</h4>
             <div className="d-flex single-pg-social">
-                  {label?.instagram && (
-                    <a
-                      className="social-div"
-                      target="_blank"
-                      href={`https://www.instagram.com/${label.instagram}`}
-                    >
-                      <img src={instagramImg} alt={""} />
-                    </a>
-                  )}
-                  {label?.facebook && (
-                    <a
-                      className="social-div"
-                      target="_blank"
-                      href={label.facebook}
-                    >
-                      <img src={facebookImg} alt={""} />
-                    </a>
-                  )}
-                  {label?.youtube && (
-                    <a
-                      className="social-div"
-                      target="_blank"
-                      href={label.youtube}
-                    >
-                      <img src={youtubeImg} alt={""} />
-                    </a>
-                  )}
-                </div>
+              {label?.instagram && (
+                <a
+                  className="social-div"
+                  target="_blank"
+                  href={`https://www.instagram.com/${label.instagram}`}
+                >
+                  <img src={instagramImg} alt={""} />
+                </a>
+              )}
+              {label?.facebook && (
+                <a className="social-div" target="_blank" href={label.facebook}>
+                  <img src={facebookImg} alt={""} />
+                </a>
+              )}
+              {label?.youtube && (
+                <a className="social-div" target="_blank" href={label.youtube}>
+                  <img src={youtubeImg} alt={""} />
+                </a>
+              )}
+            </div>
           </div>
         </div>
         {/* </> */}
@@ -419,12 +406,12 @@ function SingleLable() {
         Releases under this artist
       </h4>
       <div className="search-setion">
-        <input 
+        <input
           onKeyDown={handleKeyPress}
           onChange={(e) => setSearchText(e.target.value)}
           type="text"
           placeholder="Search..."
-         />
+        />
         {isMobile ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
@@ -454,7 +441,7 @@ function SingleLable() {
           dropdownItem
         )}
       </div>
-      <ReleaseCard releaseItems={releaseData}/>
+      <ReleaseCard releaseItems={releaseData} />
 
       <Pagination
         totalDataCount={filteredCount}

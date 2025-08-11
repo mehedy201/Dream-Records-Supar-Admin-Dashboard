@@ -17,12 +17,10 @@ import axios from "axios";
 import Pagination from "../../components/Pagination";
 import LabelsTable from "../../components/table/LabelsTable";
 
-
-
 function Labels() {
-
-
-  const { yearsList, labelStatusList } = useSelector((state) => state.yearsAndStatus);
+  const { yearsList, labelStatusList } = useSelector(
+    (state) => state.yearsAndStatus
+  );
 
   // Main Params ________________________________
   const { pageNumber, perPageItem, status } = useParams();
@@ -45,13 +43,6 @@ function Labels() {
     });
   };
 
-
-
-
-
-
-
-
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
   useEffect(() => {
     const handleResize = () => {
@@ -61,7 +52,6 @@ function Labels() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
 
   const dropdownItem = (
     <>
@@ -87,22 +77,22 @@ function Labels() {
   const [filteredCount, setFilteredCount] = useState();
   const [totalPages, setTotalPages] = useState();
   useEffect(() => {
-      axios
-        .get(
-          `http://localhost:5000/admin/api/v1/labels?page=${pageNumber}&limit=${perPageItem}&status=${status}&search=${search}&years=${years}`
-        )
-        .then((res) => {
-          if (res.status == 200) {
-            console.log(res.data.data)
-            setLabelData(res.data.data);
-            setTotalCount(res.data.totalCount);
-            setFilteredCount(res.data.filteredCount);
-            console.log(res.data.filteredCount)
-            setTotalPages(res.data.totalPages);
-          }
-        })
-        .catch((er) => console.log(er));
-  }, [ pageNumber, perPageItem, search, years]);
+    axios
+      .get(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/labels?page=${pageNumber}&limit=${perPageItem}&status=${status}&search=${search}&years=${years}`
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          console.log(res.data.data);
+          setLabelData(res.data.data);
+          setTotalCount(res.data.totalCount);
+          setFilteredCount(res.data.filteredCount);
+          console.log(res.data.filteredCount);
+          setTotalPages(res.data.totalPages);
+        }
+      })
+      .catch((er) => console.log(er));
+  }, [pageNumber, perPageItem, search, years]);
 
   // Handle Page Change ________________________________
   const handlePageChange = (page) => {
@@ -135,7 +125,7 @@ function Labels() {
       {" "}
       <h2 style={{ fontWeight: "500", fontSize: "24px" }}>Labels</h2>
       <div className="search-setion">
-        <input 
+        <input
           onKeyDown={handleKeyPress}
           onChange={(e) => setSearchText(e.target.value)}
           type="text"
@@ -170,11 +160,7 @@ function Labels() {
           dropdownItem
         )}
       </div>
-      <LabelsTable
-        data={labelData}
-      />
-
-
+      <LabelsTable data={labelData} />
       <Pagination
         totalDataCount={filteredCount}
         totalPages={totalPages}
