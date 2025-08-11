@@ -77,7 +77,6 @@ const ServiceRequest = () => {
       )
       .then((res) => {
         if (res.status === 200) {
-          console.log(res.data.data);
           dispatch(setServiceRequestData(res.data.data));
           if (isEmptyArray(res.data.data)) {
             setNotFound(true);
