@@ -31,7 +31,7 @@ const TransactionTable = ({ columns, data }) => {
                 <small>{d?.bankInfo?.account_number && `************${d?.bankInfo?.account_number.slice(-4)}`} {d?.bankInfo?.payoneerEmail} {d?.bankInfo?.paypalEmail} {d?.bankInfo?.bKashNumber && d?.bankInfo?.bKashNumber.toSlice(-4)}</small>
               </div>
                : '—'}</td>
-              <td>€ {d?.amount}</td>
+              <td>&#8377; {d?.amount}</td>
               <td>{d?.paymentReportDate}</td>
               <td><span className={`status ${d?.type === 'Withdraw' ? d?.status.toLowerCase() : 'success'}`}>{d?.type === 'Withdraw' ? d?.status : 'Success'}</span></td>
               <td>

@@ -81,7 +81,7 @@ const SpecificUserTransaactionTable = ({ columns, data }) => {
                 )}
               </td>
               <td>
-                {d?.type === "Withdraw" ? "-" : "+"} € {d?.amount}
+                {d?.type === "Withdraw" ? "-" : "+"} &#8377; {d?.amount}
               </td>
               <td>
                 <span
@@ -98,14 +98,16 @@ const SpecificUserTransaactionTable = ({ columns, data }) => {
                   : d?.paymentReportDate}
               </td>
               <td>
-                {d?.type === "Withdraw" ? (
+                {(d?.type === "Withdraw" && d?.status === 'Approved') && (
                   <button
                     style={{ cursor: "pointer" }}
                     className="non-transjection-btn"
                   >
                     Invoice
                   </button>
-                ) : (
+                )}
+                {
+                  d?.type === 'Payment' && 
                   <button
                     style={{ cursor: "pointer" }}
                     className="non-transjection-btn"
@@ -118,7 +120,8 @@ const SpecificUserTransaactionTable = ({ columns, data }) => {
                   >
                     Download Reports
                   </button>
-                )}
+                }
+                
               </td>
             </tr>
           ))}

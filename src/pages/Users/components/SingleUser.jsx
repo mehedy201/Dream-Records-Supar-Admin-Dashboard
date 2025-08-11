@@ -715,7 +715,7 @@ function SingleUser() {
           <br />
           <div className="signleUser-transaction-div">
             <p>Total Balance</p>
-            <h3>€ {userData?.balance?.amount}</h3>
+            <h3>&#8377;  {userData?.balance?.amount}</h3>
           </div>
           {notFound && <NotFoundPage />}
           {itemData && !notFound && (

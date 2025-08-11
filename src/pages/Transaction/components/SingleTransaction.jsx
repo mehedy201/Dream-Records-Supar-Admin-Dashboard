@@ -183,7 +183,7 @@ function SingleTransaction() {
                 {withdrawData?.status}
               </span>
               <h5>{withdrawData?.userName}</h5>
-              <h1>€ {withdrawData?.amount}</h1>
+              <h1>&#8377; {withdrawData?.amount}</h1>
               <p>
                 {localDate(withdrawData?.date)} &nbsp;&nbsp;{" "}
                 {localTime(withdrawData?.date)}
