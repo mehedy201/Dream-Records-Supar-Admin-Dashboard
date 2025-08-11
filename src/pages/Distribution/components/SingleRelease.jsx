@@ -161,7 +161,6 @@ function SingleRelease() {
           `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/analytics-and-balance/upc-analytics?UPC=${data?.UPC}&years=${years}`
         )
         .then((res) => {
-          console.log("Res", res);
           if (res.status === 200) {
             console.log(res.data.data);
             if (isEmptyArray(res?.data?.data)) setDataNotFound(true);
@@ -289,7 +288,7 @@ function SingleRelease() {
     // Send to backend
     axios
       .patch(
-        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${data._id}`,
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/release/update-release-status/${id}`,
         payload
       )
       .then((res) => {
