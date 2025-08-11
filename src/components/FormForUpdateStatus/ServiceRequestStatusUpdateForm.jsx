@@ -156,12 +156,6 @@ const ServiceRequestStatusUpdateForm = ({ id, closeRef }) => {
             <Controller
               name="rejectionReasons"
               control={control}
-              // rules={{
-              //   validate: (val) =>
-              //     selectedStatus === "Rejected" && val.length === 0
-              //       ? "At least one reason is required"
-              //       : true,
-              // }}
               render={({ field }) => (
                 <div>
                   {serviceRejectionsList.map((option) => {
@@ -196,26 +190,13 @@ const ServiceRequestStatusUpdateForm = ({ id, closeRef }) => {
                 </div>
               )}
             />
-
-            {/* {errors.rejectionReasons && (
-              <p style={{ color: "red" }}>{errors.rejectionReasons.message}</p>
-            )} */}
-
             {/* Custom reason */}
             <textarea
-              {...register(
-                "actionRequired"
-                //   {
-                //   required:
-                //     selectedStatus === "Rejected" ? "This field required" : false,
-                // }
-              )}
+              {...register("actionRequired")}
               placeholder="Write additional reason..."
               style={{ width: "100%", marginTop: "10px", padding: "10px" }}
+              onKeyDown={(e) => e.stopPropagation()}
             />
-            {/* {errors.actionRequired && (
-              <p style={{ color: "red" }}>{errors.actionRequired.message}</p>
-            )} */}
           </>
         )}
 

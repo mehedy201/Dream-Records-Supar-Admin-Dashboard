@@ -135,7 +135,12 @@ function Labels() {
       {" "}
       <h2 style={{ fontWeight: "500", fontSize: "24px" }}>Labels</h2>
       <div className="search-setion">
-        <input type="text" placeholder="Search..." />
+        <input 
+          onKeyDown={handleKeyPress}
+          onChange={(e) => setSearchText(e.target.value)}
+          type="text"
+          placeholder="Search..."
+        />
         {isMobile ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>

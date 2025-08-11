@@ -1,5 +1,5 @@
 import { Button, Flex } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ReleaseCard from "../../../components/ReleaseCard";
 import PropTypes from "prop-types";
@@ -22,6 +22,9 @@ import facebookImg from "../../../assets/social/facebook.png";
 import youtubeImg from "../../../assets/social/youtube-icon.png";
 import Pagination from "../../../components/Pagination";
 import localDate from "../../../hooks/localDate";
+import LabelStatusUpdateComponent from "../../../components/FormForUpdateStatus/LabelStatusUpdateComponent";
+import FormSubmitLoading from "../../../components/FormSubmitLoading";
+import { FiAlertTriangle } from "react-icons/fi";
 
 function SingleLable() {
 
@@ -39,7 +42,6 @@ function SingleLable() {
   const years = filterParams.get("years") || "";
 
   const [label, setLabel] = useState({ labelName: "label" });
-  const [deleteLoading, setDeleteLoading] = useState(false);
   useEffect(() => {
     axios
       .get(
@@ -48,11 +50,13 @@ function SingleLable() {
       .then((res) => {
         if (res.status == 200) {
           setLabel(res.data.data[0]);
+          console.log(res.data.data[0]);
         }
       });
   }, [id]);
 
   // Delete Label________________________
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const deleteLabel = (id, imgKey) => {
     setDeleteLoading(true);
     axios
@@ -191,8 +195,8 @@ function SingleLable() {
   };
 
 
-
-
+  const lebelCloseRef = useRef(null);
+  
 
 
 
@@ -202,6 +206,32 @@ function SingleLable() {
   return (
     <div className="main-content">
       <div className="lable-details">
+        {(label?.rejectionReasons && (label.status === 'Rejected')) && (
+              <>
+                {
+                  label?.rejectionReasons.map((reason, index) => 
+                    <div className="home-notice">
+                      <FiAlertTriangle />
+                      <span style={{marginLeft: '5px'}}>{reason}</span>
+                    </div>
+                  )
+                }
+              </>
+            )}
+            {(label?.rejectionReasons && (label.status === 'Rejected')) &&(
+              <>
+                <div className="home-notice">
+                  <FiAlertTriangle /> 
+                  <span
+                    style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word', marginLeft: '5px'}}
+                    dangerouslySetInnerHTML={{
+                      __html: label?.actionRequired,
+                    }}
+                  ></span>
+                </div>
+                <br />
+              </>
+            )}
         {lable?.type === "Reject" && (
           <>
             <div className="home-notice" style={{ fontSize: "12px" }}>
@@ -228,9 +258,9 @@ function SingleLable() {
             <div>
               <br />
               <span
-                className={`card-type-txt status ${lable?.status.toLowerCase()}`}
+                className={`card-type-txt status ${label?.status?.toLowerCase()}`}
               >
-                {lable?.status}
+                {label?.status}
               </span>
 
               <h1>{label?.labelName}</h1>
@@ -271,6 +301,36 @@ function SingleLable() {
                 <Dialog.Root>
                   <Dialog.Trigger asChild>
                     <span>
+                      <AiOutlineDelete /> Update Status
+                    </span>
+                  </Dialog.Trigger>
+                  <Dialog.Portal>
+                    <Dialog.Overlay className="dialog-overlay" />
+                    <Dialog.Content className="dialog-content">
+                      <Modal title="Update Label Status">
+
+                        {/* Label Status Update Form ____________ */}
+                        <LabelStatusUpdateComponent label={label} closeRef={lebelCloseRef}/>
+                        {/* Label Status Update Form ____________ */}
+
+                        {/* Hidden Dialog.Close for programmatic close */}
+                        <Dialog.Close asChild>
+                          <button ref={lebelCloseRef} style={{ display: 'none' }} />
+                        </Dialog.Close>
+
+
+                      </Modal>
+                    </Dialog.Content>
+                  </Dialog.Portal>
+                </Dialog.Root>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
+              >
+                <Dialog.Root>
+                  <Dialog.Trigger asChild>
+                    <span>
                       <AiOutlineDelete /> Delete Lebel
                     </span>
                   </Dialog.Trigger>
@@ -279,15 +339,20 @@ function SingleLable() {
                     <Dialog.Content className="dialog-content">
                       <Modal title="Delete Artist Profile?">
                         <p className="modal-description">
-                          Are you sure you want to delete this artist profile?
+                          Are you sure you want to delete this Label profile?
                           This action is irreversible, and all associated data,
                           including music releases and analytics, will be
                           permanently removed.
                         </p>
                         <br />
+                        {
+                          deleteLoading && <FormSubmitLoading/>
+                        }
                         <div className="singleArtist-deleteModal-btns">
-                          <Button>No</Button>
-                          <Button>Yes, Delete</Button>
+                          <Dialog.Close asChild>
+                            <Button>No</Button>
+                          </Dialog.Close>
+                          <Button onClick={() => deleteLabel(label._id, label?.key)}>Yes, Delete</Button>
                         </div>
                       </Modal>
                     </Dialog.Content>
