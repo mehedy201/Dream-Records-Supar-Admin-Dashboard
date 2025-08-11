@@ -59,6 +59,8 @@ function BlockedVideo({
     const closeRef = useRef(null);
 
 
+ 
+
   return (
     <div>
       {" "}
@@ -140,7 +142,7 @@ function BlockedVideo({
                         </div>
                       }
                     </td>
-                    <td>Video Link</td>
+                    <td><a href={data?.claimLink?.startsWith("http") ? data?.claimLink : `https://${data?.claimLink}`}target="_blank" rel="noopener noreferrer">{data?.claimLink?.length > 50 ? `${data?.claimLink.slice(0, 50)}...` : data?.claimLink}</a></td>
                     <td>{data?.isoDate ? localDate(data?.isoDate) : '--'}</td>
                     <td><span className={`status ${data?.status?.toLowerCase()}`}>{data?.status}</span></td>
                     <td>
@@ -166,7 +168,7 @@ function BlockedVideo({
                           }
                           <div style={{gap: '10px'}} className="d-flex">
                               <p>Video Link:</p>
-                              <p>{data?.claimLink}</p>
+                              <p><a href={data?.claimLink?.startsWith("http") ? data?.claimLink : `https://${data?.claimLink}`}target="_blank" rel="noopener noreferrer">{data?.claimLink?.length > 50 ? `${data?.claimLink.slice(0, 50)}...` : data?.claimLink}</a></p>
                           </div>
                           <div style={{gap: '10px'}} className="d-flex">
                             <p>Created At:</p>

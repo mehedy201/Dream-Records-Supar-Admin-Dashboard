@@ -137,7 +137,7 @@ function OAC({
                         </div>
                       }
                     </td>
-                    <td>Topic Channel Link</td>
+                    <td><a href={data?.artistsTopicChannelLink?.startsWith("http") ? data?.artistsTopicChannelLink : `https://${data?.artistsTopicChannelLink}`}target="_blank" rel="noopener noreferrer">{data?.artistsTopicChannelLink?.length > 50 ? `${data?.artistsTopicChannelLink.slice(0, 50)}...` : data?.artistsTopicChannelLink}</a></td>
                     <td>{data?.isoDate ? localDate(data?.isoDate) : '--'}</td>
                     <td><span className={`status ${data?.status?.toLowerCase()}`}>{data?.status}</span></td>
                     <td>
@@ -167,11 +167,11 @@ function OAC({
                           </div>
                           <div style={{gap: '10px'}} className="d-flex">
                             <p>Topic Channel Link:</p>
-                            <p>{data?.artistsTopicChannelLink}</p>
+                            <p><a href={data?.artistsTopicChannelLink?.startsWith("http") ? data?.artistsTopicChannelLink : `https://${data?.artistsTopicChannelLink}`}target="_blank" rel="noopener noreferrer">{data?.artistsTopicChannelLink?.length > 50 ? `${data?.artistsTopicChannelLink.slice(0, 50)}...` : data?.artistsTopicChannelLink}</a></p>
                           </div>
                           <div style={{gap: '10px'}} className="d-flex">
                             <p>Artist Youtube Link:</p>
-                            <p>{data?.artistsYoutubeChannelLink}</p>
+                            <p><a href={data?.artistsYoutubeChannelLink?.startsWith("http") ? data?.artistsYoutubeChannelLink : `https://${data?.artistsYoutubeChannelLink}`}target="_blank" rel="noopener noreferrer">{data?.artistsYoutubeChannelLink?.length > 50 ? `${data?.artistsYoutubeChannelLink.slice(0, 50)}...` : data?.artistsYoutubeChannelLink}</a></p>
                           </div>
                           <div style={{gap: '10px'}} className="d-flex">
                             <p>Created At:</p>

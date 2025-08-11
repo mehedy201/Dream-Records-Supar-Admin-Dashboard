@@ -136,7 +136,7 @@ function Whitelist({
                         </div>
                       }
                     </td>
-                    <td>Whitelist Link</td>
+                    <td><a href={data?.whiteListLink?.startsWith("http") ? data?.whiteListLink : `https://${data?.whiteListLink}`}target="_blank" rel="noopener noreferrer">{data?.whiteListLink?.length > 50 ? `${data?.whiteListLink.slice(0, 50)}...` : data?.whiteListLink}</a></td>
                     <td>{data?.isoDate ? localDate(data?.isoDate) : '--'}</td>
                     <td><span className={`status ${data?.status?.toLowerCase()}`}>{data?.status}</span></td>
                     <td>
@@ -162,7 +162,7 @@ function Whitelist({
                           }
                           <div style={{gap: '10px'}} className="d-flex">
                             <p>Whitelist Link</p>
-                            <p>{data?.whiteListLink}</p>
+                            <p><a href={data?.whiteListLink?.startsWith("http") ? data?.whiteListLink : `https://${data?.whiteListLink}`}target="_blank" rel="noopener noreferrer">{data?.whiteListLink?.length > 50 ? `${data?.whiteListLink.slice(0, 50)}...` : data?.whiteListLink}</a></p>
                           </div>
                           <div style={{gap: '10px'}} className="d-flex">
                             <p>Artist: </p>

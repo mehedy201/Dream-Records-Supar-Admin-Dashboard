@@ -144,7 +144,7 @@ function ProfileLinking({
                         </div>
                       }
                     </td>
-                    <td>Artist's Profile Link</td>
+                    <td><a href={data?.artistProfileLink?.startsWith("http") ? data?.artistProfileLink : `https://${data?.artistProfileLink}`}target="_blank" rel="noopener noreferrer">{data?.artistProfileLink?.length > 50 ? `${data?.artistProfileLink.slice(0, 50)}...` : data?.artistProfileLink}</a></td>
                     <td>{data?.isoDate ? localDate(data?.isoDate) : '--'}</td>
                     <td><span className={`status ${data?.status?.toLowerCase()}`}>{data?.status}</span></td>
                     <td>
@@ -175,7 +175,7 @@ function ProfileLinking({
                               </div>
                               <div style={{gap: '10px'}} className="d-flex">
                                 <p>Artist's Profile Link:</p>
-                                <p>{data?.artistProfileLink}</p>
+                                <p><a href={data?.artistProfileLink?.startsWith("http") ? data?.artistProfileLink : `https://${data?.artistProfileLink}`}target="_blank" rel="noopener noreferrer">{data?.artistProfileLink?.length > 50 ? `${data?.artistProfileLink.slice(0, 50)}...` : data?.artistProfileLink}</a></p>
                               </div>
                           <div style={{gap: '10px'}} className="d-flex">
                             <p>Created At:</p>
