@@ -22,7 +22,7 @@ const ReleaseCard = ({ releaseItems }) => {
                 style={
                   item?.status == "Takedown"
                     ? { background: "#FEEBEC", color: "#E5484D" }
-                    : item.status == "Pending"
+                    : item.status == "QC Approval"
                     ? { background: "#FFEBD8", color: "#FFA552" }
                     : item.status == "Review"
                     ? { background: "#D5EFFF", color: "#0090FF" }

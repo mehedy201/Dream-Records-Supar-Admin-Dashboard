@@ -170,6 +170,10 @@ function ProfileLinking({
                           }
                           
                               <div style={{gap: '10px'}} className="d-flex">
+                                <p>Type:</p>
+                                <p>{data?.type}</p>
+                              </div>
+                              <div style={{gap: '10px'}} className="d-flex">
                                 <p>Artist's:</p>
                                 <p>{data?.artist?.map(artist => artist.artistName).join(', ')}</p>
                               </div>
