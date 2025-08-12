@@ -54,6 +54,7 @@ function SingleLable() {
       .then((res) => {
         if (res.status == 200) {
           setLabel(res.data.data[0]);
+          console.log(res.data.data)
         }
       });
   }, [id]);
@@ -200,7 +201,7 @@ function SingleLable() {
             ))}
           </>
         )}
-        {label?.rejectionReasons && label.status === "Rejected" && (
+        {label?.actionRequired && label.status === "Rejected" && (
           <>
             <div className="home-notice">
               <FiAlertTriangle />
