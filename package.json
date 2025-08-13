@@ -29,6 +29,7 @@
     "lucide-react": "^0.476.0",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",
+    "react-country-state-city": "^1.1.12",
     "react-dom": "^19.0.0",
     "react-firebase-hooks": "^5.1.1",
     "react-hook-form": "^7.56.3",

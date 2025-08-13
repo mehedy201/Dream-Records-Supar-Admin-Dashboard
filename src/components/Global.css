@@ -1221,3 +1221,10 @@ img{
   object-fit: "cover";
   object-position: "center"
 }
+
+.stdropdown-tools{
+  position: absolute;
+  top: 8px;
+  right: 10px;
+}
+    

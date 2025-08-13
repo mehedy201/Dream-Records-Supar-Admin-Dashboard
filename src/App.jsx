@@ -216,7 +216,7 @@ function App() {
               <SingleUser/>
             }
           />
-          <Route path="/Edit-User" element={<EditUser />} />
+          <Route path="/edit-User/:id" element={<EditUser />} />
           {/* Users Route End+__________________________________________ */}
           {/* __________________________________________________________ */}
           <Route path="/profile" element={<Profile />} />

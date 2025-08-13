@@ -325,7 +325,7 @@ function SingleUser() {
             >
               <DropdownMenu.Item className="dropdown-item">
                 <Link
-                  to="/Edit-User"
+                  to={`/edit-User/${id}`}
                   style={{
                     cursor: "pointer",
                     color: "#202020",
@@ -514,7 +514,7 @@ function SingleUser() {
             <p className="user-value-text">{userData?.addressLine1}</p>
           </div>
           <div className="d-flex">
-            <p>Address Line 1:</p>
+            <p>Address Line 2:</p>
             <p className="user-value-text">{userData?.addressLine2}</p>
           </div>
           <div className="d-flex">

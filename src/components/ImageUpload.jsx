@@ -2,6 +2,7 @@ import { useState } from "react";
 import PropTypes from "prop-types"; // ✅ Import PropTypes
 import { X } from "lucide-react";
 import placeholderImg from "../assets/icons/upload-img.png";
+import axios from "axios";
 
 
 const ImageUpload = ({
