@@ -3,7 +3,6 @@ import ImageUpload from "../../../components/ImageUpload";
 import { useForm } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import SelectDropdown from "../../../components/SelectDropdown";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import LoadingScreen from "../../../components/LoadingScreen";
@@ -47,7 +46,7 @@ function EditUser() {
       return;
     }
     const payload = {...data, ...uploadedImage, phone, country, state, photoURL: uploadedImage?.imgUrl ? uploadedImage?.imgUrl : uploadedImage?.photoURL}
-    axios.patch(`http://localhost:5000/api/v1/users/${id}`, payload)
+    axios.patch(`https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/users/${id}`, payload)
     .then(res => {
       if(res.data.status === 200){
         toast.success(res.data.message)
@@ -74,7 +73,6 @@ function EditUser() {
       )
       .then((res) => {
         if (res.status === 200) {
-          console.log(res.data.data);
           const userDataForForm = res?.data?.data
           setUserData(res.data.data);
           setCountry(res?.data?.data?.country)
