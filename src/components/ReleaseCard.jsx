@@ -37,7 +37,22 @@ const ReleaseCard = ({ releaseItems }) => {
             </Flex>
             <small>{item.releaseTitle}</small>
             <br />
-            <small>{item?.artist?.map(artist => artist.artistName).join(', ')}</small>
+            <small>
+              {
+                [...new Set(
+                  item?.tracks?.flatMap(track =>
+                    track?.artist?.map(a => a.artistName.toLowerCase())
+                  )
+                )].join(', ')
+                }
+                {
+                  [...new Set(
+                    item?.tracks?.flatMap(track =>
+                      track?.primaryArtist?.map(a => a.artistName.toLowerCase())
+                    )
+                  )].join(', ')
+              }
+            </small>
           </div>
         </div>
       ))}

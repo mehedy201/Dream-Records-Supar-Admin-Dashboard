@@ -122,7 +122,7 @@ function App() {
             element={<Artists artistTable={artistTable} />}
           />
           <Route
-            path="/SingleArtist"
+            path="/artists/:id/:pageNumber/:perPageItem"
             element={<SingleArtist releaseItems={releaseItems} />}
           />
           <Route

@@ -703,7 +703,7 @@ function SingleUser() {
               !notFound &&
               itemData?.map((item, index) => (
                 <Link
-                  // to="/single-lable"
+                  to={`/labels/${item._id}/1/10/All`}
                   state={{ lable: item }}
                   key={index}
                   className="lables-card"
