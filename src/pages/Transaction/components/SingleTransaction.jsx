@@ -49,7 +49,6 @@ function SingleTransaction() {
         if (res.status === 200) {
           setWithdrawData(res.data.data);
           setMasterUserId(res.data.data.masterUserId);
-          console.log(res.data.data);
         }
       });
   }, [id, reFetch]);

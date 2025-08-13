@@ -83,11 +83,9 @@ function Labels() {
       )
       .then((res) => {
         if (res.status == 200) {
-          console.log(res.data.data);
           setLabelData(res.data.data);
           setTotalCount(res.data.totalCount);
           setFilteredCount(res.data.filteredCount);
-          console.log(res.data.filteredCount);
           setTotalPages(res.data.totalPages);
         }
       })

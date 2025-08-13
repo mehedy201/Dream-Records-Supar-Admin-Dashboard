@@ -60,7 +60,6 @@ function Home() {
             ...statusBasedReleaseCount,
             ...labelsWithdrawalServiceRequestPendingCount,
           ];
-          console.log(totalOverView);
           setOverView(totalOverView);
           setLoading(false);
         }

@@ -32,7 +32,7 @@ const TransactionTable = ({ columns, data }) => {
               </div>
                : '—'}</td>
               <td>&#8377; {d?.amount}</td>
-              <td>{d?.paymentReportDate}</td>
+              <td>{localDate(d?.date)}</td>
               <td><span className={`status ${d?.type === 'Withdraw' ? d?.status.toLowerCase() : 'success'}`}>{d?.type === 'Withdraw' ? d?.status : 'Success'}</span></td>
               <td>
                   <IoEyeOutline

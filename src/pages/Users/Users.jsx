@@ -96,7 +96,6 @@ function Users() {
       )
       .then((res) => {
         if (res.status == 200) {
-          console.log(res.data.data);
           setData(res.data.data);
           if (isEmptyArray(res.data.data)) setNotFound(true);
           setFilteredCount(res.data.filteredCount);

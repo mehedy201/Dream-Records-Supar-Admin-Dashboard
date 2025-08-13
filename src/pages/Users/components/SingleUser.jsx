@@ -28,7 +28,6 @@ import localTime from "../../../hooks/localTime";
 import useQueryParams from "../../../hooks/useQueryParams";
 import { useSelector } from "react-redux";
 import labelPlacheholderImg from "../../../assets/lables/lables-placeholder.png";
-import TransactionTable from "../../../components/table/TransactionTable";
 import isEmptyArray from "../../../hooks/isEmptyArrayCheck";
 import Pagination from "../../../components/Pagination";
 import userDemoImg from "../../../assets/artists/artist4.png";
@@ -36,6 +35,7 @@ import NotFoundPage from "../../../components/NotFoundPage";
 import toast from "react-hot-toast";
 import { Lock } from "lucide-react";
 import textToHTML from "../../../hooks/textToHTML";
+import SpecificUserTransaactionTable from "../../../components/table/SpecificUserTransaactionTable";
 
 const transactionColumns = [
   { label: "Type", key: "type" },
@@ -740,7 +740,7 @@ function SingleUser() {
           </div>
           {notFound && <NotFoundPage />}
           {itemData && !notFound && (
-            <TransactionTable columns={transactionColumns} data={itemData} />
+            <SpecificUserTransaactionTable columns={transactionColumns} data={itemData} />
           )}
         </Tabs.Content>
       </Tabs.Root>
