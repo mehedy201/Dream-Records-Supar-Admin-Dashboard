@@ -9,6 +9,7 @@ import axios from "axios";
 import LoadingScreen from "../../../components/LoadingScreen";
 import { CountrySelect, StateSelect } from "react-country-state-city";
 import toast from "react-hot-toast";
+import FormSubmitLoading from "../../../components/FormSubmitLoading";
 function EditUser() {
 
   const { id } = useParams();
@@ -30,8 +31,9 @@ function EditUser() {
     reset,
     formState: { errors },
   } = useForm();
+
   const onSubmit = (data) => {
-    console.log(country)
+    setFormLoading(true)
     if(!phone){
       setPhoneErr('Phone Required')
       return;
@@ -49,10 +51,10 @@ function EditUser() {
     .then(res => {
       if(res.data.status === 200){
         toast.success(res.data.message)
-        console.log(res)
+        setFormLoading(false)
       }else{
         toast.error(res.data.message)
-        console.log(res)
+        setFormLoading(false)
       }
     })
     // console.log(payload)
@@ -224,6 +226,9 @@ function EditUser() {
           </div>
           {/* errors will return when field validation fails  */}
 
+          {
+            formLoading && <FormSubmitLoading/>
+          }
           <input type="submit" className="theme-btn" />
         </form>
       </div>
