@@ -41,7 +41,7 @@ const Sidebar = () => {
 
       {/* Create Button */}
 
-      <button className="theme-btn">+ Create</button>
+      {/* <button className="theme-btn">+ Create</button> */}
 
       {/* Navigation Links */}
       <nav className="nav">
