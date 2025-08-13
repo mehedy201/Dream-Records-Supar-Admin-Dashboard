@@ -50,7 +50,7 @@ function SingleUser() {
   const navigate = useNavigate();
   const { id, item, pageNumber, perPageItem } = useParams();
 
-  const { yearsList } = useSelector((state) => state.yearsAndStatus);
+  const { yearsList, labelStatusList } = useSelector((state) => state.yearsAndStatus);
   // Filter Query Paramitars_____________________
   const { navigateWithParams } = useQueryParams();
   const [filterParams] = useSearchParams();
@@ -66,6 +66,14 @@ function SingleUser() {
     });
   };
 
+  const filterByStatus = (statusValue) => {
+    navigateWithParams(`/user/${id}/${item}/1/${perPageItem}`, {
+      search: search,
+      years: years,
+      status: statusValue,
+    });
+  };
+
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(false);
   const [reFetchUser, setRefetchUser] = useState(1);
@@ -77,7 +85,7 @@ function SingleUser() {
       )
       .then((res) => {
         if (res.status === 200) {
-          console.log(res.data.data);
+          // console.log(res.data.data);
           setUserData(res.data.data);
           setLoading(false);
         }
@@ -92,6 +100,7 @@ function SingleUser() {
   const [notFound, setNotFound] = useState(false);
   useEffect(() => {
     setItemLoading(true);
+    setNotFound(false)
     if (item === "artist") {
       axios
         .get(
@@ -109,7 +118,6 @@ function SingleUser() {
         .catch((er) => console.log(er));
     }
     if (item === "labels") {
-      console.log("label");
       axios
         .get(
           `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/labels/${id}?page=${pageNumber}&limit=${perPageItem}&status=${status}&search=${search}&years=${years}`
@@ -133,7 +141,7 @@ function SingleUser() {
         .then((res) => {
           if (res.status === 200) {
             setItemData(res.data.data);
-            console.log(res.data.data);
+            // console.log(res.data.data);
             if (isEmptyArray(res.data.data)) setNotFound(true);
             setFilteredCount(res.data.filteredCount);
             setTotalPages(res.data.totalPages);
@@ -154,12 +162,25 @@ function SingleUser() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   const dropdownItem = (
-    <SelectDropdown
-      options={yearsList}
-      placeholder={`${years ? years : "All Time"}`}
-      filterByYearAndStatus={filterByYear}
-    />
+    <>
+      <SelectDropdown
+        options={yearsList}
+        placeholder={`${years ? years : "All Time"}`}
+        filterByYearAndStatus={filterByYear}
+      />
+  
+      {isMobile && <br />}
+      {
+        item === "labels" &&
+        <SelectDropdown
+          options={labelStatusList}
+          placeholder={status ? status : "All"}
+          filterByYearAndStatus={filterByStatus}
+        />
+      }
+    </>
   );
   useEffect(() => {
     if (location.state?.user) {

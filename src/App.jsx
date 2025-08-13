@@ -22,30 +22,15 @@ import NewPassword from "./pages/LogIn/NewPassword";
 import { useEffect, useState } from "react";
 import LoadingScreen from "./components/LoadingScreen";
 import {
-  activeUsersTable,
-  albumTrackList,
   analyticsTable,
   artistsItems,
   artistSocialItems,
   artistTable,
-  chartData,
-  homeCardContent,
   labelSocialItems,
-  labelsTable,
-  newUsersTable,
   Release_Claim,
-  releaseAlbumInfo,
-  releaseCredits,
   releaseItems,
-  releaseTrackDetails,
   settingsTeamMember,
-  singleReleaseARevenueData,
-  singleReleaseATrackData,
   support,
-  suspendUsersTable,
-  transactionInfo,
-  transactions,
-  transactionsHistory,
   // transactionsHistory,
 } from "./data";
 import Artists from "./pages/Artists/Artists";
@@ -228,11 +213,7 @@ function App() {
           <Route
             path="/user/:id/:item/:pageNumber/:perPageItem"
             element={
-              <SingleUser
-                ArtistCard={ArtistCard}
-                artistsItems={artistsItems}
-                transactionsHistory={transactionsHistory}
-              />
+              <SingleUser/>
             }
           />
           <Route path="/Edit-User" element={<EditUser />} />
