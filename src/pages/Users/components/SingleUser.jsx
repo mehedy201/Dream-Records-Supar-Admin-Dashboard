@@ -36,6 +36,8 @@ import toast from "react-hot-toast";
 import { Lock } from "lucide-react";
 import textToHTML from "../../../hooks/textToHTML";
 import SpecificUserTransaactionTable from "../../../components/table/SpecificUserTransaactionTable";
+import FormSubmitLoading from "../../../components/FormSubmitLoading";
+import { useForm } from "react-hook-form";
 
 const transactionColumns = [
   { label: "Type", key: "type" },
@@ -271,6 +273,81 @@ function SingleUser() {
         }
       });
   };
+
+
+
+
+
+
+
+  const passwordCloseRef = useRef(null);
+  const [passMatchErr, setPassMatchErr] = useState('');
+  const {register, handleSubmit, formState: {errors}} = useForm();
+  const [passwordChangeLoading, setPasswordChangeLoading] = useState();
+  const onSubmit = async (data) => {
+    setPassMatchErr('');
+    setPasswordChangeLoading(true);
+    // First check if new passwords match
+    if (data.pass1 !== data.pass2) {
+        setPassMatchErr('New passwords do not match');
+        setPasswordChangeLoading(false);
+        return;
+    }
+
+    const payload = {newPassword: data.pass1, id, admin: 'Admin'}
+    axios.patch(`https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/change-password`, payload)
+    .then(res => {
+      if(res.data.status === 200){
+        toast.success(res.data.message)
+        setPasswordChangeLoading(false)
+        passwordCloseRef.current?.click();
+      }else{
+        toast.error(res.data.message)
+        passwordCloseRef.current?.click();
+        setPasswordChangeLoading(false)
+      }
+    })
+  }
+
+
+  const emailCloseRef = useRef(null);
+  const [email, setEmail] = useState();
+  const [emailErr, setEmailErr] = useState();
+  const [currentEmail, setCurrentEmail] = useState();
+  const [currentEmailErr, setCurrentEmailErr] = useState();
+  const [emailChangeLoading, setEmailChangeLoading] = useState(false);
+  const changeEmailFunc = () => {
+    setEmailChangeLoading(true)
+    setEmailErr('')
+    setCurrentEmailErr('')
+    if(!currentEmail){
+      setCurrentEmailErr('Current Email required')
+    }
+    if(!email){
+      setEmailErr('Email required')
+    }
+    
+    const payload = {newEmail: email, currentEmail, id}
+    axios.patch(`https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/change-email`, payload)
+    .then(res => {
+      console.log(res)
+      if(res.data.status === 200){
+        toast.success(res.data.message)
+        setEmailChangeLoading(false)
+        emailCloseRef.current?.click();
+      }else{
+        // toast.error(res.data.message.message)
+        setEmailErr(res.data.message.message)
+        setEmailChangeLoading(false)
+      }
+    })
+
+  }
+
+
+
+
+
 
   if (loading) return <LoadingScreen />;
 
@@ -580,7 +657,96 @@ function SingleUser() {
             </div>
           </div>
         </div> */}
+
+
+
+
+
+
+
       </div>
+        <h5 style={{marginBottom: '0px', padding: '12px'}}>Security Info</h5>
+        <div style={{alignItems: 'center', marginTop: '0px'}} className="profile-info d-flex">
+          <div style={{ width: "80%" }}>        
+            <div style={{margin: '10px 0px'}} className="d-flex">
+              <p>Email</p>
+              <p className="profile-value-text">{userData?.email}</p>
+            </div>
+            <div style={{margin: '10px 0px'}} className="d-flex">
+              <p>Password</p>
+              <p className="profile-value-text">*************</p>
+            </div>
+          </div>
+          <div>
+            <Dialog.Root>
+              <Dialog.Trigger className="profile-email-btn">
+                Change Email
+              </Dialog.Trigger>
+              <Modal title="Change Email">
+                <div className="prodile-modal">
+                      <label>Current Email</label>
+                      <input type="email" onChange={e => setCurrentEmail(e.target.value)}/>
+                      <label>New Email</label>
+                      <input type="email" onChange={e => setEmail(e.target.value)}/>
+                      {
+                        emailChangeLoading && <FormSubmitLoading/>
+                      }
+                      {
+                        emailErr && <p style={{color: 'red'}}>{emailErr}</p>
+                      }
+                  </div>
+                  <button onClick={changeEmailFunc} className="close-button">
+                    Change Email
+                  </button>
+          
+                  {/* Hidden Dialog.Close for programmatic close */}
+                  <Dialog.Close asChild>
+                    <button
+                      ref={emailCloseRef}
+                      style={{ display: "none" }}
+                    />
+                  </Dialog.Close>
+              </Modal>
+            </Dialog.Root>
+            <Dialog.Root>
+              <Dialog.Trigger className="profile-pass-btn">
+                Change Password
+              </Dialog.Trigger>
+              <Modal title="Change Password">
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className="prodile-modal">
+                      {/* <label>Enter current Password</label>
+                      <input type="password" placeholder="************" {...register('currentPass', {required: true})}/>
+                      {errors.currentPass && <p>Current Password Required</p>} */}
+                      <label>Enter New Password</label>
+                      <input type="password" placeholder="************" {...register('pass1', {required: true})}/>
+                      {errors.pass1 && <p>Password Required</p>}
+                      <label>Confirm New Password</label>
+                      <input type="password" placeholder="************" {...register('pass2', {required: true})}/>
+                      {errors.pass2 && <p>Password Required</p>}
+                      {
+                        passwordChangeLoading && <FormSubmitLoading/>
+                      }
+                      {
+                        passMatchErr && <p>{passMatchErr}</p>
+                      }
+                  </div>
+                  <button type="submit" className="close-button">
+                    Change Password
+                  </button>
+          
+                  {/* Hidden Dialog.Close for programmatic close */}
+                  <Dialog.Close asChild>
+                    <button
+                      ref={passwordCloseRef}
+                      style={{ display: "none" }}
+                    />
+                  </Dialog.Close>
+                </form>
+              </Modal>
+            </Dialog.Root>
+          </div>
+        </div>
 
       <Tabs.Root className="tabs-root" defaultValue={item}>
         <Tabs.List className="tabs-list">

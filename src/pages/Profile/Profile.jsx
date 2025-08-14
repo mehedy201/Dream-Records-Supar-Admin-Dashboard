@@ -9,6 +9,7 @@ import axios from "axios";
 import demoUserImg from '../../assets/artists/artist4.png'
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import FormSubmitLoading from "../../components/FormSubmitLoading";
 
 function Profile() {
 
@@ -40,9 +41,8 @@ function Profile() {
         return;
     }
 
-    const token = localStorage.getItem('token')
-    const payload = {newPassword: data.pass1, token}
-    axios.patch(`http://localhost:5000/common/api/v1/authentication/change-password`, payload)
+    const payload = {newPassword: data.pass1, currentPass: data.currentPass, id: userData?._id}
+    axios.patch(`https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/change-password`, payload)
     .then(res => {
       if(res.data.status === 200){
         toast.success(res.data.message)
@@ -60,17 +60,24 @@ function Profile() {
   const emailCloseRef = useRef(null);
   const [email, setEmail] = useState();
   const [emailErr, setEmailErr] = useState();
+  const [currentEmail, setCurrentEmail] = useState();
+  const [currentEmailErr, setCurrentEmailErr] = useState();
   const [emailChangeLoading, setEmailChangeLoading] = useState(false);
   const changeEmailFunc = () => {
     setEmailChangeLoading(true)
     setEmailErr('')
+    setCurrentEmailErr('')
+    if(!currentEmail){
+      setCurrentEmailErr('Current Email required')
+    }
     if(!email){
       setEmailErr('Email required')
     }
+    
     const token = localStorage.getItem('token')
 
-    const payload = {newEmail: email, token}
-    axios.patch(`http://localhost:5000/common/api/v1/authentication/change-email`, payload)
+    const payload = {newEmail: email, currentEmail, id: userData._id}
+    axios.patch(`https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/change-email`, payload)
     .then(res => {
       console.log(res)
       if(res.data.status === 200){
@@ -209,9 +216,10 @@ function Profile() {
           </Dialog.Trigger>
           <Modal title="Change Email">
             <div className="prodile-modal">
+                  <label>Current Email</label>
+                  <input type="email" onChange={e => setCurrentEmail(e.target.value)}/>
                   <label>New Email</label>
                   <input type="email" onChange={e => setEmail(e.target.value)}/>
-                  {errors.currentPass && <p>Current Password Required</p>}
                   {
                     emailChangeLoading && <FormSubmitLoading/>
                   }
@@ -239,6 +247,9 @@ function Profile() {
           <Modal title="Change Password">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="prodile-modal">
+                  <label>Enter current Password</label>
+                  <input type="password" placeholder="************" {...register('currentPass', {required: true})}/>
+                  {errors.currentPass && <p>Current Password Required</p>}
                   <label>Enter New Password</label>
                   <input type="password" placeholder="************" {...register('pass1', {required: true})}/>
                   {errors.pass1 && <p>Password Required</p>}
@@ -246,7 +257,7 @@ function Profile() {
                   <input type="password" placeholder="************" {...register('pass2', {required: true})}/>
                   {errors.pass2 && <p>Password Required</p>}
                   {
-                    loading && <p>Loading ......</p>
+                    loading && <FormSubmitLoading/>
                   }
                   {
                     passMatchErr && <p>{passMatchErr}</p>
