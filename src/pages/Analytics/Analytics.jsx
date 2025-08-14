@@ -22,6 +22,7 @@ import * as Select from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
 import excelLogo from "../../assets/icons/Excel logo.png";
 import uploadFileIcon from "../../assets/icons/upload-img.png";
+import FormSubmitLoading from "../../components/FormSubmitLoading";
 
 const artistColumns = [
   { label: "Report ID", key: "id" },
@@ -375,7 +376,7 @@ function Analytics() {
               <p style={{ color: "red" }}>{monthValueError}</p>
             )}
             <br />
-            {loadingForSubmit && <p>Loading......</p>}
+            {loadingForSubmit && <FormSubmitLoading/>}
             <div className="analytics-deleteModal-btns">
               <Dialog.Close>Cancel</Dialog.Close>
               <button onClick={uploadAnalyticsReport}>Upload Report</button>

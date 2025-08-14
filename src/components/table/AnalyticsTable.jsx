@@ -66,40 +66,7 @@ const AnalyticsTable = ({ columns, data }) => {
                       </div>
                     </DropdownMenu.Item>
                     <hr />
-                    <DropdownMenu.Item
-                      className="dropdown-item"
-                      onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
-                    >
-                      <Dialog.Root>
-                        <Dialog.Trigger asChild>
-                          <div>
-                            <RiDeleteBin6Line /> <span>Delete Report</span>
-                          </div>
-                        </Dialog.Trigger>
-                        <Dialog.Portal>
-                          <Dialog.Overlay className="dialog-overlay" />
-                          <Dialog.Content className="dialog-content">
-                            <Modal title="Delete Report?">
-                              <p className="modal-description">
-                                Are you sure you want to delete this report?
-                                This action is irreversible, and you will not be
-                                able to recover the deleted data.
-                              </p>
-                              <br />
-                              <div className="analytics-deleteModal-btns">
-                                <Dialog.Close>No</Dialog.Close>
-                                <Dialog.Close
-                                  onClick={() => deleteAnalytics(d._id)}
-                                >
-                                  Yes, Delete
-                                </Dialog.Close>
-                                {/* Hidden Dialog.Close for programmatic close */}
-                              </div>
-                            </Modal>
-                          </Dialog.Content>
-                        </Dialog.Portal>
-                      </Dialog.Root>
-                    </DropdownMenu.Item>
+                    
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>
               </td>
@@ -112,3 +79,39 @@ const AnalyticsTable = ({ columns, data }) => {
 };
 
 export default AnalyticsTable;
+
+
+// {/* <DropdownMenu.Item
+//                       className="dropdown-item"
+//                       onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
+//                     >
+//                       <Dialog.Root>
+//                         <Dialog.Trigger asChild>
+//                           <div>
+//                             <RiDeleteBin6Line /> <span>Delete Report</span>
+//                           </div>
+//                         </Dialog.Trigger>
+//                         <Dialog.Portal>
+//                           <Dialog.Overlay className="dialog-overlay" />
+//                           <Dialog.Content className="dialog-content">
+//                             <Modal title="Delete Report?">
+//                               <p className="modal-description">
+//                                 Are you sure you want to delete this report?
+//                                 This action is irreversible, and you will not be
+//                                 able to recover the deleted data.
+//                               </p>
+//                               <br />
+//                               <div className="analytics-deleteModal-btns">
+//                                 <Dialog.Close>No</Dialog.Close>
+//                                 <Dialog.Close
+//                                   onClick={() => deleteAnalytics(d._id)}
+//                                 >
+//                                   Yes, Delete
+//                                 </Dialog.Close>
+//                                 {/* Hidden Dialog.Close for programmatic close */}
+//                               </div>
+//                             </Modal>
+//                           </Dialog.Content>
+//                         </Dialog.Portal>
+//                       </Dialog.Root>
+//                     </DropdownMenu.Item> */}
