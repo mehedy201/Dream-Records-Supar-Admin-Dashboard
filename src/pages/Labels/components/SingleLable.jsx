@@ -360,7 +360,7 @@ function SingleLable() {
             <h4>Total Releases</h4>
             <h1>{totalCount}</h1>
             <Button
-              onClick={() => navigate("/release/1/10/All")}
+              onClick={() => navigate("/distribution/queue/live/1/10")}
               className="singleArtist-pg-allRelease-btn"
             >
               All Releases &nbsp;&nbsp; <ChevronRight />

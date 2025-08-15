@@ -10,9 +10,10 @@ const ReleaseCard = ({ releaseItems }) => {
     <div className="release-container">
       {releaseItems?.map((item) => (
         <div
-          onClick={() => navigate('/')}
+          onClick={() => navigate(`/release/${item?._id}`)}
           key={item._id}
           className="release-card"
+          style={{cursor: 'pointer'}}
         >
           <img src={item?.imgUrl} alt="" />
           <div style={{ paddingTop: "12px" }}>
@@ -41,14 +42,14 @@ const ReleaseCard = ({ releaseItems }) => {
               {
                 [...new Set(
                   item?.tracks?.flatMap(track =>
-                    track?.artist?.map(a => a.artistName.toLowerCase())
+                    track?.artist?.map(a => a.artistName)
                   )
                 )].join(', ')
                 }
                 {
                   [...new Set(
                     item?.tracks?.flatMap(track =>
-                      track?.primaryArtist?.map(a => a.artistName.toLowerCase())
+                      track?.primaryArtist?.map(a => a.artistName)
                     )
                   )].join(', ')
               }

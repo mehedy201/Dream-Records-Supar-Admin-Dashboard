@@ -58,6 +58,7 @@ import CreateUser from "./pages/Users/components/CreateUser";
 import MobileMenu from "./components/MobileMenu";
 import MobileFooter from "./components/MobileFooter";
 import Authorization from "./Authorization/Authorization";
+import ScrollToTop from "./hooks/ScrollToTop";
 function Layout() {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 830);
@@ -108,6 +109,7 @@ function Layout() {
 function App() {
   return (
     <Router>
+      <ScrollToTop/>
       <Routes>
         {/* Routes inside Layout (with Sidebar & Navbar) */}
         <Route path="/" element={<Authorization><Layout /></Authorization>}>

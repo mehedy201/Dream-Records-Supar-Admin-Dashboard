@@ -371,14 +371,14 @@ function SingleRelease() {
                 {
                 [...new Set(
                   data?.tracks?.flatMap(track =>
-                    track?.artist?.map(a => a.artistName.toLowerCase())
+                    track?.artist?.map(a => a.artistName)
                   )
                 )].join(', ')
               }
               {
                 [...new Set(
                   data?.tracks?.flatMap(track =>
-                    track?.primaryArtist?.map(a => a.artistName.toLowerCase())
+                    track?.primaryArtist?.map(a => a.artistName)
                   )
                 )].join(', ')
               }
