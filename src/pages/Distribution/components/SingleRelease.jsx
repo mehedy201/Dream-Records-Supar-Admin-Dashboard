@@ -152,7 +152,6 @@ function SingleRelease() {
   const [years, setYears] = useState(Math.max(...yearsList));
   const [dataNotFound, setDataNotFound] = useState(false);
   useEffect(() => {
-    console.log(years);
     setDataNotFound(false);
     if (data?.UPC) {
       console.log("yes go");
@@ -413,7 +412,10 @@ function SingleRelease() {
                   </div>
                 </DropdownMenu.Item>
                 <hr style={{ margin: 0 }} />
-                {data?.status === "Review" && (
+                {(data?.status === "Review" ||
+                  data?.status === "Blocked" ||
+                  data?.status === "Error" ||
+                  data?.status === "Takedown") && (
                   <DropdownMenu.Item
                     onClick={() => moveToQC(data?._id)}
                     className="dropdown-item"
@@ -440,10 +442,7 @@ function SingleRelease() {
                     </div>
                   </DropdownMenu.Item>
                 )}
-                {(data?.status === "Review" ||
-                  data?.status === "Blocked" ||
-                  data?.status === "Error" ||
-                  data?.status === "Takedown") && (
+                {(data?.status === "Review") && (
                   <DropdownMenu.Item
                     className="dropdown-item"
                     onSelect={(e) => e.preventDefault()}

@@ -175,7 +175,10 @@ const ReleaseTable = ({ columns = [], data }) => {
                       </div>
                     </DropdownMenu.Item>
                     <hr style={{ margin: 0 }} />
-                    {d?.status === "Review" && (
+                    {(d?.status === "Review" ||
+                      d?.status === "Blocked" ||
+                      d?.status === "Error" ||
+                      d?.status === "Takedown") && (
                       <DropdownMenu.Item
                         onClick={() => moveToQC(d?._id)}
                         className="dropdown-item"
@@ -201,10 +204,7 @@ const ReleaseTable = ({ columns = [], data }) => {
                         </div>
                       </DropdownMenu.Item>
                     )}
-                    {(d?.status === "Review" ||
-                      d?.status === "Blocked" ||
-                      d?.status === "Error" ||
-                      d?.status === "Takedown") && (
+                    {(d?.status === "Review") && (
                       <DropdownMenu.Item
                         className="dropdown-item"
                         onSelect={(e) => e.preventDefault()}
