@@ -115,6 +115,19 @@ const Transaction = () => {
     });
   };
 
+
+  // Withdraw page Notice_______________________________
+  const [withdrawPageNotices, setWithdrawPageNotices] = useState();
+  useEffect(() => {
+    axios
+      .get(
+        "https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/settings/withdraw-page-notice"
+      )
+      .then((res) => {
+        setWithdrawPageNotices(res.data.data);
+      });
+  }, []);
+
   return (
     <div className="main-content">
       <h2 style={{ fontWeight: "500" }}>Transactions</h2>
@@ -155,13 +168,13 @@ const Transaction = () => {
         )}
       </div>
       <br />
-      <div className="notice">
-        <InfoCircledIcon />
-        <p>
-          You can withdraw your earnings during the withdrawal periods in
-          February, May, August, and November.
-        </p>
-      </div>
+        {withdrawPageNotices &&
+        withdrawPageNotices?.map((notice) => (
+          <div key={notice._id} className="notice">
+            <InfoCircledIcon />
+            <p style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word'}} dangerouslySetInnerHTML={{ __html: notice?.notice }}></p>
+          </div>
+        ))}
       <TransactionTable
         columns={transactionColumns}
         data={transectionData}
