@@ -105,7 +105,7 @@ function OAC({
               <th>Topic Channel Link</th>
               <th>Created At</th>
               <th>Status</th>
-              <th>Reason</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>

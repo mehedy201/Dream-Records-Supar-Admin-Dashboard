@@ -103,7 +103,7 @@ function ContentID({
               <th>Release</th>
               <th>Created At</th>
               <th>Status</th>
-              <th>Reason</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
