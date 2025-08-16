@@ -126,7 +126,10 @@ const SingleArtist = ({ releaseItems, artistSocialItems }) => {
           <div className="singleArtist-info">
             <h4>Total Releases</h4>
             <h1>122</h1>
-            <Button className="singleArtist-pg-allRelease-btn">
+            <Button 
+              onClick={() => navigate("/distribution/queue/live/1/10")}
+              style={{cursor: 'pointer'}}
+              className="singleArtist-pg-allRelease-btn">
               All Releases &nbsp;&nbsp; <ChevronRight />
             </Button>
           </div>

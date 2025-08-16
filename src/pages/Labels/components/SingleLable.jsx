@@ -361,6 +361,7 @@ function SingleLable() {
             <h1>{totalCount}</h1>
             <Button
               onClick={() => navigate("/distribution/queue/live/1/10")}
+              style={{cursor: 'pointer'}}
               className="singleArtist-pg-allRelease-btn"
             >
               All Releases &nbsp;&nbsp; <ChevronRight />
