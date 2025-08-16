@@ -63,7 +63,7 @@ const ServiceRequest = () => {
     // All Service Request Count _______________________
     axios
       .get(
-        `http://localhost:5000/common/api/v1/claim-release/admin-get-all-service-request-count`
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/claim-release/admin-get-all-service-request-count`
       )
       .then((res) => {
         if (res.status === 200) {

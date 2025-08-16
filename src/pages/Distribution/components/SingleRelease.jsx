@@ -308,7 +308,7 @@ function SingleRelease() {
         className="main-content createRelease-content-div createRelease-overview-div"
         style={{ marginBottom: "20px" }}
       >
-        {(data?.rejectionReasons && (data.status === 'Error' || data.status === 'Blocked' || data.status === 'Takedown')) &&
+        {(data?.rejectionReasons && (data.status === 'Error' || data.status === 'Blocked' || data.status === 'Takedown' || data?.status === "QC Approval")) &&
           data?.rejectionReasons?.map((d, index) => (
             <div key={index} className="notice">
               <FiAlertTriangle />
@@ -322,7 +322,7 @@ function SingleRelease() {
               ></p>
             </div>
           ))}
-        {(data?.rejectionReasons && (data.status === 'Error' || data.status === 'Blocked' || data.status === 'Takedown')) &&
+        {(data?.actionReqHistory && (data.status === 'Error' || data.status === 'Blocked' || data.status === 'Takedown' || data?.status === "QC Approval")) &&
           data?.actionReqHistory?.map((d, index) => (
             <div key={index} className="notice">
               <FiAlertTriangle />

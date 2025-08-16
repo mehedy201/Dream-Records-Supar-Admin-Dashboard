@@ -6,6 +6,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Modal from "../../components/Modal";
 import axios from "axios";
 import { useState } from "react";
+import localTime from "../../hooks/localTime";
 
 const AnalyticsTable = ({ columns, data }) => {
   const deleteAnalytics = (id) => {
@@ -34,9 +35,9 @@ const AnalyticsTable = ({ columns, data }) => {
           {data?.map((d) => (
             <tr key={d?._id}>
               <td>{d?._id}</td>
-              <td>{d?.reportsDate.slice(0, 3)}</td>
               <td>{d?.reportsDate.slice(4, 10)}</td>
-              <td>{localDate(d?.date)}</td>
+              <td>{d?.reportsDate.slice(0, 3)}</td>
+              <td>{localDate(d?.date)} {localTime(d?.date)}</td>
               <td>
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
