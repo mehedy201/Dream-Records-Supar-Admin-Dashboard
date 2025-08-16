@@ -151,17 +151,23 @@ function ReleaseClaim({
                           {
                             Array.isArray(data?.release) &&
                             data?.release?.map(item => 
-                              <div key={item?._id} style={{gap: '10px'}} className="d-flex">
-                                <p>Tittle:</p>
-                                <p>{item?.releaseTitle}</p>
+                              <div style={{padding: '5px 0px'}} key={item?._id}>
+                                <div style={{gap: '10px'}} className="d-flex">
+                                  <p style={{margin: '5px 0px'}}>Tittle:</p>
+                                  <p style={{margin: '5px 0px'}}>{item?.releaseTitle}</p>
+                                </div>
+                                <small>UPC: {item?.UPC}</small>
                               </div>
                             )
                           }
-                          { data?.release?.releaseTitle &&
-                            <div style={{gap: '10px'}} className="d-flex">
-                                <p>Tittle:</p>
-                                <p>{data?.release?.releaseTitle}</p>
-                            </div>
+                          { data?.release?.releaseTitle && 
+                            <div style={{padding: '5px 0px'}}>
+                                <div style={{gap: '10px'}} className="d-flex">
+                                  <p style={{margin: '5px 0px'}}>Tittle:</p>
+                                  <p style={{margin: '5px 0px'}}>{data?.release?.releaseTitle}</p>
+                                </div>
+                                <small>UPC: {data?.release?.UPC}</small>
+                              </div>
                           }
                             <div style={{gap: '10px'}} className="d-flex">
                               <p>Type: </p>

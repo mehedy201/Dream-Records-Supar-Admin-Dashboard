@@ -63,7 +63,7 @@ const ServiceRequest = () => {
     // All Service Request Count _______________________
     axios
       .get(
-        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/claim-release/admin-get-all-service-request-count`
+        `http://localhost:5000/common/api/v1/claim-release/admin-get-all-service-request-count`
       )
       .then((res) => {
         if (res.status === 200) {
@@ -130,7 +130,7 @@ const ServiceRequest = () => {
       >
         <Tabs.List className="tabs-list">
           <Tabs.Trigger
-            onClick={() => navigate("/service-request/Release-Claim/1/10/All")}
+            onClick={() => navigate("/service-request/Release-Claim/1/10/Pending")}
             className="tabs-trigger"
             value="Release Claim"
           >
@@ -140,7 +140,7 @@ const ServiceRequest = () => {
             </div>
           </Tabs.Trigger>
           <Tabs.Trigger
-            onClick={() => navigate("/service-request/Content-ID/1/10/All")}
+            onClick={() => navigate("/service-request/Content-ID/1/10/Pending")}
             className="tabs-trigger"
             value="Content ID"
           >
@@ -150,7 +150,7 @@ const ServiceRequest = () => {
             </div>
           </Tabs.Trigger>
           <Tabs.Trigger
-            onClick={() => navigate("/service-request/Claim-Video/1/10/All")}
+            onClick={() => navigate("/service-request/Claim-Video/1/10/Pending")}
             className="tabs-trigger"
             value="Claim Video"
           >
@@ -160,7 +160,7 @@ const ServiceRequest = () => {
             </div>
           </Tabs.Trigger>
           <Tabs.Trigger
-            onClick={() => navigate("/service-request/Blocked-Video/1/10/All")}
+            onClick={() => navigate("/service-request/Blocked-Video/1/10/Pending")}
             className="tabs-trigger"
             value="Blocked Video"
           >
@@ -170,7 +170,7 @@ const ServiceRequest = () => {
             </div>
           </Tabs.Trigger>
           <Tabs.Trigger
-            onClick={() => navigate("/service-request/OAC/1/10/All")}
+            onClick={() => navigate("/service-request/OAC/1/10/Pending")}
             className="tabs-trigger"
             value="OAC"
           >
@@ -181,7 +181,7 @@ const ServiceRequest = () => {
           </Tabs.Trigger>
           <Tabs.Trigger
             onClick={() =>
-              navigate("/service-request/Profile-Linking/1/10/All")
+              navigate("/service-request/Profile-Linking/1/10/Pending")
             }
             className="tabs-trigger"
             value="Profile Linking"
@@ -192,7 +192,7 @@ const ServiceRequest = () => {
             </div>
           </Tabs.Trigger>
           <Tabs.Trigger
-            onClick={() => navigate("/service-request/Whitelist/1/10/All")}
+            onClick={() => navigate("/service-request/Whitelist/1/10/Pending")}
             className="tabs-trigger"
             value="Whitelist"
           >
