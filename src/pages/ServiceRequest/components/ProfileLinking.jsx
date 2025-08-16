@@ -13,6 +13,7 @@ import localDate from "../../../hooks/localDate";
 import { IoEyeOutline } from "react-icons/io5";
 import releasePlaceHolderImg from '../../../assets/release-placeholder.png'
 import ServiceRequestStatusUpdateForm from "../../../components/FormForUpdateStatus/ServiceRequestStatusUpdateForm";
+import localTime from "../../../hooks/localTime";
 
 function ProfileLinking({
   years,
@@ -145,7 +146,7 @@ function ProfileLinking({
                       }
                     </td>
                     <td><a href={data?.artistProfileLink?.startsWith("http") ? data?.artistProfileLink : `https://${data?.artistProfileLink}`}target="_blank" rel="noopener noreferrer">{data?.artistProfileLink?.length > 50 ? `${data?.artistProfileLink.slice(0, 50)}...` : data?.artistProfileLink}</a></td>
-                    <td>{data?.isoDate ? localDate(data?.isoDate) : '--'}</td>
+                    <td>{data?.isoDate ? `${localDate(data?.isoDate)} ${localTime(data?.isoDate)}` : '--'}</td>
                     <td><span className={`status ${data?.status?.toLowerCase()}`}>{data?.status}</span></td>
                     <td>
                       <Dialog.Root>
@@ -188,7 +189,7 @@ function ProfileLinking({
                               </div>
                           <div style={{gap: '10px'}} className="d-flex">
                             <p>Created At:</p>
-                            <p>{data?.isoDate ? localDate(data?.isoDate) : '--'}</p>
+                            <p>{data?.isoDate ? `${localDate(data?.isoDate)} ${localTime(data?.isoDate)}` : '--'}</p>
                           </div>
                           <div style={{gap: '10px'}} className="d-flex">
                             <p>Status:</p>
