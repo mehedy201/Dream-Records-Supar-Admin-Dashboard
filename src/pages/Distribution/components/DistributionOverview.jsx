@@ -81,7 +81,7 @@ function DistributionOverview({ adminSummary }) {
       }
       <Flex as="span" className="artists-flex">
         <p>Latest Releases</p>
-        <Link href="#">See All</Link>
+        <Link to={`/distribution/queue/live/1/10`}>See All</Link>
       </Flex>
       {
         !adminSummary && 
