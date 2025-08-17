@@ -98,7 +98,7 @@ const ServiceRequest = () => {
     );
   };
   // Search _____________________________________________
-  const [searchText, setSearchText] = useState();
+  const [searchText, setSearchText] = useState(search);
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       navigateWithParams(

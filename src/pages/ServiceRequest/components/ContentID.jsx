@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import SelectDropdown from "../../../components/SelectDropdown";
 import { useSelector } from "react-redux";
 import NotFoundComponent from "../../../components/NotFoundComponent";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Dialog } from "radix-ui";
 import Modal from "../../../components/Modal";
 import localDate from "../../../hooks/localDate";
@@ -27,6 +27,9 @@ function ContentID({
   const {status} = useParams();
   const {serviceRequestData} = useSelector((state) => state.serviceRequestPageSlice);
   const { yearsList } = useSelector(state => state.yearsAndStatus);
+
+  const [filterParams] = useSearchParams();
+  const search = filterParams.get("search") || "";
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
   useEffect(() => {
@@ -64,7 +67,7 @@ function ContentID({
         <h2 style={{ fontWeight: "500", fontSize: "24px" }}>Service Request</h2>
       </Flex>
       <div className="search-setion">
-        <input type="text" onKeyPress={handleKeyPress} onChange={e => setSearchText(e.target.value)} placeholder="Search..." />
+        <input type="text" defaultValue={search} onKeyPress={handleKeyPress} onChange={e => setSearchText(e.target.value)} placeholder="Search..." />
         {isMobile ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
