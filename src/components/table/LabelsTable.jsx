@@ -45,7 +45,6 @@ const LabelsTable = ({ data }) => {
             <th>User Name</th>
             <th>User Email</th>
             <th>Created At</th>
-            <th>Release Count</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -70,7 +69,6 @@ const LabelsTable = ({ data }) => {
               <td>{d?.userName}</td>
               <td>{d?.email ? d?.email : "--"}</td>
               <td>{d?.date ? localDate(d?.date) : "--"}</td>
-              <td>Release Count</td>
               <td>
                 <span className={`status ${d.status.toLowerCase()}`}>
                   {d.status}
