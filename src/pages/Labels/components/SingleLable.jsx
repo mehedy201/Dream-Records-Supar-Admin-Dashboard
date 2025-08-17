@@ -15,7 +15,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { GoPencil } from "react-icons/go";
 import Modal from "../../../components/Modal";
 import { AiOutlineDelete } from "react-icons/ai";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Edit } from "lucide-react";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import Dropdown from "../../../components/Dropdown";
 import { useSelector } from "react-redux";
@@ -288,8 +288,8 @@ function SingleLable() {
               >
                 <Dialog.Root>
                   <Dialog.Trigger asChild>
-                    <span>
-                      <AiOutlineDelete /> Update Status
+                    <span style={{color: 'black'}}>
+                      <Edit /> Update Status
                     </span>
                   </Dialog.Trigger>
                   <Dialog.Portal>
@@ -315,7 +315,7 @@ function SingleLable() {
                   </Dialog.Portal>
                 </Dialog.Root>
               </DropdownMenu.Item>
-              <DropdownMenu.Item
+              {/* <DropdownMenu.Item
                 className="dropdown-item"
                 onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
               >
@@ -351,7 +351,7 @@ function SingleLable() {
                     </Dialog.Content>
                   </Dialog.Portal>
                 </Dialog.Root>
-              </DropdownMenu.Item>
+              </DropdownMenu.Item> */}
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         </Flex>
