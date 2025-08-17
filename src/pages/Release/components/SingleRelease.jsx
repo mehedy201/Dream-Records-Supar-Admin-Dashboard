@@ -68,7 +68,7 @@ function SingleRelease({
             {release.type === "Error" && (
               <>
                 {" "}
-                <div className="home-notice">
+                <div className="notice">
                   <FiAlertTriangle />
                   <p>
                     We are upgrading our platform to enhance your experience.

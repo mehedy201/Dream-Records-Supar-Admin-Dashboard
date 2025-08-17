@@ -54,7 +54,7 @@ function SingleLable() {
       .then((res) => {
         if (res.status == 200) {
           setLabel(res.data.data[0]);
-          console.log(res.data.data)
+          console.log(res.data.data);
         }
       });
   }, [id]);
@@ -194,7 +194,7 @@ function SingleLable() {
         {label?.rejectionReasons && label.status === "Rejected" && (
           <>
             {label?.rejectionReasons.map((reason, index) => (
-              <div className="home-notice">
+              <div className="notice">
                 <FiAlertTriangle />
                 <span style={{ marginLeft: "5px" }}>{reason}</span>
               </div>
@@ -203,7 +203,7 @@ function SingleLable() {
         )}
         {label?.actionRequired && label.status === "Rejected" && (
           <>
-            <div className="home-notice">
+            <div className="notice">
               <FiAlertTriangle />
               <span
                 style={{
@@ -222,7 +222,7 @@ function SingleLable() {
         )}
         {lable?.type === "Reject" && (
           <>
-            <div className="home-notice" style={{ fontSize: "12px" }}>
+            <div className="notice" style={{ fontSize: "12px" }}>
               <InfoCircledIcon />
               <p>
                 We are upgrading our platform to enhance your experience. You
@@ -288,7 +288,7 @@ function SingleLable() {
               >
                 <Dialog.Root>
                   <Dialog.Trigger asChild>
-                    <span style={{color: 'black'}}>
+                    <span style={{ color: "black" }}>
                       <Edit /> Update Status
                     </span>
                   </Dialog.Trigger>
@@ -361,7 +361,7 @@ function SingleLable() {
             <h1>{totalCount}</h1>
             <Button
               onClick={() => navigate("/distribution/queue/live/1/10")}
-              style={{cursor: 'pointer'}}
+              style={{ cursor: "pointer" }}
               className="singleArtist-pg-allRelease-btn"
             >
               All Releases &nbsp;&nbsp; <ChevronRight />

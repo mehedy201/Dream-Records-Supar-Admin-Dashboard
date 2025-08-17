@@ -66,18 +66,36 @@ function Home() {
       });
   }, []);
 
+  // Home Page Notice
+  const [homePageNotices, setHomePageNotices] = useState();
+  useEffect(() => {
+    axios
+      .get(
+        "https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/settings/home-page-notice"
+      )
+      .then((res) => {
+        setHomePageNotices(res.data.data);
+      });
+  }, []);
+
   if (loading) return <LoadingScreen />;
 
   return (
     <div className="main-content">
-      <div className="notice">
-        <InfoCircledIcon />
-        <p>
-          We are upgrading our platform to enhance your experience. You may
-          notice new user interfaces appearing periodically. Thank you for your
-          patience as we make these improvements.
-        </p>
-      </div>
+      {homePageNotices &&
+        homePageNotices?.map((notice) => (
+          <div key={notice._id} className="notice">
+            <InfoCircledIcon />
+            <p
+              style={{
+                whiteSpace: "normal",
+                wordBreak: "break-word",
+                overflowWrap: "break-word",
+              }}
+              dangerouslySetInnerHTML={{ __html: notice?.notice }}
+            ></p>
+          </div>
+        ))}
       {/* <section className="hero">
         <div>
           <h1>Hi, Subhamay</h1>
