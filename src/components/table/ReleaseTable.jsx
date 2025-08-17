@@ -134,11 +134,29 @@ const ReleaseTable = ({ columns = [], data }) => {
                     alt=""
                     style={{ borderRadius: "6px" }}
                   />
-                  <p>
-                    {d?.releaseTitle?.length > 22
-                      ? d?.releaseTitle.slice(0, 22) + "..."
-                      : d?.releaseTitle}
-                  </p>
+                  <div>
+                    <p style={{margin: '0px'}}>
+                      {d?.releaseTitle?.length > 22
+                        ? d?.releaseTitle.slice(0, 22) + "..."
+                        : d?.releaseTitle}
+                    </p>
+                    <small style={{color: '#838383'}}>
+                      {
+                        [...new Set(
+                          d?.tracks?.flatMap(track =>
+                            track?.artist?.map(a => a.artistName)
+                          )
+                        )].join(', ')
+                        }
+                        {
+                          [...new Set(
+                            d?.tracks?.flatMap(track =>
+                              track?.primaryArtist?.map(a => a.artistName)
+                            )
+                          )].join(', ')
+                      }
+                    </small>
+                  </div>
                 </Link>
               </td>
               <td>{d?.userName}</td>
