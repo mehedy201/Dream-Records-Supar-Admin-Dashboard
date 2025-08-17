@@ -324,14 +324,14 @@ function SingleTransaction() {
             )}
             {!withdrawData?.bankInfo?.paymentMethod && (
               <>
-                <div className="d-flex">
+                {/* <div className="d-flex">
                   <p>Payment Method:</p>
                   <p>{withdrawData?.bankInfo?.paymentMethod}</p>
                 </div>
                 <div className="d-flex">
                   <p>Account Type:</p>
                   <p>{withdrawData?.bankInfo?.bankAccountType}</p>
-                </div>
+                </div> */}
                 <div className="d-flex">
                   <p>Beneficiary Name:</p>
                   <p>{withdrawData?.bankInfo?.account_holder_name}</p>
@@ -348,7 +348,7 @@ function SingleTransaction() {
                   <p>IFSC:</p>
                   <p>{withdrawData?.bankInfo?.IFSC}</p>
                 </div>
-                <div className="d-flex">
+                {/* <div className="d-flex">
                   <p>Business Entity Type:</p>
                   <p>{withdrawData?.bankInfo?.bankBusinessTypeOption}</p>
                 </div>
@@ -359,7 +359,7 @@ function SingleTransaction() {
                 <div className="d-flex">
                   <p>GST Number:</p>
                   <p>{withdrawData?.bankInfo?.GSTNumber}</p>
-                </div>
+                </div> */}
               </>
             )}
           </div>
