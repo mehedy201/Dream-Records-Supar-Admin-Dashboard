@@ -89,7 +89,7 @@ function SingleRelease() {
   const [territoryTableData, setTerritoryTableData] = useState();
   const [totalSummary, setTotalSummary] = useState();
   const dspAndTerittoriGet = (data) => {
-    // DSP Aggregation
+    // ========== DSP Aggregation ==========
     const dspMap = {};
     data?.forEach((entry) => {
       entry.byDSP.forEach((dsp) => {
@@ -101,13 +101,30 @@ function SingleRelease() {
       });
     });
 
-    const byDsp = Object.entries(dspMap).map(([dsp, { revenue, streams }]) => ({
+    let byDsp = Object.entries(dspMap).map(([dsp, { revenue, streams }]) => ({
       dsp,
       revenue: Number(revenue.toFixed(2)),
       streams,
     }));
 
-    // =============== Territory Aggregation ==============
+    // sort dsp data (highest first)
+    byDsp.sort(
+      (a, b) => b.streams + b.revenue - (a.streams + a.revenue)
+    );
+
+    // add total row for dsp
+    const totalDsp = byDsp.reduce(
+      (acc, item) => {
+        acc.streams += item.streams;
+        acc.revenue += item.revenue;
+        return acc;
+      },
+      { dsp: "TOTAL", streams: 0, revenue: 0 }
+    );
+    totalDsp.revenue = Number(totalDsp.revenue.toFixed(2));
+    byDsp.push(totalDsp);
+
+    // ========== Territory Aggregation ==========
     const territoryMap = {};
     data?.forEach((entry) => {
       entry.byTerritory.forEach((t) => {
@@ -119,7 +136,7 @@ function SingleRelease() {
       });
     });
 
-    const byTerritory = Object.entries(territoryMap).map(
+    let byTerritory = Object.entries(territoryMap).map(
       ([territory, { revenue, streams }]) => ({
         territory,
         revenue: Number(revenue.toFixed(2)),
@@ -127,46 +144,61 @@ function SingleRelease() {
       })
     );
 
-    // ================= Total Summary =================
-    const totalSummaryData = data?.reduce(
-      (acc, entry) => {
-        acc.streams += entry.summary?.streams || 0;
-        acc.revenue += entry.summary?.revenue || 0;
+    // sort territory data (highest first)
+    byTerritory.sort(
+      (a, b) => b.streams + b.revenue - (a.streams + a.revenue)
+    );
+
+    // add total row for territory
+    const totalTerritory = byTerritory.reduce(
+      (acc, item) => {
+        acc.streams += item.streams;
+        acc.revenue += item.revenue;
         return acc;
       },
-      { total: "Total", streams: 0, revenue: 0 }
+      { territory: "TOTAL", streams: 0, revenue: 0 }
     );
+    totalTerritory.revenue = Number(totalTerritory.revenue.toFixed(2));
+    byTerritory.push(totalTerritory);
+
+    // ========== Global Total Summary ==========
+    const totalSummaryData = data?.reduce(
+      (acc, entry) => {
+        acc.streams += entry?.totalStreams || 0;
+        acc.revenue += entry?.totalRevenue || 0;
+        return acc;
+      },
+      { total: "TOTAL", streams: 0, revenue: 0 }
+    );
+
     totalSummaryData.revenue = Number(totalSummaryData.revenue.toFixed(2));
 
+    // ========== Save State ==========
     setTableData(byDsp);
     setDspTableData(byDsp);
     setTerritoryTableData(byTerritory);
     setTotalSummary([totalSummaryData]);
-  };
+};
+
 
   // Getting Analytics Chart and Table Data From API ________
   const [chartDataStreams, setChartDataStreams] = useState();
   const [chartDataRevenue, setChartDataRevenue] = useState();
-  const [totalStreams, setTotalStreams] = useState();
-  const [totalRevenue, setTotalRevenue] = useState();
   const [years, setYears] = useState(Math.max(...yearsList));
   const [dataNotFound, setDataNotFound] = useState(false);
   useEffect(() => {
     setDataNotFound(false);
     if (data?.UPC) {
-      console.log("yes go");
+      // console.log("yes go");
       axios
         .get(
           `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/analytics-and-balance/upc-analytics?UPC=${data?.UPC}&years=${years}`
         )
         .then((res) => {
           if (res.status === 200) {
-            console.log(res.data.data);
+            // console.log(res.data.data);
             if (isEmptyArray(res?.data?.data)) setDataNotFound(true);
-            setTotalStreams(res?.data?.totalStreams);
-            setTotalRevenue(res?.data?.totalRevenue);
             dspAndTerittoriGet(res?.data?.data);
-
             const rawData = res?.data?.data;
             const streamsData = rawData
               ?.map((item) => ({
