@@ -110,6 +110,7 @@ function ProfileLinking({
           <thead>
             <tr>
               <th>Release</th>
+              <th>Type</th>
               <th>Artist's Profile Link</th>
               <th>Created At</th>
               <th>Status</th>
@@ -145,6 +146,7 @@ function ProfileLinking({
                         </div>
                       }
                     </td>
+                    <td>{data?.type ? data?.type : 'Instagram'}</td>
                     <td><a href={data?.artistProfileLink?.startsWith("http") ? data?.artistProfileLink : `https://${data?.artistProfileLink}`}target="_blank" rel="noopener noreferrer">{data?.artistProfileLink?.length > 50 ? `${data?.artistProfileLink.slice(0, 50)}...` : data?.artistProfileLink}</a></td>
                     <td>{data?.isoDate ? `${localDate(data?.isoDate)} ${localTime(data?.isoDate)}` : '--'}</td>
                     <td><span className={`status ${data?.status?.toLowerCase()}`}>{data?.status}</span></td>
