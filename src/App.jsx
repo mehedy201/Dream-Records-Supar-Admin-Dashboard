@@ -128,7 +128,7 @@ function App() {
             element={<SingleArtist releaseItems={releaseItems} />}
           />
           <Route
-            path="/edit-artist"
+            path="/edit-artist/:id"
             element={<EditSingleArtist artistSocialItems={artistSocialItems} />}
           />
           <Route

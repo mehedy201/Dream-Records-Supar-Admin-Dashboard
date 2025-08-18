@@ -393,18 +393,8 @@ const SingleArtist = () => {
                   side="bottom"
                   className="dropdown-content singleArtist-dropdown-content"
                 >
-                  <DropdownMenu.Item className="dropdown-item">
-                    <Link
-                      to={`/edit-artist/${id}`}
-                      // state={{ artistSocialItems }}
-                      style={{
-                        cursor: "pointer",
-                        color: "#202020",
-                        textDecoration: "none",
-                      }}
-                    >
-                      <GoPencil /> Edit Artist
-                    </Link>
+                  <DropdownMenu.Item style={{cursor: 'pointer'}} onClick={() => navigate(`/edit-artist/${id}`)} className="dropdown-item">
+                    <GoPencil /> Edit Artist
                   </DropdownMenu.Item>
                   <hr />
 

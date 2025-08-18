@@ -86,7 +86,7 @@ const ArtistTable = ({columns, data}) => {
                                 </div>
                             </DropdownMenu.Item>
                             <hr />
-                            <DropdownMenu.Item className="dropdown-item">
+                            <DropdownMenu.Item style={{cursor: 'pointer'}} onClick={() => navigate(`/edit-artist/${d?._id}`)} className="dropdown-item">
                                 <div>
                                 <GoPencil /> <span>Edit Artist</span>
                                 </div>
