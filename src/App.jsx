@@ -120,11 +120,11 @@ function App() {
             }
           />
           <Route
-            path="/artists"
+            path="/artists/:pageNumber/:perPageItem"
             element={<Artists artistTable={artistTable} />}
           />
           <Route
-            path="/artists/:id/:pageNumber/:perPageItem"
+            path="/artist-details/:id/:pageNumber/:perPageItem/:status"
             element={<SingleArtist releaseItems={releaseItems} />}
           />
           <Route

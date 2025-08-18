@@ -9,15 +9,18 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@radix-ui/themes";
 import Pagination from "../../components/Pagination";
 import { RiDeleteBin6Line, RiEyeLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import SelectDropdown from "../../components/SelectDropdown";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
+import { useSelector } from "react-redux";
+import useQueryParams from "../../hooks/useQueryParams";
+import axios from "axios";
+import ArtistTable from "../../components/table/ArtistTable";
 const artistColumns = [
   { label: "Artist Name", key: "artistName" },
   { label: "User Name", key: "userName" },
   { label: "User Email", key: "email" },
   { label: "Created At", key: "date" },
-  { label: "Release Count", key: "count" },
   { label: "Action", key: "action" },
 ];
 const renderArtistCell = (key, row) => {
@@ -137,17 +140,90 @@ function Artists({ artistTable }) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+
+
+  const { yearsList } = useSelector((state) => state.yearsAndStatus);
+  // Main Params ________________________________
+  const { pageNumber, perPageItem } = useParams();
+  // Filter Query Paramitars_____________________
+  const { navigateWithParams } = useQueryParams();
+  const [filterParams] = useSearchParams();
+  const search = filterParams.get("search") || "";
+  const years = filterParams.get("years") || "";
+
+  const filterByYear = (yearValue) => {
+    navigateWithParams("/artists/1/10", { search: search, years: yearValue });
+  };
+
   const dropdownItem = (
     <SelectDropdown
-      options={["Account", "Profile", "Settings"]}
-      placeholder="All Time"
+      options={yearsList}
+      placeholder={`${years ? years : "All Time"}`}
+      filterByYearAndStatus={filterByYear}
     />
   );
+
+  // Fatch Artist Data _______________________________________________
+  const [currentPage, setCurrentPage] = useState(parseInt(pageNumber));
+  const [artistData, setArtistData] = useState();
+  const [totalCount, setTotalCount] = useState();
+  const [filteredCount, setFilteredCount] = useState();
+  const [totalPages, setTotalPages] = useState();
+  useEffect(() => {
+     axios
+        .get(
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/artist?page=${pageNumber}&limit=${perPageItem}&search=${search}&years=${years}`
+        )
+        .then((res) => {
+          if (res.status == 200) {
+            console.log(res.data.data)
+            setArtistData(res.data.data);
+            setTotalCount(res.data.totalCount);
+            setFilteredCount(res.data.filteredCount);
+            setTotalPages(res.data.totalPages);
+          }
+        })
+        .catch((er) => console.log(er));
+  }, [ pageNumber, perPageItem, search, years]);
+
+  // Handle Page Change ________________________________
+  const handlePageChange = (page) => {
+    navigateWithParams(`/artists/${page}/${perPageItem}`, {
+      search: search,
+      years: years,
+    });
+  };
+  // Search _____________________________________________
+  const [searchText, setSearchText] = useState();
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      navigateWithParams(`/artists/1/${perPageItem}`, {
+        search: searchText,
+        years: years,
+      });
+    }
+  };
+
+  // Handle Per Page Item _______________________________
+  const handlePerPageItem = (perPageItem) => {
+    navigateWithParams(`/artists/${pageNumber}/${perPageItem}`, {
+      search: search,
+      years: years,
+    });
+  };
+
+
   return (
     <div className="main-content">
       <h2 style={{ fontWeight: "500", fontSize: "24px" }}>Artists</h2>
       <div className="search-setion">
-        <input type="text" placeholder="Search..." style={{ width: "87%" }} />
+        <input 
+          onKeyDown={handleKeyPress}
+          onChange={(e) => setSearchText(e.target.value)}
+          type="text" 
+          placeholder="Search..." 
+          style={{ width: "87%" }} />
         {/* First Dropdown */}
         {isMobile ? (
           <DropdownMenu.Root>
@@ -178,12 +254,21 @@ function Artists({ artistTable }) {
           dropdownItem
         )}
       </div>
-      <Table
+      {/* <Table
         data={artistTable}
         columns={artistColumns}
         renderCell={renderArtistCell}
+      /> */}
+      <ArtistTable columns={artistColumns} data={artistData} />
+      <Pagination
+        totalDataCount={filteredCount}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        perPageItem={perPageItem}
+        setCurrentPage={setCurrentPage}
+        handlePageChange={handlePageChange}
+        customFunDropDown={handlePerPageItem}
       />
-      <Pagination />
     </div>
   );
 }
