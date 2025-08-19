@@ -109,7 +109,7 @@ const LabelsTable = ({ data }) => {
                       </div>
                     </DropdownMenu.Item>
                     <hr style={{ margin: 0 }} />
-                    <DropdownMenu.Item
+                    {/* <DropdownMenu.Item
                       className="dropdown-item"
                       onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
                     >
@@ -145,7 +145,6 @@ const LabelsTable = ({ data }) => {
                                   Yes, Delete
                                 </Button>
                               </div>
-                              {/* Hidden Dialog.Close for programmatic close */}
                               <Dialog.Close asChild>
                                 <button
                                   ref={closeRef}
@@ -156,7 +155,7 @@ const LabelsTable = ({ data }) => {
                           </Dialog.Content>
                         </Dialog.Portal>
                       </Dialog.Root>
-                    </DropdownMenu.Item>
+                    </DropdownMenu.Item> */}
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>
               </td>
