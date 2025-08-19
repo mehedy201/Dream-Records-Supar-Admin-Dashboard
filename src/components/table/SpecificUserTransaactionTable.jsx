@@ -2,6 +2,10 @@ import PropTypes from "prop-types";
 import upImg from "../../assets/icons/Received.png";
 import downImg from "../../assets/icons/Withdrawn.png";
 import localDate from "../../hooks/localDate";
+import { IoEyeOutline } from "react-icons/io5";
+import { Dialog } from "radix-ui";
+import Modal from "../Modal";
+
 
 const SpecificUserTransaactionTable = ({ columns, data }) => {
   const handleReportDownloadExcel = async (masterUserId, date) => {
@@ -98,6 +102,30 @@ const SpecificUserTransaactionTable = ({ columns, data }) => {
                   : d?.paymentReportDate}
               </td>
               <td>
+                {
+                  d?.status == 'Rejected' &&
+                  <Dialog.Root>
+                    <Dialog.Trigger asChild>
+                        <IoEyeOutline style={{ width: "24px", height: "24px", cursor: 'pointer' }} />
+                    </Dialog.Trigger>
+                    <Dialog.Portal>
+                        <Dialog.Overlay className="dialog-overlay" />
+                        <Dialog.Content className="dialog-content">
+                        <Modal title="Rejected Reasons">
+                            <p className="modal-description">
+                              <span
+                                style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word', color: "#ea3958"}}
+                                dangerouslySetInnerHTML={{
+                                  __html: d?.rejectResoan,
+                                }}
+                              ></span>
+                            </p>
+                            <br />
+                        </Modal>
+                        </Dialog.Content>
+                    </Dialog.Portal>
+                  </Dialog.Root>
+                }
                 {(d?.type === "Withdraw" && d?.status === 'Approved') && (
                   <button
                     style={{ cursor: "pointer" }}
