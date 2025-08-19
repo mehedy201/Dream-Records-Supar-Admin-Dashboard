@@ -349,7 +349,7 @@ function SingleUser() {
     const payload = {email: data.email, password: data.password}
     axios
       .post(
-        `http://localhost:5000/common/api/v1/authentication/magic-login`,
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/magic-login`,
         payload
       )
       .then((res) => {
