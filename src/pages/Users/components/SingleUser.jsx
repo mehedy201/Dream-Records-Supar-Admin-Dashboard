@@ -345,6 +345,29 @@ function SingleUser() {
   }
 
 
+  const openAccountNewTab = (data) => {
+    const payload = {email: data.email, password: data.password}
+    axios
+      .post(
+        `http://localhost:5000/common/api/v1/authentication/magic-login`,
+        payload
+      )
+      .then((res) => {
+        if (res.data.status === 200) {
+          const token = res.data.token
+          toast.success(res.data.message);
+          window.open(
+            `https://app.dreamrecords.in/login?token=${token}`,
+            "_blank"
+          );
+
+        } else {
+          toast.success(res.data.message);
+        }
+      });
+  }
+
+
 
 
 
@@ -413,6 +436,10 @@ function SingleUser() {
                 </Link>
               </DropdownMenu.Item>
               <hr />
+              <DropdownMenu.Item onClick={() => openAccountNewTab(userData)} className="dropdown-item">
+                  <GoLinkExternal />
+                  Open Account
+              </DropdownMenu.Item>
 
               {user?.status === "SUSPENDED" ? (
                 <DropdownMenu.Item
@@ -424,19 +451,6 @@ function SingleUser() {
                 </DropdownMenu.Item>
               ) : (
                 <>
-                  <DropdownMenu.Item className="dropdown-item">
-                    <Link
-                      to="/edit-lable"
-                      style={{
-                        cursor: "pointer",
-                        color: "#202020",
-                        textDecoration: "none",
-                      }}
-                    >
-                      <GoLinkExternal />
-                      Open Account
-                    </Link>
-                  </DropdownMenu.Item>
                   <hr />
 
                   {userData?.userLocked === true && (
