@@ -104,6 +104,7 @@ function Whitelist({
           <thead>
             <tr>
               <th>Release</th>
+              <th>Type</th>
               <th>Whitelist Link</th>
               <th>Created At</th>
               <th>Status</th>
@@ -139,6 +140,7 @@ function Whitelist({
                         </div>
                       }
                     </td>
+                    <td>{data?.type || 'Facebook'}</td>
                     <td><a href={data?.whiteListLink?.startsWith("http") ? data?.whiteListLink : `https://${data?.whiteListLink}`}target="_blank" rel="noopener noreferrer">{data?.whiteListLink?.length > 50 ? `${data?.whiteListLink.slice(0, 50)}...` : data?.whiteListLink}</a></td>
                     <td>{data?.isoDate ? `${localDate(data?.isoDate)} ${localTime(data?.isoDate)}` : '--'}</td>
                     <td><span className={`status ${data?.status?.toLowerCase()}`}>{data?.status}</span></td>
@@ -169,6 +171,10 @@ function Whitelist({
                                 <small>UPC: {data?.release?.UPC}</small>
                               </div>
                           }
+                          <div style={{gap: '10px'}} className="d-flex">
+                            <p>Type: </p>
+                            <p>{data?.type || 'Facebook'}</p>
+                          </div>
                           <div style={{gap: '10px'}} className="d-flex">
                             <p>Whitelist Link</p>
                             <p><a href={data?.whiteListLink?.startsWith("http") ? data?.whiteListLink : `https://${data?.whiteListLink}`}target="_blank" rel="noopener noreferrer">{data?.whiteListLink?.length > 50 ? `${data?.whiteListLink.slice(0, 50)}...` : data?.whiteListLink}</a></p>
