@@ -220,19 +220,6 @@ function SingleLable() {
             <br />
           </>
         )}
-        {lable?.type === "Reject" && (
-          <>
-            <div className="notice" style={{ fontSize: "12px" }}>
-              <InfoCircledIcon />
-              <p>
-                We are upgrading our platform to enhance your experience. You
-                may notice new user interfaces appearing periodically. Thank you
-                for your patience as we make these improvements.
-              </p>
-            </div>
-            <br />
-          </>
-        )}
         <Flex className="lable-img-row">
           <div>
             {" "}
@@ -359,13 +346,13 @@ function SingleLable() {
           <div className="singleArtist-info" style={{ marginBottom: 0 }}>
             <h4>Total Releases</h4>
             <h1>{totalCount}</h1>
-            <Button
+            {/* <Button
               onClick={() => navigate("/distribution/queue/live/1/10")}
               style={{ cursor: "pointer" }}
               className="singleArtist-pg-allRelease-btn"
             >
               All Releases &nbsp;&nbsp; <ChevronRight />
-            </Button>
+            </Button> */}
           </div>
           <div className="singleArtist-social-div" style={{ marginBottom: 0 }}>
             <h4>label Profiles</h4>
