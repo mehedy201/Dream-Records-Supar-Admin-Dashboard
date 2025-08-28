@@ -15,6 +15,8 @@ import helpIcon from '../assets/icons/Help.png'
 import profileIcon from '../assets/icons/Profile.png'
 import settingsIcon from '../assets/icons/Settings.png'
 
+import powerdByImg from '../assets/powerd-by-believe.png'
+
 
 const menuItems = [
   { name: "Home", path: "/", icon: homeIcon },
@@ -71,7 +73,7 @@ const Sidebar = () => {
       <br />
       <div className="sidebar-bottomTxt-div">
         <p>Powered by</p>
-        <img src="src/assets/believe.png" alt="" />
+        <img style={{width: '100px', height: 'auto'}} src={powerdByImg} alt="" />
       </div>
     </aside>
   );
