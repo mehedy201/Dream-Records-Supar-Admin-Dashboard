@@ -686,10 +686,10 @@ function SingleUser() {
               <p>Email</p>
               <p className="profile-value-text">{userData?.email}</p>
             </div>
-            <div style={{margin: '10px 0px'}} className="d-flex">
+            {/* <div style={{margin: '10px 0px'}} className="d-flex">
               <p>Password</p>
               <p className="profile-value-text">*************</p>
-            </div>
+            </div> */}
           </div>
           <div>
             <Dialog.Root>
@@ -722,16 +722,15 @@ function SingleUser() {
                   </Dialog.Close>
               </Modal>
             </Dialog.Root>
-            <Dialog.Root>
+
+            
+            {/* <Dialog.Root>
               <Dialog.Trigger className="profile-pass-btn">
                 Change Password
               </Dialog.Trigger>
               <Modal title="Change Password">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="prodile-modal">
-                      {/* <label>Enter current Password</label>
-                      <input type="password" placeholder="************" {...register('currentPass', {required: true})}/>
-                      {errors.currentPass && <p>Current Password Required</p>} */}
                       <label>Enter New Password</label>
                       <input type="password" placeholder="************" {...register('pass1', {required: true})}/>
                       {errors.pass1 && <p>Password Required</p>}
@@ -749,7 +748,6 @@ function SingleUser() {
                     Change Password
                   </button>
           
-                  {/* Hidden Dialog.Close for programmatic close */}
                   <Dialog.Close asChild>
                     <button
                       ref={passwordCloseRef}
@@ -758,7 +756,9 @@ function SingleUser() {
                   </Dialog.Close>
                 </form>
               </Modal>
-            </Dialog.Root>
+            </Dialog.Root> */}
+
+
           </div>
         </div>
 
