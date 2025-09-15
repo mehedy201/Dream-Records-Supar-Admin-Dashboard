@@ -258,8 +258,6 @@ function SingleTransaction() {
                                 Reject
                               </button>
                             </form>
-
-                            <textarea name="" id=""></textarea>
                           </Modal>
                         </Dialog.Content>
                       </Dialog.Portal>
@@ -363,7 +361,7 @@ function SingleTransaction() {
               </>
             )}
           </div>
-          <div className="singleTransaction-invoice-div">
+          {/* <div className="singleTransaction-invoice-div">
             <h6>Add Invoice</h6>
             {withdrawData?.invoice ? (
               <div>
@@ -408,7 +406,7 @@ function SingleTransaction() {
               />
             )}
             {invoiceUploadErr && <p>{invoiceUploadErr}</p>}
-          </div>
+          </div> */}
         </div>
       </div>
 

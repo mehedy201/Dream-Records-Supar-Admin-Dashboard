@@ -143,7 +143,7 @@ function SingleUser() {
         .then((res) => {
           if (res.status === 200) {
             setItemData(res.data.data);
-            // console.log(res.data.data);
+            console.log(res.data.data);
             if (isEmptyArray(res.data.data)) setNotFound(true);
             setFilteredCount(res.data.filteredCount);
             setTotalPages(res.data.totalPages);

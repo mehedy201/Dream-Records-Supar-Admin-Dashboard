@@ -19,6 +19,11 @@ import localDate from "../../../hooks/localDate";
 import localTime from "../../../hooks/localTime";
 import threedotPng from '../../../assets/icons/vertical-threeDots.png'
 import artistDemoImg from '../../../assets/artists/artist4.png'
+import instagramImg from '../../../assets/social/instagram.png'
+import spotifyImg from '../../../assets/social/spotify-icon.png'
+import facebookImg from '../../../assets/social/facebook.png'
+import youtubeImg from '../../../assets/social/youtube-icon.png'
+import appleImg from '../../../assets/social/apple-music.png'
 
 const SingleArtist = () => {
   const navigate = useNavigate();
@@ -268,7 +273,7 @@ const SingleArtist = () => {
                     <a
                       className="social-div"
                       target="_blank"
-                      href={`https://music.apple.com/profile/${artist.appleId}`}
+                      href={`https://music.apple.com/profile/${artist?.appleId}`}
                     >
                       <img src={appleImg} alt={appleImg} />
                     </a>
@@ -277,7 +282,7 @@ const SingleArtist = () => {
                     <a
                       className="social-div"
                       target="_blank"
-                      href={`https://open.spotify.com/user/${artist.spotifyId}`}
+                      href={`https://open.spotify.com/user/${artist?.spotifyId}`}
                     >
                       <img src={spotifyImg} alt={spotifyImg} />
                     </a>
@@ -286,7 +291,7 @@ const SingleArtist = () => {
                     <a
                       className="social-div"
                       target="_blank"
-                      href={`https://www.instagram.com/${artist.instagramId}`}
+                      href={`https://www.instagram.com/${artist?.instagramId}`}
                     >
                       <img src={instagramImg} alt={instagramImg} />
                     </a>

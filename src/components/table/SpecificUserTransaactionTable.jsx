@@ -5,11 +5,14 @@ import localDate from "../../hooks/localDate";
 import { IoEyeOutline } from "react-icons/io5";
 import { Dialog } from "radix-ui";
 import Modal from "../Modal";
-
+import { useState } from "react";
+import FormSubmitLoading from "../FormSubmitLoading";
 
 const SpecificUserTransaactionTable = ({ columns, data }) => {
-  const handleReportDownloadExcel = async (masterUserId, date) => {
+  const [loading, setLoading] = useState(null)
+  const handleReportDownloadExcel = async (masterUserId, date, id) => {
     try {
+      setLoading(id)
       const query = new URLSearchParams({ masterUserId, date }).toString();
       const response = await fetch(
         `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/analytics-and-balance/download?${query}`
@@ -29,9 +32,11 @@ const SpecificUserTransaactionTable = ({ columns, data }) => {
       link.click();
 
       URL.revokeObjectURL(downloadUrl);
+      setLoading(null)
     } catch (error) {
       console.error("Download error:", error.message);
       alert("Could not download file");
+      setLoading(null)
     }
   };
 
@@ -126,15 +131,15 @@ const SpecificUserTransaactionTable = ({ columns, data }) => {
                     </Dialog.Portal>
                   </Dialog.Root>
                 }
-                {(d?.type === "Withdraw" && d?.status === 'Approved') && (
+                {/* {(d?.type === "Withdraw" && d?.status === 'Approved') && (
                   <button
                     style={{ cursor: "pointer" }}
                     className="non-transjection-btn"
                   >
                     Invoice
                   </button>
-                )}
-                {
+                )} */}
+                {/* {
                   d?.type === 'Payment' && 
                   <button
                     style={{ cursor: "pointer" }}
@@ -148,7 +153,29 @@ const SpecificUserTransaactionTable = ({ columns, data }) => {
                   >
                     Download Reports
                   </button>
-                }
+                } */}
+
+                {d?.type === "Payment" && (
+                  <>
+                    {loading === d._id ? (
+                      <FormSubmitLoading />
+                    ) : (
+                      <button
+                        style={{ cursor: "pointer" }}
+                        className="non-transjection-btn"
+                        onClick={() =>
+                          handleReportDownloadExcel(
+                            d?.masterUserId,
+                            d?.paymentReportDate,
+                            d._id
+                          )
+                        }
+                      >
+                        Download Reports
+                      </button>
+                    )}
+                  </>
+                )}
                 
               </td>
             </tr>
