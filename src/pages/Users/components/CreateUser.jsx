@@ -3,30 +3,23 @@ import { useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import UserPersonalInformationForm from "./UserPersonalInformationForm";
 import UserAddressInformationForm from "./UserAddressInformationForm";
-import UserLabelForm from "./UserLabelForm";
-import ImageUpload from "../../../components/ImageUpload";
+// import UserLabelForm from "./UserLabelForm";
+// import ImageUpload from "../../../components/ImageUpload";
+import SetUserPassword from "./SetUserPassword";
+import { useNavigate } from "react-router-dom";
 const steps = [
   "Personal Details",
   "Address Information",
-  "Label Verification",
-  "Document Upload",
+  // "Label Verification",
+  "Set Password",
+  // "Document Upload",
 ];
 function CreateUser() {
   const [step, setStep] = useState(0);
-  const handleNext = () => {
-    if (step < steps.length - 1) {
-      setStep(step + 1);
-    }
-  };
-
-  const handlePrev = () => {
-    if (step > 0) {
-      setStep(step - 1);
-    }
-  };
+  const navigate = useNavigate();
   return (
     <div className="main-content createUser-main-content">
-      {step === 4 ? (
+      {step === 3 ? (
         <div className="createUser-track-create-successful">
           <img src="src/assets/icons/circle-tick.png" alt="" />
           <h5>User Created Successfully</h5>
@@ -36,10 +29,10 @@ function CreateUser() {
           </p>
           <br />
           <div className="d-flex">
-            <button className="createUser-backDash-btn">
+            <button onClick={() => navigate('/')} className="createUser-backDash-btn">
               Back to Dashboard
             </button>
-            <button className="theme-btn" style={{ width: "100%" }}>
+            <button onClick={() => navigate('/users/Active/1/10')} className="theme-btn" style={{ width: "100%" }}>
               View User
             </button>
           </div>
@@ -67,8 +60,8 @@ function CreateUser() {
 
       {step === 0 && <UserPersonalInformationForm step={step} setStep={setStep}/>}
       {step === 1 && <UserAddressInformationForm step={step} setStep={setStep}/>}
-      {step === 2 && <UserLabelForm step={step} setStep={setStep}/>}
-      {step === 3 && (
+      {step === 2 && <SetUserPassword step={step} setStep={setStep}/>}
+      {/* {step === 3 && (
         <>
           {" "}
           <h4 style={{ fontSize: "24px", fontWeight: 500 }}>
@@ -98,33 +91,6 @@ function CreateUser() {
             </div>
           </div>
         </>
-      )}
-      {/* {step === 4 || (
-        <div className="createUser-btns">
-          {step > 0 && (
-            <button
-              className="theme-btn2"
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-              onClick={handlePrev}
-            >
-              <ArrowLeft />
-              &nbsp; Back
-            </button>
-          )}
-
-          {step < steps.length - 1 ? (
-            <button className="theme-btn" onClick={handleNext}>
-              Next &nbsp; <ArrowRight />
-            </button>
-          ) : (
-            <button className="theme-btn" onClick={() => setStep(4)}>
-              Submit &nbsp; <ArrowRight />
-            </button>
-          )}
-        </div>
       )} */}
     </div>
   );

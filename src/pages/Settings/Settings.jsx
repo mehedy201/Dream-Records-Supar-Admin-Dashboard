@@ -95,7 +95,7 @@ function Settings() {
 
 
   const deleteSubAdmin = (data) => {
-    axios.delete(`http://localhost:5000/admin/api/v1/users/${data._id}?uid=${data.uid}`)
+    axios.delete(`http://localhost:5000/admin/api/v1/users/delete/${data._id}?uid=${data.uid}`)
     .then(res => {
       if(res.data.status === 200){
         window.location.reload();

@@ -10,7 +10,6 @@ import { CountrySelect, StateSelect } from "react-country-state-city";
 import toast from "react-hot-toast";
 import FormSubmitLoading from "../../../components/FormSubmitLoading";
 function EditUser() {
-
   const { id } = useParams();
 
   // Country State Select____________________________________________________
@@ -32,78 +31,86 @@ function EditUser() {
   } = useForm();
 
   const onSubmit = (data) => {
-    setFormLoading(true)
-    if(!phone){
-      setPhoneErr('Phone Required')
+    setFormLoading(true);
+    if (!phone) {
+      setPhoneErr("Phone Required");
       return;
     }
-    if(!country){
-      setCountryError('Country Required')
+    if (!country) {
+      setCountryError("Country Required");
       return;
     }
-    if(!state){
-      setStateError('State Required')
+    if (!state) {
+      setStateError("State Required");
       return;
     }
-    const payload = {...data, ...uploadedImage, phone, country, state, photoURL: uploadedImage?.imgUrl ? uploadedImage?.imgUrl : uploadedImage?.photoURL}
-    axios.patch(`https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/users/${id}`, payload)
-    .then(res => {
-      if(res.data.status === 200){
-        toast.success(res.data.message)
-        setFormLoading(false)
-      }else{
-        toast.error(res.data.message)
-        setFormLoading(false)
-      }
-    })
+    const payload = {
+      ...data,
+      ...uploadedImage,
+      phone,
+      country,
+      state,
+      photoURL: uploadedImage?.imgUrl
+        ? uploadedImage?.imgUrl
+        : uploadedImage?.photoURL,
+    };
+    axios
+      .patch(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/users/${id}`,
+        payload
+      )
+      .then((res) => {
+        if (res.data.status === 200) {
+          toast.success(res.data.message);
+          setFormLoading(false);
+        } else {
+          toast.error(res.data.message);
+          setFormLoading(false);
+        }
+      });
     // console.log(payload)
   };
 
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(false);
   const [imgLink, setImgLink] = useState();
-  
+
   let photoURL;
   let key;
   useEffect(() => {
     setLoading(true);
     axios
-      .get(
-        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/users/${id}`
-      )
+      .get(`http://localhost:5000/admin/api/v1/users/single-user/${id}`)
       .then((res) => {
         if (res.status === 200) {
-          const userDataForForm = res?.data?.data
+          const userDataForForm = res?.data?.data;
           setUserData(res.data.data);
-          setCountry(res?.data?.data?.country)
-          setState(res?.data?.data?.state)
-          setCountryid(res?.data?.data?.country?.countryId)
-          setPhone(res?.data?.data?.phone)
+          setCountry(res?.data?.data?.country);
+          setState(res?.data?.data?.state);
+          setCountryid(res?.data?.data?.country?.countryId);
+          setPhone(res?.data?.data?.phone);
           setImgLink(res?.data?.data?.photoURL);
           photoURL = res?.data?.data?.photoURL;
           key = res?.data?.data?.key;
           setUploadedImage({ photoURL, key });
-          delete userDataForForm?.country
-          delete userDataForForm?.state
-          delete userDataForForm?.firebaseUID
-          delete userDataForForm?.userName
-          delete userDataForForm?.label
-          delete userDataForForm?.roll
-          delete userDataForForm?.lastLogin
-          delete userDataForForm?.openingDateISO
-          delete userDataForForm?.password
-          delete userDataForForm?.balanceBackup
-          delete userDataForForm?.balance
-          reset(userDataForForm)
+          delete userDataForForm?.country;
+          delete userDataForForm?.state;
+          delete userDataForForm?.firebaseUID;
+          delete userDataForForm?.userName;
+          delete userDataForForm?.label;
+          delete userDataForForm?.roll;
+          delete userDataForForm?.lastLogin;
+          delete userDataForForm?.openingDateISO;
+          delete userDataForForm?.password;
+          delete userDataForForm?.balanceBackup;
+          delete userDataForForm?.balance;
+          reset(userDataForForm);
           setLoading(false);
         }
       });
   }, [id]);
 
-
-  
-
-  if(loading) return <LoadingScreen/>
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="main-content editUser-content">
@@ -130,32 +137,34 @@ function EditUser() {
                 {...register("first_name", { required: true })}
                 placeholder="First Name"
               />
-              {errors.first_name && <span style={{color: 'red'}}>First Name Required</span>}
+              {errors.first_name && (
+                <span style={{ color: "red" }}>First Name Required</span>
+              )}
             </div>
 
             <div>
               <label htmlFor="">Last Name</label>
               <input
-                {...register("last_name", { required: true})}
+                {...register("last_name", { required: true })}
                 placeholder="Last Name"
               />
-              {errors.last_name && <span style={{color: 'red'}}>Last Name Required</span>}
+              {errors.last_name && (
+                <span style={{ color: "red" }}>Last Name Required</span>
+              )}
             </div>
             <div>
               <label htmlFor="">Phone Number</label>
               <PhoneInput
-              value={phone}
-              onChange={(phone) => {
-                setPhone(phone);
-                setPhoneErr("");
-              }}
-              inputClass="phone-input-field"
-              buttonClass="phone-dropdown"
-              className="signUp-phone-input"
-            />
-            {
-              phoneErr && <p style={{color: 'red'}}>{phoneErr}</p>
-            }
+                value={phone}
+                onChange={(phone) => {
+                  setPhone(phone);
+                  setPhoneErr("");
+                }}
+                inputClass="phone-input-field"
+                buttonClass="phone-dropdown"
+                className="signUp-phone-input"
+              />
+              {phoneErr && <p style={{ color: "red" }}>{phoneErr}</p>}
             </div>
           </div>
           <br />
@@ -166,13 +175,17 @@ function EditUser() {
             {...register("addressLine1", { required: true })}
             placeholder="Enter address line 1"
           />
-          {errors.addressLine1 && <span style={{color: 'red'}}>Address Line 1 Required</span>}
+          {errors.addressLine1 && (
+            <span style={{ color: "red" }}>Address Line 1 Required</span>
+          )}
           <label htmlFor="">Address Line 2</label>
           <input
             {...register("addressLine2")}
             placeholder="Enter address line 2"
           />
-          {errors.addressLine2 && <span style={{color: 'red'}}>Address Line 2 Required</span>}
+          {errors.addressLine2 && (
+            <span style={{ color: "red" }}>Address Line 2 Required</span>
+          )}
           <div className="editUser-from-grid">
             <div>
               <label htmlFor="">Select Country</label>
@@ -187,46 +200,41 @@ function EditUser() {
                 defaultValue={country}
                 placeHolder="Select Country"
               />
-              {countryError && (
-                <p style={{color: 'red'}}>{countryError}</p>
-              )}
+              {countryError && <p style={{ color: "red" }}>{countryError}</p>}
             </div>
             <div>
               <label htmlFor="">Select State</label>
               <StateSelect
-                  countryid={countryid}
-                  onChange={(e) => {
-                    setState(e);
-                  }}
-                  defaultValue={state}
-                  placeHolder="Select State"
-                />
-                {stateError && (
-                  <p style={{color: 'red'}}>{stateError}</p>
-                )}
+                countryid={countryid}
+                onChange={(e) => {
+                  setState(e);
+                }}
+                defaultValue={state}
+                placeHolder="Select State"
+              />
+              {stateError && <p style={{ color: "red" }}>{stateError}</p>}
             </div>
             <div>
               <label htmlFor="">City</label>
               <input
-                {...register("city", {required: true})}
+                {...register("city", { required: true })}
                 placeholder="Dinhata"
               />
-              {errors.city && <span style={{color: 'red'}}>City Required</span>}
+              {errors.city && (
+                <span style={{ color: "red" }}>City Required</span>
+              )}
             </div>
             <div>
               <label htmlFor="">Postal Code</label>
-              <input
-                {...register("postalCode")}
-                placeholder="736135"
-              />
-              {errors.postalCode && <span style={{color: 'red'}}>Postal Code Required</span>}
+              <input {...register("postalCode")} placeholder="736135" />
+              {errors.postalCode && (
+                <span style={{ color: "red" }}>Postal Code Required</span>
+              )}
             </div>
           </div>
           {/* errors will return when field validation fails  */}
 
-          {
-            formLoading && <FormSubmitLoading/>
-          }
+          {formLoading && <FormSubmitLoading />}
           <input type="submit" className="theme-btn" />
         </form>
       </div>
