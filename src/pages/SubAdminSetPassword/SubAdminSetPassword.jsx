@@ -17,8 +17,8 @@ const SubAdminSetPassword = () => {
         const token = localStorage.getItem("token");
         if(token){
             console.log(token)
-            // navigate("/");
-            // return;
+            navigate("/");
+            return;
         }
         axios.get(`http://localhost:5000/common/api/v1/authentication/get-temp-user/${id}`)
         .then((res) => {
@@ -26,9 +26,9 @@ const SubAdminSetPassword = () => {
                 console.log(res.data.data);
                 setTempUser(res.data.data);
             }
-            // else{
-            //     navigate("/login");
-            // }
+            else{
+                navigate("/login");
+            }
         })
         .catch((err) => {
             console.log(err);
