@@ -65,9 +65,9 @@ function CreateUser() {
         </div>
       )}
 
-      {step === 0 && <UserPersonalInformationForm />}
-      {step === 1 && <UserAddressInformationForm />}
-      {step === 2 && <UserLabelForm />}
+      {step === 0 && <UserPersonalInformationForm step={step} setStep={setStep}/>}
+      {step === 1 && <UserAddressInformationForm step={step} setStep={setStep}/>}
+      {step === 2 && <UserLabelForm step={step} setStep={setStep}/>}
       {step === 3 && (
         <>
           {" "}
@@ -99,7 +99,7 @@ function CreateUser() {
           </div>
         </>
       )}
-      {step === 4 || (
+      {/* {step === 4 || (
         <div className="createUser-btns">
           {step > 0 && (
             <button
@@ -125,7 +125,7 @@ function CreateUser() {
             </button>
           )}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

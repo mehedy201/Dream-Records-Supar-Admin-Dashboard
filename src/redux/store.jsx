@@ -5,6 +5,7 @@ import yearsAndStatusList from './features/yearList&statusListSlice/yearList&sta
 import releaseDataHandleReducer from './features/releaseDataHandleSlice/releaseDataHandleSlice';
 import reFetchDataHandleSlice from "./features/reFetchDataHandleSlice/reFetchDataHandleSlice";
 import serviceRequestPageDataHandleSlice from "./features/serviceRequestPageDataHandleSlice/serviceRequestPageDataHandleSlice";
+import createUserDataHandleSlice from "./features/createUserDataHandleSlice/createUserDataHandleSlice";
 
 const store = configureStore({
     reducer: {
@@ -13,6 +14,7 @@ const store = configureStore({
         releaseData: releaseDataHandleReducer,
         reFetchSlice: reFetchDataHandleSlice,
         serviceRequestPageSlice: serviceRequestPageDataHandleSlice,
+        createUserDataSlice: createUserDataHandleSlice,
     }
 })
 
