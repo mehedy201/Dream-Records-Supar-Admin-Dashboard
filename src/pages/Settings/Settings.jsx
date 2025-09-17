@@ -1,7 +1,7 @@
 import "./settings.css";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as Collapsible from "@radix-ui/react-collapsible";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import GeneralSettings from "./components/GeneralSettings";
 import PropTypes from "prop-types";
@@ -10,12 +10,100 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Modal from "../../components/Modal";
 import { GoPencil } from "react-icons/go";
-import CheckBox from "../../components/CheckBox";
-import { settingsMemberCrateria } from "../../data";
-function Settings({ settingsTeamMember }) {
+import { useForm, Controller, set } from "react-hook-form";
+import { Checkbox } from "radix-ui";
+import { FaCheck } from "react-icons/fa";
+import axios from "axios";
+import demoImg from '../../assets/artists/artist4.png';
+import threeDotImg from '../../assets/icons/vertical-threeDots.png';
+import toast from "react-hot-toast";
+import EditAccess from "./components/EditAccess";
+
+function Settings() {
+
+  const closeRef = useRef(null);
+
+  let settingsMemberCrateria = [
+    {name: "User", path: "user"},
+    {name: "Distribution", path: "distribution"},
+    {name: "Artist", path: "artist"},
+    {name: "Labels", path: "label"},
+    {name: "Analytics", path: "analytics"},
+    {name: "Service Request", path: "service-request"},
+    {name: "Transactions", path: "transaction"},
+    {name: "Profile", path: "profile"},
+  ];
   const [settingsCollapse, setSettingsCollapse] = useState(true);
 
-  // Simulate fetching from table
+  const {
+    register,
+    handleSubmit,
+    control,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      access: [],
+    },
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [errorMassage, setErrorMassage] = useState('');
+  const onSubmit = (data) => {
+    setLoading(true);
+    if (!data.access || data.access.length === 0) {
+      setError("access", {
+        type: "manual",
+        message: "At least one access must be selected",
+      });
+      return;
+    }
+
+    const roll = "sub-admin";
+    const openingDateISO = new Date().toISOString();
+    const payload = { ...data, roll, openingDateISO };
+    axios.post(`http://localhost:5000/common/api/v1/authentication/create-sub-admin`, payload)
+      .then((res) => {
+        console.log('before', res);
+        if(res.data.status === 200){
+          setLoading(false);
+          window.location.reload();
+        }else{
+          setErrorMassage(res.data.message);
+        }
+      })
+      .catch((error) => {
+        toast.error("Error submitting form:", error);
+        setLoading(false);
+      });
+  };
+
+  const [subAdminList, setSubAdminList] = useState([]);
+  const [filteredCount, setFilteredCount] = useState(0);
+  const [refresh, setRefresh] = useState(1);
+  useEffect(() => {
+    axios.get(`http://localhost:5000/common/api/v1/authentication/sub-admin-list`)
+    .then(res => {
+      setSubAdminList(res.data.data);
+      setFilteredCount(res.data.filteredCount);
+    })
+  },[refresh])
+
+
+  const deleteSubAdmin = (data) => {
+    axios.delete(`http://localhost:5000/admin/api/v1/users/${data._id}?uid=${data.uid}`)
+    .then(res => {
+      if(res.data.status === 200){
+        window.location.reload();
+      }else{
+        toast.error(res.data.message)
+      }
+    })
+  };
 
   return (
     <div className="main-content settings-content">
@@ -39,12 +127,16 @@ function Settings({ settingsTeamMember }) {
             Teams
           </Tabs.Trigger>
         </Tabs.List>
+
+        {/* General Settings */}
         <Tabs.Content className="tabs-content" value="Settings">
           <GeneralSettings />
         </Tabs.Content>
+
+        {/* Teams Section */}
         <Tabs.Content className="tabs-content" value="Teams">
           <Collapsible.Root
-            open={settingsCollapse} // Use object state
+            open={settingsCollapse}
             onOpenChange={() => setSettingsCollapse(!settingsCollapse)}
             className="setting-teams-collapse"
           >
@@ -65,7 +157,9 @@ function Settings({ settingsTeamMember }) {
 
             <Collapsible.Content>
               <div className="add-member-div">
-                <p>Total Member:{settingsTeamMember.length}</p>
+                <p>Total Member: {filteredCount}</p>
+
+                {/* Add Member Modal */}
                 <Dialog.Root>
                   <Dialog.Trigger asChild>
                     <button className="theme-btn"> + Add New Member</button>
@@ -77,65 +171,151 @@ function Settings({ settingsTeamMember }) {
                         title="Invite to your team"
                         className="settings-addMember-modal"
                       >
-                        <div className="settings-form-grid">
-                          <div>
-                            <label className="settings-label ">
-                              First Name *
-                            </label>
-                            <input type="text" />
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                          <div className="settings-form-grid">
+                            <div>
+                              <label className="settings-label ">
+                                First Name *
+                              </label>
+                              <input
+                                type="text"
+                                {...register("first_name", {
+                                  required: "First name is required",
+                                })}
+                              />
+                              {errors.first_name && (
+                                <p style={{ color: "red" }}>
+                                  {errors.first_name.message}
+                                </p>
+                              )}
+                            </div>
+                            <div>
+                              <label className="settings-label ">
+                                Last Name *
+                              </label>
+                              <input
+                                type="text"
+                                {...register("last_name", {
+                                  required: "Last name is required",
+                                })}
+                              />
+                              {errors.last_name && (
+                                <p style={{ color: "red" }}>
+                                  {errors.last_name.message}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          <div>
-                            <label className="settings-label ">
-                              Last Name *
-                            </label>
-                            <input type="text" />
-                          </div>
-                        </div>
-                        <label className="settings-label ">Email *</label>
-                        <input type="text" />
-                        {settingsMemberCrateria.map((item, index) => (
-                          <div
-                            className="settingsModal-checkbox-div"
-                            key={index}
-                          >
-                            <p>{item.name}</p>
-                            <CheckBox
-                              label="Edit"
-                              fromPage="SettingsPage"
-                              defaultChecked={false}
+
+                          <label className="settings-label ">Email *</label>
+                          <input
+                            type="email"
+                            {...register("email", {
+                              required: "Email is required",
+                              pattern: {
+                                value: /^\S+@\S+$/i,
+                                message: "Invalid email address",
+                              },
+                            })}
+                          />
+                          {errors.email && (
+                            <p style={{ color: "red" }}>{errors.email.message}</p>
+                          )}
+
+
+                            {/* Access Checkbox Group */}
+                            <Controller
+                              name="access"
+                              control={control}
+                              rules={{
+                                validate: (value) =>
+                                  value.length > 0 || "At least one access must be selected",
+                              }}
+                              render={({ field, fieldState }) => (
+                                <div className="settings-checkbox-group">
+                                  {settingsMemberCrateria.map((item) => {
+                                    const isChecked = field.value.includes(item.path);
+                                    return (
+                                      <div className="settingsModal-checkbox-div" key={item.name}>
+                                        <p>{item.name}</p>
+                                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                          <span>Edit</span>
+                                          <Checkbox.Root
+                                            className="CheckboxRoot"
+                                            checked={isChecked}
+                                            onCheckedChange={(checked) => {
+                                              const newValue = checked
+                                                ? [...field.value, item.path]
+                                                : field.value.filter((v) => v !== item.path);
+                                              field.onChange(newValue);
+                                              console.log(item.path, checked ? "checked" : "unchecked", newValue);
+
+                                              if (newValue.length > 0) {
+                                                clearErrors("access");
+                                              }
+                                            }}
+                                          >
+                                            <Checkbox.Indicator className="CheckboxIndicator">
+                                              <FaCheck />
+                                            </Checkbox.Indicator>
+                                          </Checkbox.Root>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                  {fieldState.error && (
+                                    <p style={{ color: "red" }}>{fieldState.error.message}</p>
+                                  )}
+                                </div>
+                              )}
                             />
-                          </div>
-                        ))}
-                        <br />
-                        <Dialog.Close
-                          className="theme-btn"
-                          style={{ width: "100%", margin: 0 }}
-                        >
-                          Invite
-                        </Dialog.Close>
-                        <br />
+
+                          {errorMassage && <p style={{ color: "red" }}>{errorMassage}</p>}
+                          <br />
+                          {
+                            loading ?
+                              <button
+                                type="submit"
+                                className="theme-btn"
+                                style={{ width: "100%", margin: 0 }}
+                              >
+                                Loading...
+                              </button> :
+                              <button
+                                type="submit"
+                                className="theme-btn"
+                                style={{ width: "100%", margin: 0 }}
+                              >
+                                Invite
+                              </button> 
+                              
+                          }
+                        </form>
                       </Modal>
                     </Dialog.Content>
                   </Dialog.Portal>
                 </Dialog.Root>
               </div>
-              {settingsTeamMember.map((item, index) => (
+
+              {/* Team Members List */}
+              {subAdminList.map((item, index) => (
                 <div key={index} className="settings-member">
                   <div>
                     <img
-                      src={`src/assets/${item.img}`}
+                      src={item?.imgUrl || demoImg}
                       className="settings-member-img"
                       alt=""
                     />
                   </div>
                   <div className="setting-member-detail">
-                    <p>{item.name}</p>
+                    <p>{item.first_name} {item.last_name}</p>
                     <small>{item.email}</small>
                   </div>
+
                   <DropdownMenu.Root>
                     <DropdownMenu.Trigger asChild>
                       <button className="dropdown-trigger settings-dropdown-btn">
-                        <img src="src/assets/icons/vertical-threeDots.png" />
+                        <img src={threeDotImg} />
                       </button>
                     </DropdownMenu.Trigger>
 
@@ -144,10 +324,29 @@ function Settings({ settingsTeamMember }) {
                       side="bottom"
                       className="dropdown-content settings-dropdown-content"
                     >
-                      <DropdownMenu.Item className="dropdown-item">
-                        <div>
-                          <GoPencil /> Edit Access
-                        </div>
+                      <DropdownMenu.Item
+                        className="dropdown-item"
+                        onSelect={(e) => e.preventDefault()}
+                      >
+                        <Dialog.Root>
+                          <Dialog.Trigger asChild>
+                            <div>
+                              <GoPencil /> Edit Access
+                            </div>
+                          </Dialog.Trigger>
+                          <Dialog.Portal>
+                            <Dialog.Overlay className="dialog-overlay" />
+                            <Dialog.Content className="dialog-content">
+                              <Modal title="Edit Member Access?">
+                                <EditAccess data={item} refresh={refresh} setRefresh={setRefresh} closeRef={closeRef}/>
+                                {/* Hidden Dialog.Close for programmatic close */}
+                                <Dialog.Close asChild>
+                                  <button ref={closeRef} style={{ display: 'none' }} />
+                                </Dialog.Close>
+                              </Modal>
+                            </Dialog.Content>
+                          </Dialog.Portal>
+                        </Dialog.Root>
                       </DropdownMenu.Item>
 
                       <hr />
@@ -158,7 +357,7 @@ function Settings({ settingsTeamMember }) {
                         <Dialog.Root>
                           <Dialog.Trigger asChild>
                             <div>
-                              <RiDeleteBin6Line /> <span>Delete Artist</span>
+                              <RiDeleteBin6Line /> <span>Delete Admin</span>
                             </div>
                           </Dialog.Trigger>
                           <Dialog.Portal>
@@ -174,7 +373,7 @@ function Settings({ settingsTeamMember }) {
                                 <br />
                                 <div className="artist-deleteModal-btns">
                                   <Dialog.Close>No</Dialog.Close>
-                                  <Dialog.Close>Yes, Remove</Dialog.Close>
+                                  <Dialog.Close onClick={() => deleteSubAdmin(item)}>Yes, Remove</Dialog.Close>
                                 </div>
                               </Modal>
                             </Dialog.Content>
@@ -192,7 +391,11 @@ function Settings({ settingsTeamMember }) {
     </div>
   );
 }
+
 Settings.propTypes = {
   settingsTeamMember: PropTypes.array.isRequired,
 };
 export default Settings;
+
+
+

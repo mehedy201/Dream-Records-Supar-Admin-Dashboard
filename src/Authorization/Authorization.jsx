@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import PropTypes from "prop-types";
@@ -12,6 +12,7 @@ import {
 
 const Authorization = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [checking, setChecking] = useState(false);
 
@@ -22,76 +23,87 @@ const Authorization = ({ children }) => {
       try {
         const token = localStorage.getItem("token");
 
-        // 1. If Token not available
         if (!token) {
           navigate("/login");
           return;
         }
 
-        // 2. Token ডিকোড করে মেয়াদ চেক করো
         const decoded = jwtDecode(token);
+
+        // Token expire
         if (decoded.exp * 1000 < Date.now()) {
+          localStorage.removeItem("token");
           navigate("/login");
           return;
         }
 
-        // 3. displayName থেকে ID বের করো
         const displayName = decoded.displayName;
         const userNameIdRoll = displayName?.split("'__'"); // ['username', 'id', 'role']
         const userId = userNameIdRoll[1];
-        const roll = userNameIdRoll[2];
+        console.log('userId', userId)
+
         dispatch(setUserNameIdRoll(userNameIdRoll));
 
-        if (!displayName) {
-          navigate("/login");
-          return;
-        }
-        if (roll !== "Admin") {
-          navigate("/login");
-          return;
-        }
-
-        // 4. API দিয়ে ইউসার ডেটা আনো এবং লকড কিনা চেক করো
         const res = await axios.get(
-          `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/users/${userId}`
+          `http://localhost:5000/api/v1/users/${userId}`
         );
-        dispatch(setUserData(res.data.data));
-        const isLocked = res.data?.data?.userLocked;
-        if (isLocked) {
-          navigate("/locked/:userId");
+        const userData = res.data.data;
+        console.log(userData)
+        dispatch(setUserData(userData));
+
+        // Role Based Access
+        if (userData?.roll === "Admin") {
+          // Admin → route access
+        } else if (userData?.roll === "sub-admin") {
+          const access = userData?.access || [];
+          const currentPath = location.pathname.toLowerCase();
+          const firstSegment = currentPath.split("/")[1];
+
+          if (currentPath === "/") {
+            
+          }else{
+            const requiredAccess = [...access];
+          if (access.includes("distribution")) {
+            requiredAccess.push("release");
+          }
+
+          const hasAccess = requiredAccess.some((acc) =>
+            firstSegment.includes(acc.toLowerCase())
+          );
+
+          if (!hasAccess) {
+            navigate("/unauthorized");
+            return;
+          }
+          }
+
+          
+        } else {
+          navigate("/login");
           return;
         }
 
-        if (!res?.data?.data.first_name && !res?.data?.data.first_name) {
-          navigate("/sign-up-profile-info");
-          return;
-        }
-        // if(!res?.data?.data?.addressLine1 && !res?.data?.data?.address ){
-        //     navigate('/sign-up-address-info')
-        //     return
-        // }
+        // Last login update
         await axios.patch(
-          `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/users/last-log-in/${userId}`,
+          `http://localhost:5000/api/v1/users/last-log-in/${userId}`,
           {}
         );
       } catch (err) {
         console.error("Auth check failed:", err.message);
-        // localStorage.removeItem("token");
-        // navigate("/login");
+        localStorage.removeItem("token");
+        navigate("/login");
       } finally {
         setChecking(false);
       }
     };
 
     verifyUserAccess();
-  }, []);
+  }, [location.pathname]);
 
-  // 5. UI Decision based on auth check
   if (checking) {
     return <LoadingScreen />;
   }
 
-  // 🔓 Auth success
   return children;
 };
 

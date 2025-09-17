@@ -1,9 +1,7 @@
 import { Flex } from "@radix-ui/themes";
 import "./logIn.css";
 import { useNavigate } from "react-router-dom";
-import auth from "../../../firebase.config";
 import { useForm } from "react-hook-form";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import logo from "../../assets/Logo.png";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -12,12 +10,6 @@ import FormSubmitLoading from "../../components/FormSubmitLoading";
 
 function LogIn() {
   const navigate = useNavigate();
-
-  // const [
-  //   signInWithEmailAndPassword,
-  //   loading,
-  //   error,
-  // ] = useSignInWithEmailAndPassword(auth);
 
   const [loading, setLoading] = useState(false);
   const [errorMassage, setErrorMassage] = useState();
@@ -29,21 +21,13 @@ function LogIn() {
   const onSubmit = (data) => {
     setErrorMassage("");
     setLoading(true);
-    console.log(data);
-    // const email = data.email;
-    // const password = data.password;
-    // const loginUser = signInWithEmailAndPassword(email, password)
-    // .then((res) => {
-    //   if(res.user){
-    //     navigate('/')
-    //     }
-    // })
     axios
       .post(
         `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/user-login`,
         data
       )
       .then((res) => {
+        console.log(res)
         if (res.data.status === 200) {
           const userNameIdRoll = res?.data?.displayName?.split("'__'"); // ['username', 'id', 'role']
           const roll = userNameIdRoll[2];

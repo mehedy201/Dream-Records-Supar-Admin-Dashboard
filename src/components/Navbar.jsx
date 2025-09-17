@@ -65,7 +65,7 @@ const Navbar = ({ toggleMobileMenu }) => {
         <DropdownMenu.Trigger style={{ border: "none", background: "none" }}>
           <span style={{ padding: "15px 20px" }} className="nav-dropdown">
             {" "}
-            S
+            {userData?.first_name?.slice(0, 1)}
           </span>{" "}
           <ChevronDown className={`${open ? "rotate" : ""}`} />
         </DropdownMenu.Trigger>

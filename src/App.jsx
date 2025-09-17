@@ -59,6 +59,8 @@ import MobileMenu from "./components/MobileMenu";
 import MobileFooter from "./components/MobileFooter";
 import Authorization from "./Authorization/Authorization";
 import ScrollToTop from "./hooks/ScrollToTop";
+import SubAdminSetPassword from "./pages/SubAdminSetPassword/SubAdminSetPassword";
+import Unauthorized from "./pages/Unauthorized/Unauthorized";
 function Layout() {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 830);
@@ -222,6 +224,7 @@ function App() {
           {/* Users Route End+__________________________________________ */}
           {/* __________________________________________________________ */}
           <Route path="/profile" element={<Profile />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
         </Route>
 
         {/* Route WITHOUT Sidebar & Navbar */}
@@ -233,6 +236,10 @@ function App() {
           path="/VerificationEmailSent"
           element={<VerificationEmailSent />}
         />
+          
+        {/* Admin Set password Link */}
+        <Route path="/sub-admin-set-password/:id" element={<SubAdminSetPassword />} />
+        
       </Routes>
     </Router>
   );
