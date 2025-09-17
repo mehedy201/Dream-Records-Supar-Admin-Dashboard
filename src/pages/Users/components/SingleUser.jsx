@@ -84,7 +84,9 @@ function SingleUser() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://localhost:5000/admin/api/v1/users/single-user/${id}`)
+      .get(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/users/single-user/${id}`
+      )
       .then((res) => {
         if (res.status === 200) {
           // console.log(res.data.data);
@@ -242,7 +244,7 @@ function SingleUser() {
     };
     axios
       .patch(
-        `http://localhost:5000/admin/api/v1/users/suspend-and-unsuspend/${id}`,
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/users/suspend-and-unsuspend/${id}`,
         payload
       )
       .then((res) => {
@@ -262,7 +264,7 @@ function SingleUser() {
     const payload = { userLocked, userLockedDate, suspendReason, status };
     axios
       .patch(
-        `http://localhost:5000/admin/api/v1/users/suspend-and-unsuspend/${id}`,
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/users/suspend-and-unsuspend/${id}`,
         payload
       )
       .then((res) => {

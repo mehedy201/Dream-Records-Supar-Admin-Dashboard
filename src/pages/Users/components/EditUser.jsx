@@ -80,7 +80,9 @@ function EditUser() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://localhost:5000/admin/api/v1/users/single-user/${id}`)
+      .get(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/users/single-user/${id}`
+      )
       .then((res) => {
         if (res.status === 200) {
           const userDataForForm = res?.data?.data;

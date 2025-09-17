@@ -14,24 +14,23 @@ import { useForm, Controller, set } from "react-hook-form";
 import { Checkbox } from "radix-ui";
 import { FaCheck } from "react-icons/fa";
 import axios from "axios";
-import demoImg from '../../assets/artists/artist4.png';
-import threeDotImg from '../../assets/icons/vertical-threeDots.png';
+import demoImg from "../../assets/artists/artist4.png";
+import threeDotImg from "../../assets/icons/vertical-threeDots.png";
 import toast from "react-hot-toast";
 import EditAccess from "./components/EditAccess";
 
 function Settings() {
-
   const closeRef = useRef(null);
 
   let settingsMemberCrateria = [
-    {name: "User", path: "user"},
-    {name: "Distribution", path: "distribution"},
-    {name: "Artist", path: "artist"},
-    {name: "Labels", path: "label"},
-    {name: "Analytics", path: "analytics"},
-    {name: "Service Request", path: "service-request"},
-    {name: "Transactions", path: "transaction"},
-    {name: "Profile", path: "profile"},
+    { name: "User", path: "user" },
+    { name: "Distribution", path: "distribution" },
+    { name: "Artist", path: "artist" },
+    { name: "Labels", path: "label" },
+    { name: "Analytics", path: "analytics" },
+    { name: "Service Request", path: "service-request" },
+    { name: "Transactions", path: "transaction" },
+    { name: "Profile", path: "profile" },
   ];
   const [settingsCollapse, setSettingsCollapse] = useState(true);
 
@@ -52,7 +51,7 @@ function Settings() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [errorMassage, setErrorMassage] = useState('');
+  const [errorMassage, setErrorMassage] = useState("");
   const onSubmit = (data) => {
     setLoading(true);
     if (!data.access || data.access.length === 0) {
@@ -66,13 +65,17 @@ function Settings() {
     const roll = "sub-admin";
     const openingDateISO = new Date().toISOString();
     const payload = { ...data, roll, openingDateISO };
-    axios.post(`http://localhost:5000/common/api/v1/authentication/create-sub-admin`, payload)
+    axios
+      .post(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/create-sub-admin`,
+        payload
+      )
       .then((res) => {
-        console.log('before', res);
-        if(res.data.status === 200){
+        console.log("before", res);
+        if (res.data.status === 200) {
           setLoading(false);
           window.location.reload();
-        }else{
+        } else {
           setErrorMassage(res.data.message);
         }
       })
@@ -86,23 +89,28 @@ function Settings() {
   const [filteredCount, setFilteredCount] = useState(0);
   const [refresh, setRefresh] = useState(1);
   useEffect(() => {
-    axios.get(`http://localhost:5000/common/api/v1/authentication/sub-admin-list`)
-    .then(res => {
-      setSubAdminList(res.data.data);
-      setFilteredCount(res.data.filteredCount);
-    })
-  },[refresh])
-
+    axios
+      .get(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/sub-admin-list`
+      )
+      .then((res) => {
+        setSubAdminList(res.data.data);
+        setFilteredCount(res.data.filteredCount);
+      });
+  }, [refresh]);
 
   const deleteSubAdmin = (data) => {
-    axios.delete(`http://localhost:5000/admin/api/v1/users/delete/${data._id}?uid=${data.uid}`)
-    .then(res => {
-      if(res.data.status === 200){
-        window.location.reload();
-      }else{
-        toast.error(res.data.message)
-      }
-    })
+    axios
+      .delete(
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/users/delete/${data._id}?uid=${data.uid}`
+      )
+      .then((res) => {
+        if (res.data.status === 200) {
+          window.location.reload();
+        } else {
+          toast.error(res.data.message);
+        }
+      });
   };
 
   return (
@@ -219,77 +227,99 @@ function Settings() {
                             })}
                           />
                           {errors.email && (
-                            <p style={{ color: "red" }}>{errors.email.message}</p>
+                            <p style={{ color: "red" }}>
+                              {errors.email.message}
+                            </p>
                           )}
 
+                          {/* Access Checkbox Group */}
+                          <Controller
+                            name="access"
+                            control={control}
+                            rules={{
+                              validate: (value) =>
+                                value.length > 0 ||
+                                "At least one access must be selected",
+                            }}
+                            render={({ field, fieldState }) => (
+                              <div className="settings-checkbox-group">
+                                {settingsMemberCrateria.map((item) => {
+                                  const isChecked = field.value.includes(
+                                    item.path
+                                  );
+                                  return (
+                                    <div
+                                      className="settingsModal-checkbox-div"
+                                      key={item.name}
+                                    >
+                                      <p>{item.name}</p>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          alignItems: "center",
+                                          gap: "10px",
+                                        }}
+                                      >
+                                        <span>Edit</span>
+                                        <Checkbox.Root
+                                          className="CheckboxRoot"
+                                          checked={isChecked}
+                                          onCheckedChange={(checked) => {
+                                            const newValue = checked
+                                              ? [...field.value, item.path]
+                                              : field.value.filter(
+                                                  (v) => v !== item.path
+                                                );
+                                            field.onChange(newValue);
+                                            console.log(
+                                              item.path,
+                                              checked ? "checked" : "unchecked",
+                                              newValue
+                                            );
 
-                            {/* Access Checkbox Group */}
-                            <Controller
-                              name="access"
-                              control={control}
-                              rules={{
-                                validate: (value) =>
-                                  value.length > 0 || "At least one access must be selected",
-                              }}
-                              render={({ field, fieldState }) => (
-                                <div className="settings-checkbox-group">
-                                  {settingsMemberCrateria.map((item) => {
-                                    const isChecked = field.value.includes(item.path);
-                                    return (
-                                      <div className="settingsModal-checkbox-div" key={item.name}>
-                                        <p>{item.name}</p>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                                          <span>Edit</span>
-                                          <Checkbox.Root
-                                            className="CheckboxRoot"
-                                            checked={isChecked}
-                                            onCheckedChange={(checked) => {
-                                              const newValue = checked
-                                                ? [...field.value, item.path]
-                                                : field.value.filter((v) => v !== item.path);
-                                              field.onChange(newValue);
-                                              console.log(item.path, checked ? "checked" : "unchecked", newValue);
-
-                                              if (newValue.length > 0) {
-                                                clearErrors("access");
-                                              }
-                                            }}
-                                          >
-                                            <Checkbox.Indicator className="CheckboxIndicator">
-                                              <FaCheck />
-                                            </Checkbox.Indicator>
-                                          </Checkbox.Root>
-                                        </div>
+                                            if (newValue.length > 0) {
+                                              clearErrors("access");
+                                            }
+                                          }}
+                                        >
+                                          <Checkbox.Indicator className="CheckboxIndicator">
+                                            <FaCheck />
+                                          </Checkbox.Indicator>
+                                        </Checkbox.Root>
                                       </div>
-                                    );
-                                  })}
-                                  {fieldState.error && (
-                                    <p style={{ color: "red" }}>{fieldState.error.message}</p>
-                                  )}
-                                </div>
-                              )}
-                            />
+                                    </div>
+                                  );
+                                })}
+                                {fieldState.error && (
+                                  <p style={{ color: "red" }}>
+                                    {fieldState.error.message}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          />
 
-                          {errorMassage && <p style={{ color: "red" }}>{errorMassage}</p>}
+                          {errorMassage && (
+                            <p style={{ color: "red" }}>{errorMassage}</p>
+                          )}
                           <br />
-                          {
-                            loading ?
-                              <button
-                                type="submit"
-                                className="theme-btn"
-                                style={{ width: "100%", margin: 0 }}
-                              >
-                                Loading...
-                              </button> :
-                              <button
-                                type="submit"
-                                className="theme-btn"
-                                style={{ width: "100%", margin: 0 }}
-                              >
-                                Invite
-                              </button> 
-                              
-                          }
+                          {loading ? (
+                            <button
+                              type="submit"
+                              className="theme-btn"
+                              style={{ width: "100%", margin: 0 }}
+                            >
+                              Loading...
+                            </button>
+                          ) : (
+                            <button
+                              type="submit"
+                              className="theme-btn"
+                              style={{ width: "100%", margin: 0 }}
+                            >
+                              Invite
+                            </button>
+                          )}
                         </form>
                       </Modal>
                     </Dialog.Content>
@@ -308,7 +338,9 @@ function Settings() {
                     />
                   </div>
                   <div className="setting-member-detail">
-                    <p>{item.first_name} {item.last_name}</p>
+                    <p>
+                      {item.first_name} {item.last_name}
+                    </p>
                     <small>{item.email}</small>
                   </div>
 
@@ -338,10 +370,18 @@ function Settings() {
                             <Dialog.Overlay className="dialog-overlay" />
                             <Dialog.Content className="dialog-content">
                               <Modal title="Edit Member Access?">
-                                <EditAccess data={item} refresh={refresh} setRefresh={setRefresh} closeRef={closeRef}/>
+                                <EditAccess
+                                  data={item}
+                                  refresh={refresh}
+                                  setRefresh={setRefresh}
+                                  closeRef={closeRef}
+                                />
                                 {/* Hidden Dialog.Close for programmatic close */}
                                 <Dialog.Close asChild>
-                                  <button ref={closeRef} style={{ display: 'none' }} />
+                                  <button
+                                    ref={closeRef}
+                                    style={{ display: "none" }}
+                                  />
                                 </Dialog.Close>
                               </Modal>
                             </Dialog.Content>
@@ -373,7 +413,11 @@ function Settings() {
                                 <br />
                                 <div className="artist-deleteModal-btns">
                                   <Dialog.Close>No</Dialog.Close>
-                                  <Dialog.Close onClick={() => deleteSubAdmin(item)}>Yes, Remove</Dialog.Close>
+                                  <Dialog.Close
+                                    onClick={() => deleteSubAdmin(item)}
+                                  >
+                                    Yes, Remove
+                                  </Dialog.Close>
                                 </div>
                               </Modal>
                             </Dialog.Content>
@@ -396,6 +440,3 @@ Settings.propTypes = {
   settingsTeamMember: PropTypes.array.isRequired,
 };
 export default Settings;
-
-
-

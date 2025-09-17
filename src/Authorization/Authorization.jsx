@@ -44,7 +44,7 @@ const Authorization = ({ children }) => {
         dispatch(setUserNameIdRoll(userNameIdRoll));
 
         const res = await axios.get(
-          `http://localhost:5000/api/v1/users/${userId}`
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/users/${userId}`
         );
         const userData = res.data.data;
         dispatch(setUserData(userData));
@@ -58,24 +58,21 @@ const Authorization = ({ children }) => {
           const firstSegment = currentPath.split("/")[1];
 
           if (currentPath === "/") {
-            
-          }else{
+          } else {
             const requiredAccess = [...access];
-          if (access.includes("distribution")) {
-            requiredAccess.push("release");
-          }
+            if (access.includes("distribution")) {
+              requiredAccess.push("release");
+            }
 
-          const hasAccess = requiredAccess.some((acc) =>
-            firstSegment.includes(acc.toLowerCase())
-          );
+            const hasAccess = requiredAccess.some((acc) =>
+              firstSegment.includes(acc.toLowerCase())
+            );
 
-          if (!hasAccess) {
-            navigate("/unauthorized");
-            return;
+            if (!hasAccess) {
+              navigate("/unauthorized");
+              return;
+            }
           }
-          }
-
-          
         } else {
           navigate("/login");
           return;
@@ -83,7 +80,7 @@ const Authorization = ({ children }) => {
 
         // Last login update
         await axios.patch(
-          `http://localhost:5000/api/v1/users/last-log-in/${userId}`,
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/users/last-log-in/${userId}`,
           {}
         );
       } catch (err) {

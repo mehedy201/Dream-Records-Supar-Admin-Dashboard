@@ -9,10 +9,11 @@ import { ArrowRight } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCreateUserFirstStep } from "../../../redux/features/createUserDataHandleSlice/createUserDataHandleSlice";
 
-function UserPersonalInformationForm({step, setStep}) {
-
+function UserPersonalInformationForm({ step, setStep }) {
   const dispatch = useDispatch();
-  const { createUserFirstStep } = useSelector((state) => state.createUserDataSlice);
+  const { createUserFirstStep } = useSelector(
+    (state) => state.createUserDataSlice
+  );
 
   const [phone, setPhone] = useState("");
   const [userName, setUserName] = useState(createUserFirstStep?.userName);
@@ -23,7 +24,7 @@ function UserPersonalInformationForm({step, setStep}) {
 
   useEffect(() => {
     const checkUsername = async () => {
-      setUserNameErr('')
+      setUserNameErr("");
       const regex = /^[a-zA-Z0-9]+$/;
       setAvailability(""); // reset
       setRegaxErr(""); // reset
@@ -41,10 +42,10 @@ function UserPersonalInformationForm({step, setStep}) {
       }
       try {
         const res = await axios.post(
-          `http://localhost:5000/common/api/v1/authentication/check-existing-user`,
+          `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/check-existing-user`,
           { userName: debouncedUsername }
         );
-        console.log('response', res)
+        console.log("response", res);
         if (res.data.message === "Exist User") {
           setAvailability("unavailable");
         } else if (res.data.message === "Continue") {
@@ -64,20 +65,20 @@ function UserPersonalInformationForm({step, setStep}) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({defaultValues: {...createUserFirstStep}});
+  } = useForm({ defaultValues: { ...createUserFirstStep } });
   const onSubmit = (data) => {
     setUserNameErr("");
     if (!userName) {
       setUserNameErr("User Name Required");
     }
-    
+
     if (availability !== "available") {
       return;
     }
 
-    const payload ={...data, phone: phone, userName: userName};
+    const payload = { ...data, phone: phone, userName: userName };
     dispatch(setCreateUserFirstStep(payload));
-    console.log(payload)
+    console.log(payload);
     setStep(step + 1);
   };
 
@@ -94,7 +95,11 @@ function UserPersonalInformationForm({step, setStep}) {
               {...register("first_name", { required: true })}
               placeholder="First Name"
             />
-            {errors.first_name && (<p style={{ color: "red", fontSize: '14px', margin: '3px 0px' }}>First Name Required</p>)}
+            {errors.first_name && (
+              <p style={{ color: "red", fontSize: "14px", margin: "3px 0px" }}>
+                First Name Required
+              </p>
+            )}
           </div>
           <div>
             <label htmlFor="">First Name</label>
@@ -102,32 +107,43 @@ function UserPersonalInformationForm({step, setStep}) {
               {...register("last_name", { required: true })}
               placeholder="Last Name"
             />
-            {errors.last_name && (<p style={{ color: "red", fontSize: '14px', margin: '3px 0px' }}>Last Name Required</p>)}
+            {errors.last_name && (
+              <p style={{ color: "red", fontSize: "14px", margin: "3px 0px" }}>
+                Last Name Required
+              </p>
+            )}
           </div>
           <div>
             <label htmlFor="">User Name</label>
-            <input type="text" value={createUserFirstStep?.userName} placeholder="User Name" onChange={(e) => setUserName(e.target.value)} />
+            <input
+              type="text"
+              value={createUserFirstStep?.userName}
+              placeholder="User Name"
+              onChange={(e) => setUserName(e.target.value)}
+            />
             {availability === "available" && (
-              <p style={{ color: "green", fontSize: "12px"}}>
+              <p style={{ color: "green", fontSize: "12px" }}>
                 Username available
               </p>
             )}
             {availability === "unavailable" && (
-              <p style={{ color: "red", fontSize: "12px"}}>
-                Username taken
-              </p>
+              <p style={{ color: "red", fontSize: "12px" }}>Username taken</p>
             )}
-            {userNameErr && (
-              <p style={{ color: "red"}}>{userNameErr}</p>
-            )}
-            {regaxErr && (
-              <p style={{ color: "red"}}>{regaxErr}</p>
-            )}
+            {userNameErr && <p style={{ color: "red" }}>{userNameErr}</p>}
+            {regaxErr && <p style={{ color: "red" }}>{regaxErr}</p>}
           </div>
           <div>
             <label htmlFor="">Email</label>
-            <input type='email' placeholder="Email" {...register("email", {required: true})} />
-            {errors.email && (<p style={{ color: "red", fontSize: '14px', margin: '3px 0px' }}>Email Required</p>)}
+            <input
+              type="email"
+              placeholder="Email"
+              {...register("email", { required: true })}
+            />
+            {errors.email && (
+              <p style={{ color: "red", fontSize: "14px", margin: "3px 0px" }}>
+                Email Required
+              </p>
+            )}
           </div>
           <div>
             <label htmlFor="">Phone Number</label>
@@ -146,7 +162,9 @@ function UserPersonalInformationForm({step, setStep}) {
         {errors.exampleRequired && <span>This field is required</span>}
 
         <div className="createUser-btns">
-          <button type="submit" className="theme-btn">Next &nbsp; <ArrowRight /></button>
+          <button type="submit" className="theme-btn">
+            Next &nbsp; <ArrowRight />
+          </button>
         </div>
       </form>
     </>
