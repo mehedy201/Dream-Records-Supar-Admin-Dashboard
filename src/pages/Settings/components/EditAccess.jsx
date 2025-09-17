@@ -73,7 +73,7 @@ const EditAccess = ({data, refresh, setRefresh, closeRef}) => {
                     })}
                     />
                     {errors.firstName && (
-                    <p className="form-error">
+                    <p style={{color: 'red'}}>
                         {errors.firstName.message}
                     </p>
                     )}
@@ -90,7 +90,7 @@ const EditAccess = ({data, refresh, setRefresh, closeRef}) => {
                     })}
                     />
                     {errors.lastName && (
-                    <p className="form-error">
+                    <p style={{color: 'red'}}>
                         {errors.lastName.message}
                     </p>
                     )}
@@ -110,7 +110,7 @@ const EditAccess = ({data, refresh, setRefresh, closeRef}) => {
                 })}
                 />
                 {errors.email && (
-                <p className="form-error">{errors.email.message}</p>
+                <p style={{color: 'red'}}>{errors.email.message}</p>
                 )}
 
 
@@ -155,7 +155,7 @@ const EditAccess = ({data, refresh, setRefresh, closeRef}) => {
                         );
                         })}
                         {fieldState.error && (
-                        <p className="form-error">{fieldState.error.message}</p>
+                        <p style={{color: 'red'}}>{fieldState.error.message}</p>
                         )}
                     </div>
                     )}

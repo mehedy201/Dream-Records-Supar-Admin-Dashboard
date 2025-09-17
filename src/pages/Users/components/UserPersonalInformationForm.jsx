@@ -23,7 +23,7 @@ function UserPersonalInformationForm() {
             <label htmlFor="">First Name</label>
             <input
               // defaultValue="Subhamay"
-              {...register("firstName")}
+              {...register("first_name")}
               placeholder="Subhamay"
             />
           </div>
@@ -31,7 +31,7 @@ function UserPersonalInformationForm() {
             <label htmlFor="">First Name</label>
             <input
               // defaultValue="Karjee"
-              {...register("lastName")}
+              {...register("last_name")}
               placeholder="Karjee"
             />
           </div>
