@@ -102,7 +102,7 @@ function Settings() {
   const deleteSubAdmin = (data) => {
     axios
       .delete(
-        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/users/delete/${data._id}?uid=${data.uid}`
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/admin/api/v1/users/delete/${data._id}?uid=${data?.uid || data?.firebaseUID}`
       )
       .then((res) => {
         if (res.data.status === 200) {
