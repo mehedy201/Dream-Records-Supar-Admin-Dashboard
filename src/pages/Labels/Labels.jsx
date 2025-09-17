@@ -121,7 +121,7 @@ function Labels() {
   return (
     <div className="main-content">
       {" "}
-      <h2 style={{ fontWeight: "500", fontSize: "24px" }}>Labels</h2>
+      <h2 style={{display: 'flex', gap: '10px', alignItems: 'start', fontWeight: "500", fontSize: "24px" }}>Labels <span style={{fontSize: '16px', border: '1px solid #ea3958', padding: '2px 8px', borderRadius: '5px'}}>{filteredCount || 0}</span></h2>
       <div className="search-setion">
         <input
           onKeyDown={handleKeyPress}

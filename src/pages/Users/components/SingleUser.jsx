@@ -275,42 +275,42 @@ function SingleUser() {
       });
   };
 
-  const passwordCloseRef = useRef(null);
-  const [passMatchErr, setPassMatchErr] = useState("");
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const [passwordChangeLoading, setPasswordChangeLoading] = useState();
-  const onSubmit = async (data) => {
-    setPassMatchErr("");
-    setPasswordChangeLoading(true);
-    // First check if new passwords match
-    if (data.pass1 !== data.pass2) {
-      setPassMatchErr("New passwords do not match");
-      setPasswordChangeLoading(false);
-      return;
-    }
+  // const passwordCloseRef = useRef(null);
+  // const [passMatchErr, setPassMatchErr] = useState("");
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm();
+  // const [passwordChangeLoading, setPasswordChangeLoading] = useState();
+  // const onSubmit = async (data) => {
+  //   setPassMatchErr("");
+  //   setPasswordChangeLoading(true);
+  //   // First check if new passwords match
+  //   if (data.pass1 !== data.pass2) {
+  //     setPassMatchErr("New passwords do not match");
+  //     setPasswordChangeLoading(false);
+  //     return;
+  //   }
 
-    const payload = { newPassword: data.pass1, id, admin: "Admin" };
-    axios
-      .patch(
-        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/change-password`,
-        payload
-      )
-      .then((res) => {
-        if (res.data.status === 200) {
-          toast.success(res.data.message);
-          setPasswordChangeLoading(false);
-          passwordCloseRef.current?.click();
-        } else {
-          toast.error(res.data.message);
-          passwordCloseRef.current?.click();
-          setPasswordChangeLoading(false);
-        }
-      });
-  };
+  //   const payload = { newPassword: data.pass1, id, admin: "Admin" };
+  //   axios
+  //     .patch(
+  //       `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/change-password`,
+  //       payload
+  //     )
+  //     .then((res) => {
+  //       if (res.data.status === 200) {
+  //         toast.success(res.data.message);
+  //         setPasswordChangeLoading(false);
+  //         passwordCloseRef.current?.click();
+  //       } else {
+  //         toast.error(res.data.message);
+  //         passwordCloseRef.current?.click();
+  //         setPasswordChangeLoading(false);
+  //       }
+  //     });
+  // };
 
   const emailCloseRef = useRef(null);
   const [email, setEmail] = useState();
@@ -760,21 +760,21 @@ function SingleUser() {
             className="tabs-trigger distribution-tabs-trigger"
             value="artist"
           >
-            Artists
+            Artists {item === "artist" && `(${filteredCount || 0})`}
           </Tabs.Trigger>
           <Tabs.Trigger
             onClick={() => navigate(`/user/${id}/labels/1/10`)}
             className="tabs-trigger distribution-tabs-trigger"
             value="labels"
           >
-            Labels
+            Labels {item === "labels" && `(${filteredCount || 0})`}
           </Tabs.Trigger>
           <Tabs.Trigger
             onClick={() => navigate(`/user/${id}/transactions/1/10`)}
             className="tabs-trigger distribution-tabs-trigger"
             value="transactions"
           >
-            Transactions
+            Transactions {item === "transactions" && `(${filteredCount || 0})`}
           </Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content className="tabs-content" value="artist">

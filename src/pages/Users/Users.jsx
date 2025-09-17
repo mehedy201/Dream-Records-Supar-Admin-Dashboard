@@ -201,21 +201,21 @@ function Users() {
             value="Pending"
             onClick={() => navigate("/users/Pending/1/10")}
           >
-            New Users
+            New Users {status === "Pending" && `(${filteredCount || 0})`}
           </Tabs.Trigger>
           <Tabs.Trigger
             className="tabs-trigger distribution-tabs-trigger"
             value="Active"
             onClick={() => navigate("/users/Active/1/10")}
           >
-            Active Users
+            Active Users {status === "Active" && `(${filteredCount || 0})`}
           </Tabs.Trigger>
           <Tabs.Trigger
             className="tabs-trigger distribution-tabs-trigger"
             value="Suspended"
             onClick={() => navigate("/users/Suspended/1/10")}
           >
-            Suspended Users
+            Suspended Users {status === "Suspended" && `(${filteredCount || 0})`}
           </Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content className="tabs-content" value="Pending">
