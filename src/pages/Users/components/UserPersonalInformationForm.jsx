@@ -13,12 +13,9 @@ function UserPersonalInformationForm({step, setStep}) {
 
   const dispatch = useDispatch();
   const { createUserFirstStep } = useSelector((state) => state.createUserDataSlice);
-  console.log('redux data', createUserFirstStep)
-
-
 
   const [phone, setPhone] = useState("");
-  const [userName, setUserName] = useState();
+  const [userName, setUserName] = useState(createUserFirstStep?.userName);
   const [availability, setAvailability] = useState(null);
   const debouncedUsername = useDebounce(userName, 600);
   const [regaxErr, setRegaxErr] = useState();
@@ -109,7 +106,7 @@ function UserPersonalInformationForm({step, setStep}) {
           </div>
           <div>
             <label htmlFor="">User Name</label>
-            <input type="text" placeholder="User Name" onChange={(e) => setUserName(e.target.value)} />
+            <input type="text" value={createUserFirstStep?.userName} placeholder="User Name" onChange={(e) => setUserName(e.target.value)} />
             {availability === "available" && (
               <p style={{ color: "green", fontSize: "12px"}}>
                 Username available
@@ -148,8 +145,6 @@ function UserPersonalInformationForm({step, setStep}) {
         {/* errors will return when field validation fails  */}
         {errors.exampleRequired && <span>This field is required</span>}
 
-        {/* <input type="submit" className="theme-btn" /> */}
-        {/* <button type="submit" className="theme-btn">Next &nbsp; <ArrowRight /></button> */}
         <div className="createUser-btns">
           <button type="submit" className="theme-btn">Next &nbsp; <ArrowRight /></button>
         </div>

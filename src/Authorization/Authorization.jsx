@@ -40,7 +40,6 @@ const Authorization = ({ children }) => {
         const displayName = decoded.displayName;
         const userNameIdRoll = displayName?.split("'__'"); // ['username', 'id', 'role']
         const userId = userNameIdRoll[1];
-        console.log('userId', userId)
 
         dispatch(setUserNameIdRoll(userNameIdRoll));
 
@@ -48,7 +47,6 @@ const Authorization = ({ children }) => {
           `http://localhost:5000/api/v1/users/${userId}`
         );
         const userData = res.data.data;
-        console.log(userData)
         dispatch(setUserData(userData));
 
         // Role Based Access
@@ -90,7 +88,7 @@ const Authorization = ({ children }) => {
         );
       } catch (err) {
         console.error("Auth check failed:", err.message);
-        localStorage.removeItem("token");
+        // localStorage.removeItem("token");
         navigate("/login");
       } finally {
         setChecking(false);

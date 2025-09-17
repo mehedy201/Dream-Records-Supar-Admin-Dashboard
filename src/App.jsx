@@ -61,6 +61,8 @@ import Authorization from "./Authorization/Authorization";
 import ScrollToTop from "./hooks/ScrollToTop";
 import SubAdminSetPassword from "./pages/SubAdminSetPassword/SubAdminSetPassword";
 import Unauthorized from "./pages/Unauthorized/Unauthorized";
+import "react-country-state-city/dist/react-country-state-city.css";
+
 function Layout() {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 830);

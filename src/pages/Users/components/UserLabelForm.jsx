@@ -1,5 +1,6 @@
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useForm } from "react-hook-form";
-function UserLabelForm() {
+function UserLabelForm({step, setStep}) {
   const {
     register,
     handleSubmit,
@@ -33,7 +34,21 @@ function UserLabelForm() {
         {/* errors will return when field validation fails  */}
         {errors.exampleRequired && <span>This field is required</span>}
 
-        {/* <input type="submit" className="theme-btn" /> */}
+        <div className="createUser-btns">
+            <button
+              className="theme-btn2"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+              onClick={() => setStep(step - 1)}
+            >
+              <ArrowLeft />
+              &nbsp; Back
+            </button>
+
+          <button type="submit" className="theme-btn">Next &nbsp; <ArrowRight /></button>
+        </div>
       </form>
     </div>
   );
