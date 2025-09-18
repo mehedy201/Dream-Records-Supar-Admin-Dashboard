@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import UserPersonalInformationForm from "./UserPersonalInformationForm";
 import UserAddressInformationForm from "./UserAddressInformationForm";
 // import UserLabelForm from "./UserLabelForm";
 // import ImageUpload from "../../../components/ImageUpload";
 import SetUserPassword from "./SetUserPassword";
 import { useNavigate } from "react-router-dom";
+import circleTickImg from '../../../assets/icons/circle-tick.png';
 const steps = [
   "Personal Details",
   "Address Information",
@@ -21,7 +21,7 @@ function CreateUser() {
     <div className="main-content createUser-main-content">
       {step === 3 ? (
         <div className="createUser-track-create-successful">
-          <img src="src/assets/icons/circle-tick.png" alt="" />
+          <img src={circleTickImg} alt="" />
           <h5>User Created Successfully</h5>
           <p>
             Your user has been successfully created. You can now review the
