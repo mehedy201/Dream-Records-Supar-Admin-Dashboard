@@ -93,6 +93,7 @@ const Navbar = ({ toggleMobileMenu }) => {
             onClick={() => {
               signOut();
               navigate("/login");
+              localStorage.removeItem("token");
             }}
             className="d-flex"
             style={{ marginLeft: "6px" }}

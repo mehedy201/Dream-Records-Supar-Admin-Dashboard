@@ -50,6 +50,7 @@ function Settings() {
     },
   });
 
+  const [refresh, setRefresh] = useState(1);
   const [loading, setLoading] = useState(false);
   const [errorMassage, setErrorMassage] = useState("");
   const onSubmit = (data) => {
@@ -74,7 +75,12 @@ function Settings() {
         console.log("before", res);
         if (res.data.status === 200) {
           setLoading(false);
-          window.location.reload();
+          setRefresh(refresh + 1);
+          setErrorMassage("");
+          toast.success("Invitation sent successfully");
+          if (closeRef.current) {
+            closeRef.current.click();
+          }
         } else {
           setErrorMassage(res.data.message);
         }
@@ -87,7 +93,6 @@ function Settings() {
 
   const [subAdminList, setSubAdminList] = useState([]);
   const [filteredCount, setFilteredCount] = useState(0);
-  const [refresh, setRefresh] = useState(1);
   useEffect(() => {
     axios
       .get(
@@ -106,7 +111,8 @@ function Settings() {
       )
       .then((res) => {
         if (res.data.status === 200) {
-          window.location.reload();
+          setRefresh(refresh + 1);
+          toast.success('Deleted successfully');
         } else {
           toast.error(res.data.message);
         }
@@ -321,6 +327,14 @@ function Settings() {
                             </button>
                           )}
                         </form>
+
+                        {/* Hidden Dialog.Close for programmatic close */}
+                        <Dialog.Close asChild>
+                          <button
+                            ref={closeRef}
+                            style={{ display: "none" }}
+                          />
+                        </Dialog.Close>
                       </Modal>
                     </Dialog.Content>
                   </Dialog.Portal>

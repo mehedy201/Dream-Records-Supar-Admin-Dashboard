@@ -23,7 +23,7 @@ function LogIn() {
     setLoading(true);
     axios
       .post(
-        `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/authentication/user-login`,
+        `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/authentication/user-login`,
         data
       )
       .then((res) => {
@@ -31,7 +31,7 @@ function LogIn() {
         if (res.data.status === 200) {
           const userNameIdRoll = res?.data?.displayName?.split("'__'"); // ['username', 'id', 'role']
           const roll = userNameIdRoll[2];
-          if (roll !== "Admin") {
+          if (roll !== "Admin" || roll !== "sub-admin") {
             setErrorMassage("Not Found");
             setLoading(false);
             return;
