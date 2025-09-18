@@ -30,7 +30,8 @@ function LogIn() {
         console.log(res)
         if (res.data.status === 200) {
           const userNameIdRoll = res?.data?.displayName?.split("'__'"); // ['username', 'id', 'role']
-          const roll = userNameIdRoll[2];
+          const roll = userNameIdRoll[2].replace(/^'|'$/g, "");
+          console.log(roll)
           if (roll === "Admin" || roll === "sub-admin") {
             localStorage.setItem("token", res.data.token);
             toast.success(res.data.message);
