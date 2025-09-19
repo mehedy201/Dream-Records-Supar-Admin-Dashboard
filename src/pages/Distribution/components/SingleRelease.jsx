@@ -68,7 +68,7 @@ function SingleRelease() {
         `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/release/release/${id}`
       )
       .then((res) => {
-        // console.log(res)
+        console.log(res)
         // Set Full Release Data_________
         dispatch(setData(res.data.data));
         // Set Album Info________________
@@ -396,6 +396,22 @@ function SingleRelease() {
               >
                 {data?.status}
               </span>
+              {
+                data?.reviewAdminInfo &&
+                <span style={{color: '#838383', marginLeft: '10px', fontSize: '16px'}}>Reviewed by: {data?.reviewAdminInfo?.adminUserName}</span> 
+              }
+              {
+                data?.blockedAdminInfo &&
+                <span style={{color: '#838383', marginLeft: '10px', fontSize: '16px'}}>Blocked by: {data?.blockedAdminInfo?.adminUserName}</span> 
+              }
+              {
+                data?.errorAdminInfo &&
+                <span style={{color: '#838383', marginLeft: '10px', fontSize: '16px'}}>Error by: {data?.errorAdminInfo?.adminUserName}</span> 
+              }
+              {
+                data?.takedownAdminInfo &&
+                <span style={{color: '#838383', marginLeft: '10px', fontSize: '16px'}}>Takedown by: {data?.takedownAdminInfo?.adminUserName}</span> 
+              }
               <br />
               <h1>{data?.releaseTitle}</h1>
               <h2>
