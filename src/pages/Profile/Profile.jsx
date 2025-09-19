@@ -132,7 +132,7 @@ console.log(userData)
           )}
         </div>
         <div className="profile-img-txt">
-          <h1>{userData.userName}</h1>
+          <h1>{userData?.userName}</h1>
         </div>
       </Flex>
       {/* Personal Information ________________________________ */}
