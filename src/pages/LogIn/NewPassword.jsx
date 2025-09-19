@@ -1,57 +1,16 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { confirmPasswordReset, applyActionCode } from "firebase/auth";
-import auth from "../../../firebase.config";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import axios from "axios";
 
 function NewPassword() {
+
   const navigate = useNavigate();
-
   const { email } = useParams();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const oobCode = queryParams.get("oobCode");
-  const mode = queryParams.get("mode");
 
-  // const [message, setMessage] = useState("");
-  const [errMessage, setErrMessage] = useState("");
-  // const [openEmailDiv, setOpenEmailDiv] = useState(false)
-  // const [openPassDiv, setOpenPassDiv] = useState(false)
-
-  useEffect(() => {
-    if (mode && oobCode) {
-      switch (mode) {
-        case "verifyAndChangeEmail":
-          // setOpenEmailDiv(true)
-          handleEmailVerification(auth, oobCode);
-          break;
-        case "resetPassword":
-          setOpenPassDiv(true);
-          break;
-      }
-    }
-  }, [mode, oobCode]);
-
-  const handleEmailVerification = async (auth, oobCode) => {
-    try {
-      await applyActionCode(auth, oobCode);
-      toast.success("Your email has been successfully updated!");
-      // setMessage("Your email has been successfully updated!");
-      setErrMessage("");
-    } catch (error) {
-      if (error.code === "auth/invalid-action-code") {
-        setErrMessage("The action code is invalid or has expired.");
-      } else {
-        setErrMessage("Error updating email: " + error.message);
-      }
-    }
-  };
-
-  const [passwordError, setPasswordError] = useState();
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -76,31 +35,11 @@ function NewPassword() {
 
     if (res.data.token) {
       setMessage(res.data.message);
-      localStorage.setItem("token", res.data.token); // ✅ Token save
+      localStorage.setItem("token", res.data.token); 
       navigate("/"); // redirect
       setLoading(false);
     }
   };
-
-  const [inputType1, setInputType1] = useState("password");
-  const [inputType2, setInputType2] = useState("password");
-
-  // const passwordTypeHandle1 = () => {
-  //     if(inputType1 === 'password'){
-  //         setInputType1('text')
-  //     }
-  //     if(inputType1 === 'text'){
-  //         setInputType1('password')
-  //     }
-  // }
-  // const passwordTypeHandle2 = () => {
-  //     if(inputType2 === 'password'){
-  //         setInputType2('text')
-  //     }
-  //     if(inputType2 === 'text'){
-  //         setInputType2('password')
-  //     }
-  // }
 
   return (
     <div className="logIn-pg">
