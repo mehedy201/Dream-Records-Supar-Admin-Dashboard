@@ -18,6 +18,7 @@ import demoImg from "../../assets/artists/artist4.png";
 import threeDotImg from "../../assets/icons/vertical-threeDots.png";
 import toast from "react-hot-toast";
 import EditAccess from "./components/EditAccess";
+import { cdnLink } from "../../hooks/cdnLink";
 
 function Settings() {
   const closeRef = useRef(null);
@@ -346,7 +347,7 @@ function Settings() {
                 <div key={index} className="settings-member">
                   <div>
                     <img
-                      src={item?.imgUrl || demoImg}
+                      src={cdnLink(item?.imgKey) || demoImg}
                       className="settings-member-img"
                       alt=""
                     />

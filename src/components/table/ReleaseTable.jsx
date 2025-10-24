@@ -13,6 +13,7 @@ import Modal from "../Modal";
 import ReleaseStatusSuspendForm from "../FormForUpdateStatus/ReleaseStatusSuspendForm";
 import { useForm } from "react-hook-form";
 import threeDotImg from "../../assets/icons/vertical-threeDots.png";
+import { cdnLink } from "../../hooks/cdnLink";
 
 const ReleaseTable = ({ columns = [], data }) => {
   /// Change Status and Reject Function____________________________________
@@ -124,7 +125,7 @@ const ReleaseTable = ({ columns = [], data }) => {
                   className="artistTable-img-row"
                 >
                   <img
-                    src={d?.imgUrl ? d.imgUrl : releasePlaceHolderImg}
+                    src={d?.key ? cdnLink(d.key) : releasePlaceHolderImg}
                     alt=""
                     style={{ borderRadius: "6px" }}
                   />

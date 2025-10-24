@@ -7,6 +7,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Modal from "./Modal";
 import demoImg from '../assets/artists/artist4.png'
 import CreateRelease from "../pages/Release/components/CreateRelease";
+import { cdnLink } from "../hooks/cdnLink";
 const SearchDropdownRelease = ({
   items,
   onSelect,
@@ -122,7 +123,7 @@ const filteredItems = items?.filter((item) =>  item.releaseTitle?.toLowerCase().
               <div key={index} className="selected-item">
                   <img
                     style={{borderRadius: '50%', objectFit: 'cover', objectPosition: 'center'}}
-                    src={item?.imgUrl ? item?.imgUrl : demoImg}
+                    src={item?.key ? cdnLink(item?.key) : demoImg}
                     alt=''
                     className="item-image"
                   />

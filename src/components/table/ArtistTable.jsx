@@ -11,6 +11,7 @@ import localTime from '../../hooks/localTime';
 import { Link, useNavigate } from 'react-router-dom';
 import artistDemoImg from '../../assets/artists/artist4.png'
 import FormSubmitLoading from '../FormSubmitLoading';
+import { cdnLink } from '../../hooks/cdnLink';
 
 
 const ArtistTable = ({columns, data}) => {
@@ -60,7 +61,7 @@ const ArtistTable = ({columns, data}) => {
                                 // state={{ artist: row }}
                                 className=" artistTable-img-row"
                             >
-                                <img src={d?.imgUrl ? d?.imgUrl : artistDemoImg} alt="" />
+                                <img src={d?.key ? cdnLink(d?.key) : artistDemoImg} alt="" />
                                 <p>{d?.artistName}</p>
                             </Link>
                         </td>

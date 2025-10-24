@@ -14,6 +14,7 @@ import { IoEyeOutline } from "react-icons/io5";
 import releasePlaceHolderImg from '../../../assets/release-placeholder.png'
 import ServiceRequestStatusUpdateForm from "../../../components/FormForUpdateStatus/ServiceRequestStatusUpdateForm";
 import localTime from "../../../hooks/localTime";
+import { cdnLink } from "../../../hooks/cdnLink";
 
 function ContentID({
   years,
@@ -120,7 +121,7 @@ function ContentID({
                         Array.isArray(data?.release) &&
                         data?.release?.map(item => 
                           <div style={{margin: '3px'}} key={item?._id} className="release-table-img-td">
-                            <img src={item?.imgUrl ? item?.imgUrl : releasePlaceHolderImg} alt="" />
+                            <img src={item?.key ? cdnLink(item?.key) : releasePlaceHolderImg} alt="" />
                             <div>
                               <p>{item?.releaseTitle}</p>
                               <small>UPC: {item?.UPC}</small>
@@ -131,7 +132,7 @@ function ContentID({
                       {
                         typeof data?.release === 'object' && data?.release?.releaseTitle &&
                         <div className="release-table-img-td">
-                          <img src={data?.release?.imgUrl ? data?.release?.imgUrl : releasePlaceHolderImg} alt="" />
+                          <img src={data?.release?.key ? cdnLink(data?.release?.key) : releasePlaceHolderImg} alt="" />
                           <div>
                             <p>{data?.release?.releaseTitle}</p>
                             <small>UPC: {data?.release?.UPC}</small>

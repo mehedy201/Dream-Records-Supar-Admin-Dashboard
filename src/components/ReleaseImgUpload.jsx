@@ -3,6 +3,7 @@ import PropTypes from "prop-types"; // ✅ Import PropTypes
 import { X } from "lucide-react";
 import axios from "axios";
 import demoImg from "../assets/icons/upload-img.png";
+import { cdnLink } from "../hooks/cdnLink";
 
 const ReleaseImgUpload = ({
   link,
@@ -39,7 +40,7 @@ const ReleaseImgUpload = ({
             .post(link, formData)
             .then((res) => {
               if (res.status == 200) {
-                setImgLink(res.data.data.imgUrl);
+                setImgLink(res.data.data.key);
                 setUploadedImage(res.data.data);
                 setUploadLoading(false);
               }
@@ -79,7 +80,7 @@ const ReleaseImgUpload = ({
       <div className={`upload-box ${className || ""}`}>
         {imgLink ? (
           <div className="image-preview">
-            <img src={imgLink} alt="Uploaded" className="uploaded-img" />
+            <img src={cdnLink(imgLink)} alt="Uploaded" className="uploaded-img" />
             <button
               className="img-upload-remove-btn"
               onClick={() => deleteFile(uploadedImage.key)}

@@ -2,6 +2,7 @@ import { IoEyeOutline } from 'react-icons/io5';
 import userDemoImg from '../../assets/artists/artist4.png'
 import localDate from '../../hooks/localDate';
 import { Link } from 'react-router-dom';
+import { cdnLink } from '../../hooks/cdnLink';
 
 const UserTable = ({ columns = [], data = [], renderCell }) => {
     return (
@@ -19,7 +20,7 @@ const UserTable = ({ columns = [], data = [], renderCell }) => {
             <tr key={d._id}>
                 <td>
                     <div className=" artistTable-img-row">
-                        <img src={d?.photoURL ? d?.photoURL : userDemoImg} alt="" />
+                        <img src={d?.imgKey ? cdnLink(d?.imgKey) : userDemoImg} alt="" />
                         <p>{d.userName}</p>
                     </div>
                 </td>

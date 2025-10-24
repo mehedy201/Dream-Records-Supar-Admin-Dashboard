@@ -1,45 +1,3 @@
-// import PropTypes from "prop-types";
-
-// const Table = ({ columns = [], data = [], renderCell }) => {
-//   return (
-//     <div className="table-wrapper">
-//       <table className="theme-table">
-//         <thead>
-//           <tr>
-//             {columns.map((col, index) => (
-//               <th key={index}>{col.label}</th>
-//             ))}
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {data.map((row, rowIndex) => (
-//             <tr key={rowIndex}>
-//               {columns.map((col, colIndex) => (
-//                 <td key={colIndex}>
-//                   {renderCell ? renderCell(col.key, row) : row[col.key]}
-//                 </td>
-//               ))}
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// };
-
-// Table.propTypes = {
-//   columns: PropTypes.arrayOf(
-//     PropTypes.shape({
-//       label: PropTypes.string.isRequired,
-//       key: PropTypes.string.isRequired,
-//     })
-//   ).isRequired,
-//   data: PropTypes.arrayOf(PropTypes.object).isRequired,
-//   renderCell: PropTypes.func,
-// };
-
-// export default Table;
-
 import PropTypes from "prop-types";
 import { IoEyeOutline } from "react-icons/io5";
 import releasePlaceHolderImg from "../assets/release-placeholder.png"
@@ -47,6 +5,7 @@ import localDate from "../hooks/localDate";
 import { Dialog } from "radix-ui";
 import Modal from "./Modal";
 import { useParams } from "react-router-dom";
+import { cdnLink } from "../hooks/cdnLink";
 const Table = ({ tableFor, serviceRequestData }) => {
 
   const {request} = useParams();
@@ -100,7 +59,7 @@ const Table = ({ tableFor, serviceRequestData }) => {
                       Array.isArray(data?.release) &&
                       data?.release?.map(item => 
                         <div style={{margin: '3px'}} key={item?._id} className="release-table-img-td">
-                          <img src={item?.imgUrl ? item?.imgUrl : releasePlaceHolderImg} alt="" />
+                          <img src={item?.key ? cdnLink(item?.key) : releasePlaceHolderImg} alt="" />
                           <div>
                             <p>{item?.releaseTitle}</p>
                             <small>UPC: {item?.UPC}</small>
@@ -111,7 +70,7 @@ const Table = ({ tableFor, serviceRequestData }) => {
                     {
                       typeof data?.release === 'object' && data?.release?.releaseTitle &&
                       <div className="release-table-img-td">
-                        <img src={data?.release?.imgUrl ? data?.release?.imgUrl : releasePlaceHolderImg} alt="" />
+                        <img src={data?.release?.key ? cdnLink(data?.release?.key) : releasePlaceHolderImg} alt="" />
                         <div>
                           <p>{data?.release?.releaseTitle}</p>
                           <small>UPC: {data?.release?.UPC}</small>

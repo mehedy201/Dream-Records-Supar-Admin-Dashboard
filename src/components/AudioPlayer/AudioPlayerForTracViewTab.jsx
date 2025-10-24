@@ -4,6 +4,7 @@ import { IoPauseCircleOutline, IoPlayCircleOutline } from "react-icons/io5";
 import { RiDownloadLine } from "react-icons/ri";
 import TrackInfoEditComponent from "../../pages/Distribution/EditRelease/TrackInfoEditComponent";
 import axios from "axios";
+import { cdnLink } from "../../hooks/cdnLink";
 
 const formatTime = (time) => {
   if (isNaN(time)) return "00:00";
@@ -122,7 +123,7 @@ const AudioPlayerForTracViewTab = ({ track, index }) => {
     <>
       <div className="release-album-list">
         <div>
-          <audio ref={audioRef} src={track?.audioUrl} preload="metadata" />
+          <audio ref={audioRef} src={cdnLink(track?.audioKey)} preload="metadata" />
           <button
             onClick={togglePlay}
             style={{

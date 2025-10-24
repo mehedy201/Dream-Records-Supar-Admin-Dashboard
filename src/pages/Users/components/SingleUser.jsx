@@ -38,6 +38,7 @@ import textToHTML from "../../../hooks/textToHTML";
 import SpecificUserTransaactionTable from "../../../components/table/SpecificUserTransaactionTable";
 import FormSubmitLoading from "../../../components/FormSubmitLoading";
 import { useForm } from "react-hook-form";
+import { cdnLink } from "../../../hooks/cdnLink";
 
 const transactionColumns = [
   { label: "Type", key: "type" },
@@ -390,7 +391,7 @@ function SingleUser() {
       <Flex className="singleUser-img-div">
         <div className="singleLabel-image-div">
           <img
-            src={userData?.photoURL ? userData?.photoURL : userDemoImg}
+            src={userData?.imgKey ? cdnLink(userData?.imgKey) : userDemoImg}
             className="singleLabel-image"
           />
         </div>
@@ -880,7 +881,7 @@ function SingleUser() {
                   className="lables-card"
                 >
                   <img
-                    src={item?.imgUrl ? item?.imgUrl : labelPlacheholderImg}
+                    src={item?.key ? cdnLink(item?.key) : labelPlacheholderImg}
                     alt="Labels"
                   />
                   <Flex style={{ display: "flex" }}>

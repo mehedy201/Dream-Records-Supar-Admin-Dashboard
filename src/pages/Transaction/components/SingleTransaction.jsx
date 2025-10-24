@@ -23,6 +23,7 @@ import textToHTML from "../../../hooks/textToHTML";
 import demoFileImg from "../../../assets/icons/upload-file.png";
 import { RiDownloadLine } from "react-icons/ri";
 import { X } from "lucide-react";
+import { cdnLink } from "../../../hooks/cdnLink";
 
 const transactionColumns = [
   { label: "Type", key: "type" },
@@ -40,6 +41,7 @@ function SingleTransaction() {
 
   const [masterUserId, setMasterUserId] = useState();
   const [withdrawData, setWithdrawData] = useState();
+  const [imgKey, setImgKey] = useState();
   useEffect(() => {
     axios
       .get(
@@ -47,6 +49,10 @@ function SingleTransaction() {
       )
       .then((res) => {
         if (res.status === 200) {
+          console.log(res.data.data.photoURL)
+          const url = res.data.data.photoURL
+          const key = url.split(".com/")[1];
+          setImgKey(key);
           setWithdrawData(res.data.data);
           setMasterUserId(res.data.data.masterUserId);
         }
@@ -169,7 +175,7 @@ function SingleTransaction() {
           <div className="single-transaction-img-div">
             <img
               src={
-                withdrawData?.photoURL ? withdrawData?.photoURL : demoUserImg
+                withdrawData?.key ? cdnLink(withdrawData?.key) : withdrawData?.photoURL ? cdnLink(imgKey) : demoUserImg
               }
               className="single-transaction-img"
               alt=""

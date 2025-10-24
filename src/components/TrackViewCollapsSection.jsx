@@ -9,6 +9,7 @@ import axios from "axios";
 import AudioPlayerForTracViewTab from "./AudioPlayer/AudioPlayerForTracViewTab";
 import artistDemoImg from "../assets/artists/artist4.png";
 import { object } from "prop-types";
+import { cdnLink } from "../hooks/cdnLink";
 
 const TrackViewCollapsSection = ({ track, index }) => {
   const [albumOverviewSong, setAlbumOverviewSong] = useState(false);
@@ -125,7 +126,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                       {track?.artist?.map((data, index) => (
                         <div key={index} className="d-flex">
                           <img
-                            src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
+                            src={data?.key ? cdnLink(data?.key) : artistDemoImg}
                             alt=""
                           />
                           <p>{data?.artistName}</p>
@@ -134,7 +135,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                       {track?.primaryArtist?.map((data, index) => (
                         <div key={index} className="d-flex">
                           <img
-                            src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
+                            src={data?.key ? cdnLink(data?.key) : artistDemoImg}
                             alt=""
                           />
                           <p>{data?.artistName}</p>
@@ -164,7 +165,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                               <div key={index} className="d-flex">
                                 <img
                                   src={
-                                    data?.imgUrl ? data?.imgUrl : artistDemoImg
+                                    data?.key ? cdnLink(data?.key) : artistDemoImg
                                   }
                                   alt=""
                                 />
@@ -187,7 +188,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                       {track?.featuring?.map((data, index) => (
                         <div key={index} className="d-flex">
                           <img
-                            src={data?.imgUrl ? data?.imgUrl : artistDemoImg}
+                            src={data?.key ? cdnLink(data?.key) : artistDemoImg}
                             alt=""
                           />
                           <p>{data?.artistName}</p>
@@ -218,7 +219,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                               <div key={index} className="d-flex">
                                 <img
                                   src={
-                                    data?.imgUrl ? data?.imgUrl : artistDemoImg
+                                    data?.key ? cdnLink(data?.key) : artistDemoImg
                                   }
                                   alt=""
                                 />

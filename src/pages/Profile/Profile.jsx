@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import FormSubmitLoading from "../../components/FormSubmitLoading";
 import localDate from "../../hooks/localDate";
 import localTime from "../../hooks/localTime";
+import { cdnLink } from "../../hooks/cdnLink";
 
 function Profile() {
 
@@ -113,7 +114,7 @@ console.log(userData)
           ) : (
             <>
               <img
-                src={userData?.photoURL ? userData?.photoURL : demoUserImg}
+                src={userData?.imgKey ? cdnLink(userData?.imgKey) : demoUserImg}
                 alt="Profile"
                 onClick={() => document.getElementById("fileInput").click()}
               />

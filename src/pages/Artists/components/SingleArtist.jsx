@@ -24,6 +24,7 @@ import spotifyImg from '../../../assets/social/spotify-icon.png'
 import facebookImg from '../../../assets/social/facebook.png'
 import youtubeImg from '../../../assets/social/youtube-icon.png'
 import appleImg from '../../../assets/social/apple-music.png'
+import { cdnLink } from "../../../hooks/cdnLink";
 
 const SingleArtist = () => {
   const navigate = useNavigate();
@@ -186,7 +187,7 @@ const SingleArtist = () => {
                     objectPosition: "center",
                   }}
                   className="singleArtist-image"
-                  src={`${artist?.imgUrl ? artist.imgUrl : artistDemoImg}`}
+                  src={`${artist?.key ? cdnLink(artist.key) : artistDemoImg}`}
                   alt={artist?.artistName}
                 />
               </div>

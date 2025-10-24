@@ -31,6 +31,7 @@ import localDate from "../../../hooks/localDate";
 import LabelStatusUpdateComponent from "../../../components/FormForUpdateStatus/LabelStatusUpdateComponent";
 import FormSubmitLoading from "../../../components/FormSubmitLoading";
 import { FiAlertTriangle } from "react-icons/fi";
+import { cdnLink } from "../../../hooks/cdnLink";
 
 function SingleLable() {
   const navigate = useNavigate();
@@ -224,7 +225,7 @@ function SingleLable() {
           <div>
             {" "}
             <img
-              src={label.imgUrl ? label.imgUrl : labelPlaceHolderImg}
+              src={label.key ? cdnLink(label.key) : labelPlaceHolderImg}
               className="singleLabel-image"
               alt=""
             />

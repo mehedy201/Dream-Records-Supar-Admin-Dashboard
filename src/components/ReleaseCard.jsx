@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import "./Global.css";
 import localDate from "../hooks/localDate";
 import { useNavigate } from "react-router-dom";
+import { cdnLink } from "../hooks/cdnLink";
 const ReleaseCard = ({ releaseItems }) => {
   const navigate = useNavigate();
 
@@ -15,7 +16,7 @@ const ReleaseCard = ({ releaseItems }) => {
           className="release-card"
           style={{cursor: 'pointer'}}
         >
-          <img src={item?.imgUrl} alt="" />
+          <img src={item?.key ? cdnLink(item?.key) : ''} alt="" />
           <div style={{ paddingTop: "12px" }}>
             <Flex style={{ display: "flex" }}>
               <div

@@ -30,6 +30,7 @@ import {
 import AlbumInfoEditComponent from "../EditRelease/AlbumInfoEditComponent";
 import { useForm } from "react-hook-form";
 import ReleaseStatusSuspendForm from "../../../components/FormForUpdateStatus/ReleaseStatusSuspendForm";
+import { cdnLink } from "../../../hooks/cdnLink";
 
 const dspColumn = [
   { label: "DSPs", key: "DSPs" },
@@ -370,7 +371,7 @@ function SingleRelease() {
           ))}
         <div className="d-flex release-overview-img-div">
           <div>
-            <img src={data?.imgUrl} alt="" className="release-overview-img" />
+            <img src={cdnLink(data?.key)} alt="" className="release-overview-img" />
           </div>
           <div className="d-flex" style={{ width: "100%" }}>
             <div>

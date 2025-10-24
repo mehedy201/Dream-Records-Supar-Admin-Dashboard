@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { CirclePlay, CirclePause } from 'lucide-react';
+import { cdnLink } from '../hooks/cdnLink';
 
 const formatTime = (time) => {
   if (isNaN(time)) return '00:00';
@@ -91,7 +92,7 @@ const AudioPlayerForEditRelease = ({ audioSrc }) => {
       alignItems: 'center',
       gap: '10px',
     }}>
-      <audio ref={audioRef} src={audioSrc} preload="metadata" />
+      <audio ref={audioRef} src={cdnLink(audioSrc)} preload="metadata" />
 
       <button
         onClick={togglePlay}
