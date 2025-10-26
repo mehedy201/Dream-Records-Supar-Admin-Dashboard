@@ -7,6 +7,7 @@ import Modal from "../../components/Modal";
 import axios from "axios";
 import { useState } from "react";
 import localTime from "../../hooks/localTime";
+import { cdnLink } from "../../hooks/cdnLink";
 
 const AnalyticsTable = ({ columns, data }) => {
   const deleteAnalytics = (id) => {
@@ -56,7 +57,7 @@ const AnalyticsTable = ({ columns, data }) => {
                     <DropdownMenu.Item className="dropdown-item">
                       <div>
                         <a
-                          href={d?.modifiedFileUrl}
+                          href={cdnLink(d?.modifiedFileKey)}
                           download={`${d?.reportsDate}`}
                           target="_blank"
                           rel="noopener noreferrer"

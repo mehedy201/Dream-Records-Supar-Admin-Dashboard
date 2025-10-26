@@ -450,8 +450,8 @@ function SingleRelease() {
                 <DropdownMenu.Item className="dropdown-item">
                   <div>
                     <a
-                      href={data?.imgUrl}
-                      download={`${data?.imgUrl}`}
+                      href={cdnLink(data?.key)}
+                      download={`${cdnLink(data?.key)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ textDecoration: "none", color: "black" }}

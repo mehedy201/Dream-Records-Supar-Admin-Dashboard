@@ -211,7 +211,7 @@ const AudioPlayerForTracViewTab = ({ track, index }) => {
 
           <button
             style={{ cursor: "pointer" }}
-            onClick={() => handleDownload(track.audioUrl)}
+            onClick={() => handleDownload(cdnLink(track.audioKey))}
             className="release-track-download-btn"
           >
             <RiDownloadLine /> Download
