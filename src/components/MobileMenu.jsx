@@ -58,7 +58,7 @@ const MobileMenu = ({ closeMenu }) => {
             style={{ borderBottom: "1px solid #D9D9D9" }}
           >
             <img
-              src={`src/assets/icons/${item.icon}`}
+              src={item.icon}
               alt={item.name}
               className="nav-icon"
             />
