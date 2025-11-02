@@ -19,8 +19,7 @@ const ArtistDetailsForModal = ({data}) => {
                     style={{
                     width: "80px",
                     height: "80px",
-                    borderRadius: "10px",
-                    border: "1px solid #ccc",
+                    borderRadius: "50%",
                     objectFit: "cover",
                     objectPosition: "center",
                     }}

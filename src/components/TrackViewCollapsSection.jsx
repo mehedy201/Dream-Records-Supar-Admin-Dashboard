@@ -138,7 +138,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                     <p className="releaseCredit-items-title">Primary Artist</p>
                     <div>
                       {track?.artist?.map((data, index) => (
-                         <Dialog.Root key={index}>
+                        <Dialog.Root key={index}>
                           <Dialog.Trigger className="serviceRequest-view-trigger">
                             <div key={index} className="d-flex">
                               <img
@@ -191,7 +191,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                                     <p>{data?.artistName}</p>
                                   </div>
                                 </Dialog.Trigger>
-                                <Modal title='Primary Artist'>
+                                <Modal title='Lyricist'>
                                   <ArtistDetailsForModal data={data}/>
                                 </Modal>
                               </Dialog.Root>
@@ -248,7 +248,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                                     <p>{data?.artistName}</p>
                                   </div>
                                 </Dialog.Trigger>
-                                <Modal title='Primary Artist'>
+                                <Modal title='Composer'>
                                   <ArtistDetailsForModal data={data}/>
                                 </Modal>
                               </Dialog.Root>
