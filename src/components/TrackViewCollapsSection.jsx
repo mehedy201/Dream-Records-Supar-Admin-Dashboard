@@ -8,8 +8,9 @@ import { X } from "lucide-react";
 import axios from "axios";
 import AudioPlayerForTracViewTab from "./AudioPlayer/AudioPlayerForTracViewTab";
 import artistDemoImg from "../assets/artists/artist4.png";
-import { object } from "prop-types";
 import { cdnLink } from "../hooks/cdnLink";
+import { Dialog } from "radix-ui";
+import Modal from "./Modal";
 
 const TrackViewCollapsSection = ({ track, index }) => {
   const [albumOverviewSong, setAlbumOverviewSong] = useState(false);
@@ -110,7 +111,19 @@ const TrackViewCollapsSection = ({ track, index }) => {
                   </div>
                   <div className="d-flex">
                     <p>Lyrics:</p>
-                    <p>{track?.Lyrics}</p>
+                    {
+                      track?.Lyrics ?
+                      <>
+                      <Dialog.Root>
+                        <Dialog.Trigger className="serviceRequest-view-trigger">
+                          <p>{track?.Lyrics ? `${track?.Lyrics.slice(0, 20)}...`: ''}</p>
+                        </Dialog.Trigger>
+                        <Modal title='Lyrics'>
+                          <p>{track?.Lyrics}</p>
+                        </Modal>
+                      </Dialog.Root>
+                      </> : ''
+                    }
                   </div>
                   <div className="d-flex">
                     <p>ISRC Code:</p>
