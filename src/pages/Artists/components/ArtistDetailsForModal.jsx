@@ -1,6 +1,5 @@
 import artistDemoImg from "../../../assets/artists/artist4.png";
 import localDate from "../../../hooks/localDate";
-import localTime from "../../../hooks/localTime";
 import instagramImg from '../../../assets/social/instagram.png'
 import spotifyImg from '../../../assets/social/spotify-icon.png'
 import facebookImg from '../../../assets/social/facebook.png'
@@ -8,7 +7,7 @@ import youtubeImg from '../../../assets/social/youtube-icon.png'
 import appleImg from '../../../assets/social/apple-music.png'
 import { cdnLink } from "../../../hooks/cdnLink";
 import notFoundImg from "../../../assets/Empty.png";
-import { CopyIcon, Divide } from "lucide-react";
+import { CopyIcon } from "lucide-react";
 import toast from "react-hot-toast";
 
 
