@@ -48,10 +48,9 @@ function SingleTransaction() {
         `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/payment/single-withdrawal/${id}`
       )
       .then((res) => {
-        if (res.status === 200) {
-          console.log(res.data.data.photoURL)
-          const url = res.data.data.photoURL
-          const key = url.split(".com/")[1];
+        if (res.data.status == 200) {
+          const url = res?.data?.data?.photoURL
+          const key = url?.split(".com/")[1];
           setImgKey(key);
           setWithdrawData(res.data.data);
           setMasterUserId(res.data.data.masterUserId);
@@ -73,6 +72,7 @@ function SingleTransaction() {
         )
         .then((res) => {
           if (res.status === 200) {
+            // console.log(res.data.data);
             setPaymentDetails(res.data.data);
             if (isEmptyArray(res.data.data)) setNotFound(true);
             setFilteredCount(res.data.filteredCount);
