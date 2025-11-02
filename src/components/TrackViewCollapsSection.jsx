@@ -148,7 +148,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                               <p>{data?.artistName}</p>
                             </div>
                           </Dialog.Trigger>
-                          <Modal title='Primary Artist'>
+                          <Modal title=''>
                             <ArtistDetailsForModal data={data}/>
                           </Modal>
                         </Dialog.Root>
