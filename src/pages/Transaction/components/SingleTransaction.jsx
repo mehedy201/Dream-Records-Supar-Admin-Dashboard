@@ -20,10 +20,8 @@ import toast from "react-hot-toast";
 import NotFoundPage from "../../../components/NotFoundPage";
 import { useForm } from "react-hook-form";
 import textToHTML from "../../../hooks/textToHTML";
-import demoFileImg from "../../../assets/icons/upload-file.png";
-import { RiDownloadLine } from "react-icons/ri";
-import { X } from "lucide-react";
 import { cdnLink } from "../../../hooks/cdnLink";
+import LoadingScreen from "../../../components/LoadingScreen";
 
 const transactionColumns = [
   { label: "Type", key: "type" },
@@ -42,18 +40,22 @@ function SingleTransaction() {
   const [masterUserId, setMasterUserId] = useState();
   const [withdrawData, setWithdrawData] = useState();
   const [imgKey, setImgKey] = useState();
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     axios
       .get(
         `https://dream-records-2025-m2m9a.ondigitalocean.app/common/api/v1/payment/single-withdrawal/${id}`
       )
       .then((res) => {
-        if (res.data.status == 200) {
+        if (res.status == 200) {
+          console.log('yes')
           const url = res?.data?.data?.photoURL
           const key = url?.split(".com/")[1];
           setImgKey(key);
           setWithdrawData(res.data.data);
           setMasterUserId(res.data.data.masterUserId);
+          setLoading(false);
         }
       });
   }, [id, reFetch]);
@@ -167,6 +169,10 @@ function SingleTransaction() {
         }
       });
   };
+
+  if(loading){
+    return <LoadingScreen/>
+  }
 
   return (
     <div className="main-content transaction-detail-content">
