@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import Modal from "../../components/Modal";
-import * as Dialog from "@radix-ui/react-dialog";
 import localDate from '../../hooks/localDate';
 import threeDots from '../../assets/icons/vertical-threeDots.png'
-import { RiDeleteBin6Line, RiEyeLine } from 'react-icons/ri';
 import { GoPencil } from 'react-icons/go';
-import { Button } from '@radix-ui/themes';
 import localTime from '../../hooks/localTime';
 import { Link, useNavigate } from 'react-router-dom';
 import artistDemoImg from '../../assets/artists/artist4.png'
-import FormSubmitLoading from '../FormSubmitLoading';
 import { cdnLink } from '../../hooks/cdnLink';
+import  { useState } from 'react';
+import Modal from "../../components/Modal";
+import * as Dialog from "@radix-ui/react-dialog";
+import { RiDeleteBin6Line, RiEyeLine } from 'react-icons/ri';
+import { Button } from '@radix-ui/themes';
+import FormSubmitLoading from '../FormSubmitLoading';
 import axios from 'axios';
 
 
@@ -20,24 +20,24 @@ const ArtistTable = ({columns, data}) => {
     const navigate = useNavigate();
 
 
-    const [deleteLoading, setDeleteLoading] = useState(false);
-    // Delete Artist________________________
-    const deleteArtist = (id, imgKey) => {
-        setDeleteLoading(true);
-        axios
-        .delete(
-            `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/artist/delete-artist/${id}?imgKey=${imgKey}`
-        )
-        .then((res) => {
-            if (res.status == 200) {
-            setDeleteLoading(false);
-            navigate("/artists/1/10");
-            } else {
-            setDeleteLoading(false);
-            }
-        })
-        .catch((er) => console.log(er));
-    };
+    // const [deleteLoading, setDeleteLoading] = useState(false);
+    // // Delete Artist________________________
+    // const deleteArtist = (id, imgKey) => {
+    //     setDeleteLoading(true);
+    //     axios
+    //     .delete(
+    //         `https://dream-records-2025-m2m9a.ondigitalocean.app/api/v1/artist/delete-artist/${id}?imgKey=${imgKey}`
+    //     )
+    //     .then((res) => {
+    //         if (res.status == 200) {
+    //         setDeleteLoading(false);
+    //         navigate("/artists/1/10");
+    //         } else {
+    //         setDeleteLoading(false);
+    //         }
+    //     })
+    //     .catch((er) => console.log(er));
+    // };
 
 
     return (
@@ -94,7 +94,7 @@ const ArtistTable = ({columns, data}) => {
                                 </div>
                             </DropdownMenu.Item>
                             <hr />
-                            <DropdownMenu.Item
+                            {/* <DropdownMenu.Item
                                 className="dropdown-item"
                                 onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
                             >
@@ -126,7 +126,7 @@ const ArtistTable = ({columns, data}) => {
                                     </Dialog.Content>
                                 </Dialog.Portal>
                                 </Dialog.Root>
-                            </DropdownMenu.Item>
+                            </DropdownMenu.Item> */}
                             </DropdownMenu.Content>
                         </DropdownMenu.Root>
                         </td>

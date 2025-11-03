@@ -168,6 +168,57 @@ const SingleArtist = () => {
     );
   };
 
+
+  // Common social link formatter
+    const  formatSocialUrl = (platform, value) => {
+        if (!value) return "";
+
+        let input = value.trim();
+
+        // Step 1: remove double URL (like https://www.instagram.com/https://...)
+        const doubleUrlIndex = input.indexOf("https://", 8);
+        if (doubleUrlIndex !== -1) {
+            input = input.slice(doubleUrlIndex);
+        }
+
+        // Step 2: clean extra trailing slashes
+        input = input.replace(/\/+$/, "");
+
+        // Step 3: build final URLs based on platform
+        switch (platform.toLowerCase()) {
+            case "apple":
+            return input.startsWith("http")
+                ? input
+                : `https://music.apple.com/profile/${input}`;
+
+            case "spotify":
+            return input.startsWith("http")
+                ? input
+                : `https://open.spotify.com/artist/${input}`; // or 'user/' if needed
+
+            case "instagram":
+            return input.startsWith("http")
+                ? input
+                : `https://www.instagram.com/${input}`;
+
+            case "facebook":
+            return input.startsWith("http")
+                ? input
+                : `https://www.facebook.com/${input}`;
+
+            case "youtube":
+            return input.startsWith("http")
+                ? input
+                : `https://www.youtube.com/${input}`;
+
+            default:
+            return input;
+        }
+    }
+
+
+
+
   if (deleteLoading == true) {
     return <LoadingScreen />;
   }
@@ -216,43 +267,45 @@ const SingleArtist = () => {
                     <GoPencil /> Edit Artist
                   </DropdownMenu.Item>
                   <hr />
-
-                  <DropdownMenu.Item
-                    className="dropdown-item"
-                    onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
-                  >
-                    <Dialog.Root>
-                      <Dialog.Trigger asChild>
-                        <span>
-                          <AiOutlineDelete /> Delete Artist
-                        </span>
-                      </Dialog.Trigger>
-                      <Dialog.Portal>
-                        <Dialog.Overlay className="dialog-overlay" />
-                        <Dialog.Content className="dialog-content">
-                          <Modal title="Delete Artist Profile?">
-                            <p className="modal-description">
-                              Are you sure you want to delete this artist
-                              profile? This action is irreversible, and all
-                              associated data, including music releases and
-                              analytics, will be permanently removed.
-                            </p>
-                            <br />
-                            <div className="singleArtist-deleteModal-btns">
-                              <Button>No</Button>
-                              <Button
-                                onClick={() =>
-                                  deleteArtist(artist._id, artist?.imgKey)
-                                }
-                              >
-                                Yes, Delete
-                              </Button>
-                            </div>
-                          </Modal>
-                        </Dialog.Content>
-                      </Dialog.Portal>
-                    </Dialog.Root>
-                  </DropdownMenu.Item>
+                  {
+                    totalCount == 0 &&
+                    <DropdownMenu.Item
+                      className="dropdown-item"
+                      onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
+                    >
+                      <Dialog.Root>
+                        <Dialog.Trigger asChild>
+                          <span>
+                            <AiOutlineDelete /> Delete Artist
+                          </span>
+                        </Dialog.Trigger>
+                        <Dialog.Portal>
+                          <Dialog.Overlay className="dialog-overlay" />
+                          <Dialog.Content className="dialog-content">
+                            <Modal title="Delete Artist Profile?">
+                              <p className="modal-description">
+                                Are you sure you want to delete this artist
+                                profile? This action is irreversible, and all
+                                associated data, including music releases and
+                                analytics, will be permanently removed.
+                              </p>
+                              <br />
+                              <div className="singleArtist-deleteModal-btns">
+                                <Button>No</Button>
+                                <Button
+                                  onClick={() =>
+                                    deleteArtist(artist._id, artist?.imgKey)
+                                  }
+                                >
+                                  Yes, Delete
+                                </Button>
+                              </div>
+                            </Modal>
+                          </Dialog.Content>
+                        </Dialog.Portal>
+                      </Dialog.Root>
+                    </DropdownMenu.Item>
+                  }
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
             </Flex>
@@ -260,13 +313,6 @@ const SingleArtist = () => {
               <div className="singleArtist-info">
                 <h4>Total Releases</h4>
                 <h1>{totalCount}</h1>
-                {/* <Button
-                  style={{ cursor: "pointer" }}
-                  onClick={() => navigate("/release/1/10/All")}
-                  className="singleArtist-pg-allRelease-btn"
-                >
-                  All Releases &nbsp;&nbsp; <ChevronRight />
-                </Button> */}
               </div>
               <div className="singleArtist-social-div">
                 <h4>Artist Profiles</h4>
@@ -275,7 +321,7 @@ const SingleArtist = () => {
                     <a
                       className="social-div"
                       target="_blank"
-                      href={`https://music.apple.com/profile/${artist?.appleId}`}
+                      href={formatSocialUrl("apple", artist.appleId)}
                     >
                       <img src={appleImg} alt={appleImg} />
                     </a>
@@ -284,7 +330,7 @@ const SingleArtist = () => {
                     <a
                       className="social-div"
                       target="_blank"
-                      href={`https://open.spotify.com/user/${artist?.spotifyId}`}
+                      href={formatSocialUrl("spotify", artist.spotifyId)}
                     >
                       <img src={spotifyImg} alt={spotifyImg} />
                     </a>
@@ -293,7 +339,7 @@ const SingleArtist = () => {
                     <a
                       className="social-div"
                       target="_blank"
-                      href={`https://www.instagram.com/${artist?.instagramId}`}
+                      href={formatSocialUrl("instagram", artist.instagramId)}
                     >
                       <img src={instagramImg} alt={instagramImg} />
                     </a>
@@ -302,7 +348,7 @@ const SingleArtist = () => {
                     <a
                       className="social-div"
                       target="_blank"
-                      href={artist.facebook}
+                      href={formatSocialUrl("facebook", artist.facebook)}
                     >
                       <img src={facebookImg} alt={facebookImg} />
                     </a>
@@ -311,7 +357,7 @@ const SingleArtist = () => {
                     <a
                       className="social-div"
                       target="_blank"
-                      href={artist.youtube}
+                      href={formatSocialUrl("youtube", artist.youtube)}
                     >
                       <img src={youtubeImg} alt={youtubeImg} />
                     </a>

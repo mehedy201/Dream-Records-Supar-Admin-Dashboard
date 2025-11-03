@@ -23,113 +23,7 @@ const artistColumns = [
   { label: "Created At", key: "date" },
   { label: "Action", key: "action" },
 ];
-const renderArtistCell = (key, row) => {
-  if (key === "artistName") {
-    return (
-      <Link
-        to="/SingleArtist"
-        style={{ color: "#1C2024", textDecoration: "none" }}
-        state={{ artist: row }}
-        className=" artistTable-img-row"
-      >
-        <img src={`src/assets/${row.img}`} alt="" />
-        <p>{row.artistName}</p>
-      </Link>
-    );
-  }
 
-  if (key === "action") {
-    return (
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild>
-          <button className="dropdown-trigger artist-dropdown-btn">
-            <img src="src/assets/icons/vertical-threeDots.png" />
-          </button>
-        </DropdownMenu.Trigger>
-
-        <DropdownMenu.Content
-          align="left"
-          side="bottom"
-          className="dropdown-content artist-dropdown-content"
-        >
-          <DropdownMenu.Item className="dropdown-item">
-            <div>
-              <RiEyeLine /> View Details
-            </div>
-          </DropdownMenu.Item>
-          <hr />
-          <DropdownMenu.Item className="dropdown-item">
-            <div>
-              <GoPencil /> <span>Edit Artist</span>
-            </div>
-          </DropdownMenu.Item>
-          <hr />
-          <DropdownMenu.Item
-            className="dropdown-item"
-            onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing
-          >
-            <Dialog.Root>
-              <Dialog.Trigger asChild>
-                <div>
-                  <RiDeleteBin6Line /> <span>Delete Artist</span>
-                </div>
-              </Dialog.Trigger>
-              <Dialog.Portal>
-                <Dialog.Overlay className="dialog-overlay" />
-                <Dialog.Content className="dialog-content">
-                  <Modal title="Delete Artist ?">
-                    <p className="modal-description">
-                      Are you sure you want to delete this label? This action is
-                      irreversible, and all associated data, including artist
-                      accounts, music releases, and analytics, will be
-                      permanently removed.
-                    </p>
-                    <br />
-                    <div className="artist-deleteModal-btns">
-                      <Button>No</Button>
-                      <Button>Yes, Delete</Button>
-                    </div>
-                  </Modal>
-                </Dialog.Content>
-              </Dialog.Portal>
-            </Dialog.Root>
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-    );
-  }
-  if (
-    key === "artistName" ||
-    key === "userName" ||
-    key === "email" ||
-    key === "count" ||
-    key === "date" ||
-    key === "action"
-  ) {
-    return (
-      <Link
-        to="/SingleArtist"
-        style={{ color: "#1C2024", textDecoration: "none" }}
-        state={{ artist: row }}
-      >
-        {key === "artistName"
-          ? row.artistName
-          : key === "userName"
-          ? row.userName
-          : key === "email"
-          ? row.email
-          : key === "date"
-          ? row.date
-          : key === "count"
-          ? row.count
-          : key === "action"
-          ? row.action
-          : ""}
-      </Link>
-    );
-  }
-  return row[key];
-};
 function Artists({ artistTable }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
   useEffect(() => {
@@ -177,7 +71,6 @@ function Artists({ artistTable }) {
         )
         .then((res) => {
           if (res.status == 200) {
-            console.log(res.data.data)
             setArtistData(res.data.data);
             setTotalCount(res.data.totalCount);
             setFilteredCount(res.data.filteredCount);
