@@ -96,13 +96,13 @@ function Profile() {
 
   }
 
-console.log(userData)
 
+  
 
 
   return (
     <div className="main-content profile-content">
-      <Flex className="profile-img-flex">
+      {/* <Flex className="profile-img-flex">
         <div className="profile-img">
           {image ? (
             <>
@@ -135,9 +135,9 @@ console.log(userData)
         <div className="profile-img-txt">
           <h1>{userData?.userName}</h1>
         </div>
-      </Flex>
+      </Flex> */}
       {/* Personal Information ________________________________ */}
-      <div className="profile-info">
+      {/* <div className="profile-info">
         <h5>Personal Information</h5>
         <div style={{marginTop: '14px'}} className="d-flex">
           <p>Registered As:</p>
@@ -166,10 +166,10 @@ console.log(userData)
               : ""}
           </p>
         </div>
-      </div>
+      </div> */}
 
       {/* Address ________________________________ */}
-      <div className="profile-info">
+      {/* <div className="profile-info">
           <div>
             <h5>Address</h5>
             <div style={{marginTop: '14px'}} className="d-flex">
@@ -197,7 +197,7 @@ console.log(userData)
               <p className="profile-value-text">{userData?.country?.name}</p>
             </div>
           </div>
-      </div>
+      </div> */}
 
       <div className="profile-info d-flex">
         <div style={{ width: "80%" }}>
