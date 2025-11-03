@@ -12,6 +12,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import artistDemoImg from '../../assets/artists/artist4.png'
 import FormSubmitLoading from '../FormSubmitLoading';
 import { cdnLink } from '../../hooks/cdnLink';
+import axios from 'axios';
 
 
 const ArtistTable = ({columns, data}) => {

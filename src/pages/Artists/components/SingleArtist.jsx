@@ -25,6 +25,7 @@ import facebookImg from '../../../assets/social/facebook.png'
 import youtubeImg from '../../../assets/social/youtube-icon.png'
 import appleImg from '../../../assets/social/apple-music.png'
 import { cdnLink } from "../../../hooks/cdnLink";
+import LoadingScreen from "../../../components/LoadingScreen";
 
 const SingleArtist = () => {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ const SingleArtist = () => {
       .then((res) => {
         if (res.status == 200) {
           setDeleteLoading(false);
-          navigate("/artist/1/10");
+          navigate("/artists/1/10");
         } else {
           setDeleteLoading(false);
         }
