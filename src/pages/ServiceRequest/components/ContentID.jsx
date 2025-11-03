@@ -178,25 +178,24 @@ function ContentID({
                             <p>{data?.status}</p>
                           </div>
                          {
-                          data?.actionRequired &&
-                          <div style={{gap: '10px'}} className="">
-                            <p style={{ fontSize: "14px", color: "#838383" }}>
-                              Reject Reason:
-                            </p>
-                            <div style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word',}} dangerouslySetInnerHTML={{ __html: data?.actionRequired }} />
-                          </div>
-                        }
-
-                        {
-                            data?.rejectionReasons && 
-                            <div>
+                            data?.status == 'Rejected' &&
+                            <div style={{gap: '10px'}} className="">
+                              <p style={{ fontSize: "14px", color: "#838383" }}>
+                                Reject Reason:
+                              </p>
                               {
-                                data?.rejectionReasons?.map((r, index) => 
-                                  <div key={index}>
-                                    <p style={{fontWeight: '14px'}}>{r}</p>
-                                  </div>
-                                )
+                                data?.rejectionReasons && 
+                                <div>
+                                  {
+                                    data?.rejectionReasons?.map((r, index) => 
+                                      <div key={index}>
+                                        <p style={{fontWeight: '14px'}}>{r}</p>
+                                      </div>
+                                    )
+                                  }
+                                </div>
                               }
+                              <div style={{whiteSpace: 'normal',wordBreak: 'break-word',overflowWrap: 'break-word',}} dangerouslySetInnerHTML={{ __html: data?.actionRequired }} />
                             </div>
                           }
                           <br />
