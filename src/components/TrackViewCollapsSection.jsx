@@ -7,8 +7,8 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 // import { setTracksInfo } from "../../../redux/features/releaseDataHandleSlice/releaseDataHandleSlice";
 // import axios from "axios";
 import AudioPlayerForTracViewTab from "./AudioPlayer/AudioPlayerForTracViewTab";
-import artistDemoImg from "../assets/artists/artist4.png";
-import { cdnLink } from "../hooks/cdnLink";
+// import artistDemoImg from "../assets/artists/artist4.png";
+// import { cdnLink } from "../hooks/cdnLink";
 import { Dialog } from "radix-ui";
 import Modal from "./Modal";
 import ArtistDetailsForModal from "../pages/Artists/components/ArtistDetailsForModal";
@@ -138,36 +138,40 @@ const TrackViewCollapsSection = ({ track, index }) => {
                     <p className="releaseCredit-items-title">Primary Artist</p>
                     <div>
                       {track?.artist?.map((data, index) => (
-                        <Dialog.Root key={index}>
-                          <Dialog.Trigger className="serviceRequest-view-trigger">
-                            <div key={index} className="d-flex">
-                              <img
-                                src={data?.key ? cdnLink(data?.key) : artistDemoImg}
-                                alt=""
-                              />
-                              <p>{data?.artistName}</p>
-                            </div>
-                          </Dialog.Trigger>
-                          <Modal title=''>
-                            <ArtistDetailsForModal data={data}/>
-                          </Modal>
-                        </Dialog.Root>
+                        <div>
+                          <Dialog.Root key={index}>
+                            <Dialog.Trigger className="serviceRequest-view-trigger">
+                              <div key={index} className="d-flex">
+                                {/* <img
+                                  src={data?.key ? cdnLink(data?.key) : artistDemoImg}
+                                  alt=""
+                                /> */}
+                                <p>{data?.artistName}</p>
+                              </div>
+                            </Dialog.Trigger>
+                            <Modal title=''>
+                              <ArtistDetailsForModal data={data}/>
+                            </Modal>
+                          </Dialog.Root>
+                        </div>
                       ))}
                       {track?.primaryArtist?.map((data, index) => (
-                        <Dialog.Root key={index}>
-                          <Dialog.Trigger className="serviceRequest-view-trigger">
-                            <div key={index} className="d-flex">
-                              <img
-                                src={data?.key ? cdnLink(data?.key) : artistDemoImg}
-                                alt=""
-                              />
-                              <p>{data?.artistName}</p>
-                            </div>
-                          </Dialog.Trigger>
-                          <Modal title='Primary Artist'>
-                            <ArtistDetailsForModal data={data}/>
-                          </Modal>
-                        </Dialog.Root>
+                        <div>
+                          <Dialog.Root key={index}>
+                            <Dialog.Trigger className="serviceRequest-view-trigger">
+                              <div key={index} className="d-flex">
+                                {/* <img
+                                  src={data?.key ? cdnLink(data?.key) : artistDemoImg}
+                                  alt=""
+                                /> */}
+                                <p>{data?.artistName}</p>
+                              </div>
+                            </Dialog.Trigger>
+                            <Modal title='Primary Artist'>
+                              <ArtistDetailsForModal data={data}/>
+                            </Modal>
+                          </Dialog.Root>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -181,13 +185,14 @@ const TrackViewCollapsSection = ({ track, index }) => {
                         track.lyricist.length > 0 &&
                         (typeof track.lyricist[0] === "object"
                           ? track.lyricist.map((data, index) => (
+                            <div>
                               <Dialog.Root key={index}>
                                 <Dialog.Trigger className="serviceRequest-view-trigger">
                                   <div key={index} className="d-flex">
-                                    <img
+                                    {/* <img
                                       src={data?.key ? cdnLink(data?.key) : artistDemoImg}
                                       alt=""
-                                    />
+                                    /> */}
                                     <p>{data?.artistName}</p>
                                   </div>
                                 </Dialog.Trigger>
@@ -195,6 +200,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                                   <ArtistDetailsForModal data={data}/>
                                 </Modal>
                               </Dialog.Root>
+                            </div>
                             ))
                           : track.lyricist.join(", ")
                         )}
@@ -210,20 +216,18 @@ const TrackViewCollapsSection = ({ track, index }) => {
                     <p className="releaseCredit-items-title">Featuring</p>
                     <div>
                       {track?.featuring?.map((data, index) => (
-                        <Dialog.Root key={index}>
-                          <Dialog.Trigger className="serviceRequest-view-trigger">
-                            <div key={index} className="d-flex">
-                              <img
-                                src={data?.key ? cdnLink(data?.key) : artistDemoImg}
-                                alt=""
-                              />
-                              <p>{data?.artistName}</p>
-                            </div>
-                          </Dialog.Trigger>
-                          <Modal title='Featuring'>
-                            <ArtistDetailsForModal data={data}/>
-                          </Modal>
-                        </Dialog.Root>
+                        <div>
+                          <Dialog.Root key={index}>
+                            <Dialog.Trigger className="serviceRequest-view-trigger">
+                              <div key={index} className="d-flex">
+                                <p>{data?.artistName}</p>
+                              </div>
+                            </Dialog.Trigger>
+                            <Modal title='Featuring'>
+                              <ArtistDetailsForModal data={data}/>
+                            </Modal>
+                          </Dialog.Root>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -238,13 +242,14 @@ const TrackViewCollapsSection = ({ track, index }) => {
                         track.composer.length > 0 &&
                         (typeof track.composer[0] === "object"
                           ? track.composer.map((data, index) => (
+                            <div>
                               <Dialog.Root key={index}>
                                 <Dialog.Trigger className="serviceRequest-view-trigger">
                                   <div key={index} className="d-flex">
-                                    <img
+                                    {/* <img
                                       src={data?.key ? cdnLink(data?.key) : artistDemoImg}
                                       alt=""
-                                    />
+                                    /> */}
                                     <p>{data?.artistName}</p>
                                   </div>
                                 </Dialog.Trigger>
@@ -252,6 +257,7 @@ const TrackViewCollapsSection = ({ track, index }) => {
                                   <ArtistDetailsForModal data={data}/>
                                 </Modal>
                               </Dialog.Root>
+                            </div>
                             ))
                           : track.composer.join(", "))}
                     </div>
