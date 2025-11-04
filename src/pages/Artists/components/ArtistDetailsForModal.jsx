@@ -98,7 +98,7 @@ const ArtistDetailsForModal = ({data}) => {
                 <h4 style={{ fontSize: '20px', fontFamily: 'inter', fontWeight: '500', color: '#838383'}}>Artist Profiles</h4>
                 <div style={{display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px'}}>
                     {data?.appleId && (
-                    <div className="d-flex">
+                    <div style={{display: 'flex', alignItems: 'center', gap: '18px'}}>
                         <img style={{height: '36px', width: '36px'}} src={appleImg} alt={appleImg} />
                         <input value={formatSocialUrl("apple", data.appleId)} type="text" disabled/>
                         <CopyIcon style={{cursor: 'pointer'}} onClick={() => copyLink(formatSocialUrl("apple", data.appleId))} size={16} />
