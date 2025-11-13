@@ -6,11 +6,14 @@ import logo from "../../assets/Logo.png";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useState } from "react";
-import FormSubmitLoading from "../../components/FormSubmitLoading";
+import eyeIcon from "../../assets/icons/eye.png";
+import eyeOffIcon from "../../assets/icons/eye-off.png";
+
 
 function LogIn() {
   const navigate = useNavigate();
 
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMassage, setErrorMassage] = useState();
   const {
@@ -50,6 +53,10 @@ function LogIn() {
       });
   };
 
+  const togglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <div className="logIn-pg">
       <div className="login-sideimg-div"></div>
@@ -80,21 +87,35 @@ function LogIn() {
             Forget Password?
           </label>
         </Flex>
-        <input
+        {/* <input
           {...register("password", { required: true })}
           type="password"
           className="password-input"
-        />
+        /> */}
+        <div style={{ position: "relative", width: "100%" }}>
+            <input
+              type={showPassword ? "text" : "password"}
+              className="password-input"
+              {...register("password", { required: true })}
+            />
+
+            <img
+              src={showPassword ? eyeIcon : eyeOffIcon}
+              alt="Toggle visibility"
+              onClick={togglePassword}
+              className="password-input-eye-img"
+            />
+          </div>
         {errors.password && (
           <p style={{ color: "red", marginTop: "-10px" }}>Password Required</p>
         )}
-        {loading && <FormSubmitLoading />}
         {errorMassage && <p style={{ color: "red" }}>{errorMassage}</p>}
         <button
           className="theme-btn"
-          style={{ width: "100%", margin: "0 0 24px 0" }}
+          style={{ width: "100%", margin: "0 0 24px 0", display: "flex", justifyContent: "center", alignItems: "center", gap: '10px' }}
           type="submit"
         >
+          {loading && <span className="btn-spinner-span"></span>}
           Log In
         </button>
         <button className="theme-btn2">Don’t have an account? sign up</button>

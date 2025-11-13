@@ -52,13 +52,13 @@ function ResetPassword() {
           <label>Email</label>
           <input type="email" {...register("email", { required: true })} />
           {errors.email && <span>Email Required</span>}
-          {loading && <FormSubmitLoading />}
           {message && <p>{message}</p>}
           <button
             type="submit"
             className="theme-btn"
-            style={{ width: "100%", margin: "0 0 24px 0" }}
+            style={{ width: "100%", margin: "0 0 24px 0", display: "flex", justifyContent: "center", alignItems: "center", gap: '10px' }}
           >
+            {loading && <span className="btn-spinner-span"></span>}
             Reset Password
           </button>
         </form>

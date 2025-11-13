@@ -89,13 +89,13 @@ const SubAdminSetPassword = () => {
         {errors.password && (
           <p style={{ color: "red", marginTop: "-10px" }}>Password Required</p>
         )}
-        {loading && <FormSubmitLoading />}
         {errorMassage && <p style={{ color: "red" }}>{errorMassage}</p>}
         <button
           className="theme-btn"
-          style={{ width: "100%", margin: "0 0 24px 0" }}
+          style={{ width: "100%", margin: "0 0 24px 0", display: "flex", justifyContent: "center", alignItems: "center", gap: '10px' }}
           type="submit"
         >
+          {loading && <span className="btn-spinner-span"></span>}
           Set Password
         </button>
       </form>

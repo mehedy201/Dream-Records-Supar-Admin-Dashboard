@@ -39,9 +39,9 @@
   font-size: 16px;
 }
 .password-input {
-  background-image: url(../../assets/icons/eye.png);
+  /* background-image: url(../../assets/icons/eye.png);
   background-repeat: no-repeat;
-  background-size: 16px;
+  background-size: 16px; */
 
   background-position: calc(100% - 15px) center;
   padding-right: 45px;
@@ -96,4 +96,14 @@
   .login-form-section {
     width: 300px;
   }
+}
+
+
+.password-input-eye-img {
+  position: absolute;
+  right: 15px;
+  top: 38%;
+  transform: translateY(-50%);
+  width: 18px !important;
+  cursor: pointer;
 }

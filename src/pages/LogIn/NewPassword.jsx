@@ -81,13 +81,13 @@ function NewPassword() {
             {...register("password2", { required: true })}
           />
           {errors.password2 && <span>Confirm Password Required</span>}
-          {loading && <FormSubmitLoading />}
           {message && <p>{message}</p>}
           <button
             className="theme-btn"
-            style={{ width: "100%", margin: "0 0 24px 0" }}
+            style={{ width: "100%", margin: "0 0 24px 0", display: "flex", justifyContent: "center", alignItems: "center", gap: '10px' }}
             type="submit"
           >
+            {loading && <span className="btn-spinner-span"></span>}
             Update Password
           </button>
         </form>
