@@ -11,6 +11,7 @@ import { Button } from "@radix-ui/themes";
 import axios from "axios";
 import { useRef, useState } from "react";
 import FormSubmitLoading from "../FormSubmitLoading";
+import { cdnLink } from "../../hooks/cdnLink";
 
 const LabelsTable = ({ data }) => {
   const closeRef = useRef(null);
@@ -59,7 +60,7 @@ const LabelsTable = ({ data }) => {
                   className="artistTable-img-row"
                 >
                   <img
-                    src={d?.imgUrl ? d.imgUrl : releasePlaceHolderImg}
+                    src={d?.key ? cdnLink(d?.key) : releasePlaceHolderImg}
                     alt=""
                     style={{ borderRadius: "50%" }}
                   />
